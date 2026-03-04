@@ -55,6 +55,7 @@ export interface GamePlayerStat {
 
 export interface GameResult {
   opponent: string;
+  date: string;
   players: GamePlayerStat[];
   teamPoints: number;
 }

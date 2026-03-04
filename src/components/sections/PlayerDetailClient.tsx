@@ -28,7 +28,7 @@ function fmtPct(made: number, attempt: number): string {
 
 interface PlayerDetailClientProps {
   summary: PlayerSummary;
-  games: { opponent: string; stat: GamePlayerStat }[];
+  games: { opponent: string; date: string; stat: GamePlayerStat }[];
 }
 
 export default function PlayerDetailClient({ summary, games }: PlayerDetailClientProps) {
@@ -36,7 +36,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
   const p = summary;
 
   const lineData = games.map((g) => ({
-    game: `vs ${g.opponent}`,
+    game: `${g.date.slice(5).replace("-", "/")} ${g.opponent}`,
     PTS: g.stat.points,
     REB: g.stat.totalReb,
     AST: g.stat.assists,
@@ -239,7 +239,9 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                 <tbody>
                   {games.map((g) => (
                     <tr key={g.opponent} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="py-2 px-1.5 sm:py-3 sm:px-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10">vs {g.opponent}</td>
+                      <td className="py-2 px-1.5 sm:py-3 sm:px-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10">
+                        <span className="text-neutral-400 mr-2 text-xs">{g.date.replace(/-/g, "/")}</span>vs {g.opponent}
+                      </td>
                       <td className={td}>{g.stat.starter ? <span aria-label="スターター">●</span> : ""}</td>
                       <td className={`${td} font-bold text-accent-purple`}>{g.stat.points}</td>
                       <td className={td}>{g.stat.threePointMade}/{g.stat.threePointAttempt}</td>
