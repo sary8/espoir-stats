@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
-const navLinks = [
-  { href: "#overview", label: "Overview" },
-  { href: "#players", label: "Players" },
-  { href: "#games", label: "Games" },
+const sections = [
+  { id: "overview", label: "Overview" },
+  { id: "players", label: "Players" },
+  { id: "games", label: "Games" },
 ];
 
 export default function Header() {
@@ -22,6 +23,13 @@ export default function Header() {
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const navLinks = sections.map((s) => ({
+    href: isHome ? `#${s.id}` : `/#${s.id}`,
+    label: s.label,
+  }));
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -34,9 +42,9 @@ export default function Header() {
         </Link>
         <nav className="hidden sm:flex items-center gap-6 text-sm text-neutral-400" aria-label="メインナビゲーション">
           {navLinks.map((link) => (
-            <a key={link.href} href={link.href} className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
+            <Link key={link.href} href={link.href} className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <button
@@ -52,14 +60,14 @@ export default function Header() {
         <nav className="sm:hidden bg-[#0a0a0f]/95 backdrop-blur-md border-t border-white/5" aria-label="モバイルナビゲーション">
           <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 onClick={closeMenu}
                 className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
         </nav>
