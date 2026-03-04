@@ -14,7 +14,7 @@ export default function HeroSection({ totalPoints, totalGames, totalPlayers }: H
   const noMotion = { duration: 0 };
 
   return (
-    <section className="relative min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center gradient-mesh overflow-hidden pt-16">
+    <section className="relative min-h-[50vh] sm:min-h-[70vh] flex items-center justify-center gradient-mesh overflow-hidden pt-16">
       <div className="absolute inset-0 bg-[#0a0a0f]/40" />
       <div className="relative z-10 text-center px-4">
         <motion.div

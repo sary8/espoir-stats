@@ -34,7 +34,7 @@ export default function Home() {
   const topRebounder = [...players].sort((a, b) => b.totalReb - a.totalReb)[0].number;
   const topAssister = [...players].sort((a, b) => b.assists - a.assists)[0].number;
 
-  const scoringData = sortedByPpg.map((p) => ({ name: p.name, ppg: p.ppg, number: p.number }));
+  const scoringData = sortedByPpg.map((p) => ({ name: p.name.split(" ").pop()!, ppg: p.ppg, number: p.number }));
 
   const shootingData = sortedByPpg.map((p) => ({
     name: p.name.split(" ").pop()!,

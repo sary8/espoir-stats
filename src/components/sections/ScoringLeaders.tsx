@@ -26,9 +26,9 @@ export default function ScoringLeaders({ data }: ScoringLeadersProps) {
       <GlassCard>
         <p className="sr-only">選手別の平均得点を示す横棒グラフ。{data.map((d) => `${d.name}: ${d.ppg} PPG`).join("、")}。</p>
         <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={data} layout="vertical" margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-            <XAxis type="number" domain={[0, "auto"]} tick={{ fontSize: 11 }} />
-            <YAxis type="category" dataKey="name" width={60} tick={{ fontSize: 11 }} />
+          <BarChart data={data} layout="vertical" margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
+            <XAxis type="number" domain={[0, "auto"]} tick={{ fontSize: 10 }} />
+            <YAxis type="category" dataKey="name" width={50} tick={{ fontSize: 10 }} />
             <Tooltip
               contentStyle={tooltipStyle}
               labelStyle={tooltipLabelStyle}

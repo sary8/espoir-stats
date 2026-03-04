@@ -7,8 +7,8 @@ export default function Footer() {
           <a href="#players" className="hover:text-white transition-colors">Players</a>
           <a href="#games" className="hover:text-white transition-colors">Games</a>
         </nav>
-        <p><span className="text-accent-orange font-semibold">ESPOIR</span> Basketball Stats Dashboard</p>
-        <p className="mt-1">Season 2025-2026</p>
+        <p className="text-xs sm:text-sm"><span className="text-accent-orange font-semibold">ESPOIR</span> Stats Dashboard</p>
+        <p className="mt-1 text-xs sm:text-sm">Season 2025-2026</p>
       </div>
     </footer>
   );
