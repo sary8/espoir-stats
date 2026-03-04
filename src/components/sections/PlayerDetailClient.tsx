@@ -94,7 +94,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
               <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={lineData} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
                   <CartesianGrid stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="game" tick={{ fontSize: 12 }} />
+                  <XAxis dataKey="game" tick={{ fontSize: 10 }} />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
                     contentStyle={tooltipStyle}
@@ -123,12 +123,12 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                     <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">PTS</th>
                     <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">3P</th>
                     <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">2P</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">FT</th>
+                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">FT</th>
                     <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">REB</th>
                     <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">AST</th>
                     <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">STL</th>
                     <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">BLK</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">TO</th>
+                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">TO</th>
                     <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">MIN</th>
                   </tr>
                 </thead>
@@ -140,12 +140,12 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2 font-bold text-accent-orange">{g.stat.points}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.threePointMade}/{g.stat.threePointAttempt}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.twoPointMade}/{g.stat.twoPointAttempt}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.ftMade}/{g.stat.ftAttempt}</td>
+                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{g.stat.ftMade}/{g.stat.ftAttempt}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.totalReb}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.assists}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.steals}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{g.stat.blocks}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.turnovers}</td>
+                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{g.stat.turnovers}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2 text-neutral-400 hidden sm:table-cell">{g.stat.minutes}</td>
                     </tr>
                   ))}

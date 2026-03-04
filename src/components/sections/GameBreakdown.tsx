@@ -46,7 +46,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               key={g.opponent}
               onClick={() => setActiveGame(i)}
               aria-pressed={i === activeGame}
-              className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition-all cursor-pointer ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                 i === activeGame
                   ? "bg-accent-orange text-white"
                   : "bg-white/5 text-neutral-400 hover:bg-white/10"
@@ -68,12 +68,12 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                 <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">PTS</th>
                 <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">3PM</th>
                 <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">2PM</th>
-                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">FTM</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">FTM</th>
                 <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">REB</th>
                 <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">AST</th>
                 <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">STL</th>
                 <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">BLK</th>
-                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">TO</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">TO</th>
                 <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">MIN</th>
               </tr>
             </thead>
@@ -89,12 +89,12 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2 font-bold text-accent-orange">{p.points}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.threePointMade}/{p.threePointAttempt}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.twoPointMade}/{p.twoPointAttempt}</td>
-                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.ftMade}/{p.ftAttempt}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{p.ftMade}/{p.ftAttempt}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.totalReb}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.assists}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.steals}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{p.blocks}</td>
-                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.turnovers}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{p.turnovers}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2 text-neutral-400 hidden sm:table-cell">{p.minutes}</td>
                 </tr>
               ))}
@@ -106,12 +106,12 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2 text-accent-orange">{game.teamPoints}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.threePointMade}/{teamTotals.threePointAttempt}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.twoPointMade}/{teamTotals.twoPointAttempt}</td>
-                <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.ftMade}/{teamTotals.ftAttempt}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{teamTotals.ftMade}/{teamTotals.ftAttempt}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.totalReb}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.assists}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.steals}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{teamTotals.blocks}</td>
-                <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.turnovers}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{teamTotals.turnovers}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell"></td>
               </tr>
             </tfoot>
