@@ -72,7 +72,7 @@ export function getGameStats(): GameResult[] {
       personalFouls: parseInt(row["PF"], 10),
       technicalFouls: parseInt(row["TF"], 10),
       offensiveFouls: parseInt(row["OF"], 10),
-      flagrantFouls: parseInt(row["FO"], 10),
+      foulsDrawn: parseInt(row["FO"], 10),
       disqualifications: parseInt(row["DQ"], 10),
       minutes: row["MIN"],
     };

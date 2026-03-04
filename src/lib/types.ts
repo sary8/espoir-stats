@@ -48,7 +48,7 @@ export interface GamePlayerStat {
   personalFouls: number;
   technicalFouls: number;
   offensiveFouls: number;
-  flagrantFouls: number;
+  foulsDrawn: number;
   disqualifications: number;
   minutes: string;
 }

@@ -34,16 +34,18 @@ export default function Home() {
   const topRebounder = [...players].sort((a, b) => b.totalReb - a.totalReb)[0].number;
   const topAssister = [...players].sort((a, b) => b.assists - a.assists)[0].number;
 
+  const sortedByNumber = [...players].sort((a, b) => a.number - b.number);
+
   const scoringData = sortedByPpg.map((p) => ({ name: p.name.split(" ").pop()!, ppg: p.ppg, number: p.number }));
 
-  const shootingData = sortedByPpg.map((p) => ({
+  const shootingData = sortedByNumber.map((p) => ({
     name: p.name.split(" ").pop()!,
     threePointPct: p.threePointPct ?? 0,
     twoPointPct: p.twoPointPct ?? 0,
     ftPct: p.ftPct ?? 0,
   }));
 
-  const radarPlayers = players.map((p) => ({
+  const radarPlayers = sortedByNumber.map((p) => ({
     number: p.number,
     name: p.name,
     ppg: p.ppg,
