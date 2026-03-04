@@ -48,6 +48,25 @@ interface AggregatedPlayer {
   totalMinutes: number;
 }
 
+const TH_SORTABLE = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap cursor-pointer select-none hover:text-white transition-colors";
+
+function SortTh({ k, sortKey, sortAsc, onSort, children }: {
+  k: SortKey;
+  sortKey: SortKey;
+  sortAsc: boolean;
+  onSort: (k: SortKey) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <th className={TH_SORTABLE} scope="col" onClick={() => onSort(k)}>
+      <span className="inline-flex items-center gap-0.5">
+        {children}
+        {sortKey === k && (sortAsc ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+      </span>
+    </th>
+  );
+}
+
 interface GameBreakdownProps {
   games: GameResult[];
 }
@@ -197,19 +216,6 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
   const thBase = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
   const td = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
 
-  const SortTh = ({ k, children }: { k: SortKey; children: React.ReactNode }) => (
-    <th
-      className={`${thBase} cursor-pointer select-none hover:text-white transition-colors`}
-      scope="col"
-      onClick={() => handleSort(k)}
-    >
-      <span className="inline-flex items-center gap-0.5">
-        {children}
-        {sortKey === k && (sortAsc ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
-      </span>
-    </th>
-  );
-
   const label = isAllGames ? "全試合合計" : `vs ${games[activeGame].opponent}`;
 
   return (
@@ -263,22 +269,22 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                   </span>
                 </th>
                 {isAllGames && <th className={thBase} scope="col">GP</th>}
-                <SortTh k="points">PTS</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="points">PTS</SortTh>
                 <th className={thBase} scope="col">3P</th>
-                <SortTh k="threePointPct">3P%</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="threePointPct">3P%</SortTh>
                 <th className={thBase} scope="col">2P</th>
-                <SortTh k="twoPointPct">2P%</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="twoPointPct">2P%</SortTh>
                 <th className={thBase} scope="col">FT</th>
-                <SortTh k="ftPct">FT%</SortTh>
-                <SortTh k="offReb">OR</SortTh>
-                <SortTh k="defReb">DR</SortTh>
-                <SortTh k="totalReb">REB</SortTh>
-                <SortTh k="assists">AST</SortTh>
-                <SortTh k="steals">STL</SortTh>
-                <SortTh k="blocks">BLK</SortTh>
-                <SortTh k="turnovers">TO</SortTh>
-                <SortTh k="personalFouls">PF</SortTh>
-                <SortTh k="foulsDrawn">FD</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="ftPct">FT%</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="offReb">OR</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="defReb">DR</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="totalReb">REB</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="assists">AST</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="steals">STL</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="blocks">BLK</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="turnovers">TO</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="personalFouls">PF</SortTh>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="foulsDrawn">FD</SortTh>
                 <th className={thBase} scope="col">MIN</th>
               </tr>
             </thead>
