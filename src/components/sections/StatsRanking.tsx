@@ -55,21 +55,21 @@ export default function StatsRanking({ players }: StatsRankingProps) {
                     const isFirst = rank === 0;
                     return (
                       <li key={p.number} className="flex items-center gap-2 text-sm">
-                        <span className={`w-5 text-right text-xs font-mono ${isFirst ? "text-amber-600 font-bold" : "text-neutral-500"}`}>
+                        <span className={`w-5 text-right text-xs font-mono ${isFirst ? "text-amber-700 font-bold" : "text-neutral-500"}`}>
                           {rank + 1}
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between mb-0.5">
-                            <span className={`truncate ${isFirst ? "text-amber-600 font-semibold" : ""}`}>
+                            <span className={`truncate ${isFirst ? "text-amber-700 font-semibold" : ""}`}>
                               {p.name}
                             </span>
-                            <span className={`font-bold ml-2 shrink-0 ${isFirst ? "text-amber-600" : ""}`}>
+                            <span className={`font-bold ml-2 shrink-0 ${isFirst ? "text-amber-700" : ""}`}>
                               {val}
                             </span>
                           </div>
                           <div className="h-1 rounded-full bg-white/5">
                             <div
-                              className={`h-full rounded-full ${isFirst ? "bg-amber-600" : "bg-accent-purple/60"}`}
+                              className={`h-full rounded-full ${isFirst ? "bg-amber-700" : "bg-accent-purple/60"}`}
                               style={{ width: `${pct}%` }}
                             />
                           </div>
