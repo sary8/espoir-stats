@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -19,6 +20,11 @@ const tooltipStyle = {
   borderRadius: 8,
 } as const;
 const tooltipLabelStyle = { color: "#fff" } as const;
+
+function fmtPct(made: number, attempt: number): string {
+  if (attempt === 0) return "-";
+  return `${((made / attempt) * 100).toFixed(1)}%`;
+}
 
 interface PlayerDetailClientProps {
   summary: PlayerSummary;
@@ -44,6 +50,41 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
     { label: "BPG", value: p.blocks / p.games, decimals: 1 },
     { label: "TPG", value: p.turnovers / p.games, decimals: 1 },
   ];
+
+  const totals = useMemo(() => {
+    const t = {
+      points: 0, threePointMade: 0, threePointAttempt: 0,
+      twoPointMade: 0, twoPointAttempt: 0,
+      ftMade: 0, ftAttempt: 0,
+      offReb: 0, defReb: 0, totalReb: 0,
+      assists: 0, steals: 0, blocks: 0, turnovers: 0,
+      personalFouls: 0, foulsDrawn: 0, totalMinutes: 0,
+    };
+    for (const g of games) {
+      const s = g.stat;
+      t.points += s.points;
+      t.threePointMade += s.threePointMade;
+      t.threePointAttempt += s.threePointAttempt;
+      t.twoPointMade += s.twoPointMade;
+      t.twoPointAttempt += s.twoPointAttempt;
+      t.ftMade += s.ftMade;
+      t.ftAttempt += s.ftAttempt;
+      t.offReb += s.offReb;
+      t.defReb += s.defReb;
+      t.totalReb += s.totalReb;
+      t.assists += s.assists;
+      t.steals += s.steals;
+      t.blocks += s.blocks;
+      t.turnovers += s.turnovers;
+      t.personalFouls += s.personalFouls;
+      t.foulsDrawn += s.foulsDrawn;
+      t.totalMinutes += parseMinutes(s.minutes);
+    }
+    return t;
+  }, [games]);
+
+  const th = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
+  const td = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
 
   return (
     <>
@@ -85,6 +126,62 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
           </div>
         </AnimatedSection>
 
+        {/* Season Totals */}
+        <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+          <h2 className="text-2xl font-bold mb-6">Season Totals</h2>
+          <GlassCard>
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+              <table className="w-full text-xs sm:text-sm min-w-[800px]" aria-label={`${p.name} シーズン合計`}>
+                <caption className="sr-only">{p.name}のシーズン合計スタッツ</caption>
+                <thead>
+                  <tr className="border-b border-white/10 text-neutral-400">
+                    <th className={th} scope="col">GP</th>
+                    <th className={th} scope="col">PTS</th>
+                    <th className={th} scope="col">3P</th>
+                    <th className={th} scope="col">3P%</th>
+                    <th className={th} scope="col">2P</th>
+                    <th className={th} scope="col">2P%</th>
+                    <th className={th} scope="col">FT</th>
+                    <th className={th} scope="col">FT%</th>
+                    <th className={th} scope="col">OR</th>
+                    <th className={th} scope="col">DR</th>
+                    <th className={th} scope="col">REB</th>
+                    <th className={th} scope="col">AST</th>
+                    <th className={th} scope="col">STL</th>
+                    <th className={th} scope="col">BLK</th>
+                    <th className={th} scope="col">TO</th>
+                    <th className={th} scope="col">PF</th>
+                    <th className={th} scope="col">FD</th>
+                    <th className={th} scope="col">MIN</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className={`${td} font-semibold`}>{p.games}</td>
+                    <td className={`${td} font-bold text-accent-purple`}>{totals.points}</td>
+                    <td className={td}>{totals.threePointMade}/{totals.threePointAttempt}</td>
+                    <td className={`${td} text-neutral-400`}>{fmtPct(totals.threePointMade, totals.threePointAttempt)}</td>
+                    <td className={td}>{totals.twoPointMade}/{totals.twoPointAttempt}</td>
+                    <td className={`${td} text-neutral-400`}>{fmtPct(totals.twoPointMade, totals.twoPointAttempt)}</td>
+                    <td className={td}>{totals.ftMade}/{totals.ftAttempt}</td>
+                    <td className={`${td} text-neutral-400`}>{fmtPct(totals.ftMade, totals.ftAttempt)}</td>
+                    <td className={td}>{totals.offReb}</td>
+                    <td className={td}>{totals.defReb}</td>
+                    <td className={`${td} font-semibold`}>{totals.totalReb}</td>
+                    <td className={td}>{totals.assists}</td>
+                    <td className={td}>{totals.steals}</td>
+                    <td className={td}>{totals.blocks}</td>
+                    <td className={td}>{totals.turnovers}</td>
+                    <td className={td}>{totals.personalFouls}</td>
+                    <td className={td}>{totals.foulsDrawn}</td>
+                    <td className={`${td} text-neutral-400`}>{formatMinutes(totals.totalMinutes)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </AnimatedSection>
+
         {/* Scoring Trend */}
         {games.length > 1 && (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
@@ -109,47 +206,84 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
           </AnimatedSection>
         )}
 
-        {/* Game Details Table */}
+        {/* Game Log */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
           <h2 className="text-2xl font-bold mb-6">Game Log</h2>
           <GlassCard>
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-              <table className="w-full text-xs sm:text-sm" aria-label={`${p.name} ゲームログ`}>
+              <table className="w-full text-xs sm:text-sm min-w-[900px]" aria-label={`${p.name} ゲームログ`}>
                 <caption className="sr-only">{p.name}の各試合スタッツ</caption>
                 <thead>
                   <tr className="border-b border-white/10 text-neutral-400">
-                    <th className="text-left py-2 px-1 sm:py-3 sm:px-2 whitespace-nowrap" scope="col">対戦</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">GS</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">PTS</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">3P</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">2P</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">FT</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">REB</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">AST</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">STL</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">BLK</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">TO</th>
-                    <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">MIN</th>
+                    <th className="text-left py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap sticky left-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10" scope="col">対戦</th>
+                    <th className={th} scope="col">GS</th>
+                    <th className={th} scope="col">PTS</th>
+                    <th className={th} scope="col">3P</th>
+                    <th className={th} scope="col">3P%</th>
+                    <th className={th} scope="col">2P</th>
+                    <th className={th} scope="col">2P%</th>
+                    <th className={th} scope="col">FT</th>
+                    <th className={th} scope="col">FT%</th>
+                    <th className={th} scope="col">OR</th>
+                    <th className={th} scope="col">DR</th>
+                    <th className={th} scope="col">REB</th>
+                    <th className={th} scope="col">AST</th>
+                    <th className={th} scope="col">STL</th>
+                    <th className={th} scope="col">BLK</th>
+                    <th className={th} scope="col">TO</th>
+                    <th className={th} scope="col">PF</th>
+                    <th className={th} scope="col">FD</th>
+                    <th className={th} scope="col">MIN</th>
                   </tr>
                 </thead>
                 <tbody>
                   {games.map((g) => (
                     <tr key={g.opponent} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="py-2 px-1 sm:py-3 sm:px-2 font-medium whitespace-nowrap">vs {g.opponent}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{g.stat.starter ? <span aria-label="スターター">●</span> : ""}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 font-bold text-accent-purple">{g.stat.points}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.threePointMade}/{g.stat.threePointAttempt}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.twoPointMade}/{g.stat.twoPointAttempt}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{g.stat.ftMade}/{g.stat.ftAttempt}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.totalReb}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.assists}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.steals}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{g.stat.blocks}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{g.stat.turnovers}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 text-neutral-400 hidden sm:table-cell">{g.stat.minutes}</td>
+                      <td className="py-2 px-1.5 sm:py-3 sm:px-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10">vs {g.opponent}</td>
+                      <td className={td}>{g.stat.starter ? <span aria-label="スターター">●</span> : ""}</td>
+                      <td className={`${td} font-bold text-accent-purple`}>{g.stat.points}</td>
+                      <td className={td}>{g.stat.threePointMade}/{g.stat.threePointAttempt}</td>
+                      <td className={`${td} text-neutral-400`}>{fmtPct(g.stat.threePointMade, g.stat.threePointAttempt)}</td>
+                      <td className={td}>{g.stat.twoPointMade}/{g.stat.twoPointAttempt}</td>
+                      <td className={`${td} text-neutral-400`}>{fmtPct(g.stat.twoPointMade, g.stat.twoPointAttempt)}</td>
+                      <td className={td}>{g.stat.ftMade}/{g.stat.ftAttempt}</td>
+                      <td className={`${td} text-neutral-400`}>{fmtPct(g.stat.ftMade, g.stat.ftAttempt)}</td>
+                      <td className={td}>{g.stat.offReb}</td>
+                      <td className={td}>{g.stat.defReb}</td>
+                      <td className={`${td} font-semibold`}>{g.stat.totalReb}</td>
+                      <td className={td}>{g.stat.assists}</td>
+                      <td className={td}>{g.stat.steals}</td>
+                      <td className={td}>{g.stat.blocks}</td>
+                      <td className={td}>{g.stat.turnovers}</td>
+                      <td className={td}>{g.stat.personalFouls}</td>
+                      <td className={td}>{g.stat.foulsDrawn}</td>
+                      <td className={`${td} text-neutral-400`}>{g.stat.minutes}</td>
                     </tr>
                   ))}
                 </tbody>
+                <tfoot>
+                  <tr className="border-t border-white/10 font-semibold">
+                    <td className="py-2 px-1.5 sm:py-3 sm:px-2 sticky left-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10">TOTAL</td>
+                    <td className={td}></td>
+                    <td className={`${td} text-accent-purple`}>{totals.points}</td>
+                    <td className={td}>{totals.threePointMade}/{totals.threePointAttempt}</td>
+                    <td className={`${td} text-neutral-400`}>{fmtPct(totals.threePointMade, totals.threePointAttempt)}</td>
+                    <td className={td}>{totals.twoPointMade}/{totals.twoPointAttempt}</td>
+                    <td className={`${td} text-neutral-400`}>{fmtPct(totals.twoPointMade, totals.twoPointAttempt)}</td>
+                    <td className={td}>{totals.ftMade}/{totals.ftAttempt}</td>
+                    <td className={`${td} text-neutral-400`}>{fmtPct(totals.ftMade, totals.ftAttempt)}</td>
+                    <td className={td}>{totals.offReb}</td>
+                    <td className={td}>{totals.defReb}</td>
+                    <td className={td}>{totals.totalReb}</td>
+                    <td className={td}>{totals.assists}</td>
+                    <td className={td}>{totals.steals}</td>
+                    <td className={td}>{totals.blocks}</td>
+                    <td className={td}>{totals.turnovers}</td>
+                    <td className={td}>{totals.personalFouls}</td>
+                    <td className={td}>{totals.foulsDrawn}</td>
+                    <td className={`${td} text-neutral-400`}>{formatMinutes(totals.totalMinutes)}</td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </GlassCard>
@@ -158,4 +292,16 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
       <Footer />
     </>
   );
+}
+
+function parseMinutes(min: string): number {
+  if (!min) return 0;
+  const parts = min.split(":");
+  return parseInt(parts[0], 10) * 60 + parseInt(parts[1] || "0", 10);
+}
+
+function formatMinutes(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
 }

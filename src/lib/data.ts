@@ -83,7 +83,7 @@ export function getGameStats(): GameResult[] {
 
   return Array.from(gameMap.entries()).map(([opponent, players]) => ({
     opponent,
-    players: players.sort((a, b) => b.points - a.points),
+    players: players.sort((a, b) => a.number - b.number),
     teamPoints: players.reduce((sum, p) => sum + p.points, 0),
   }));
 }
