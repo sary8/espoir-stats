@@ -26,6 +26,12 @@ function fmtPct(made: number, attempt: number): string {
   return `${((made / attempt) * 100).toFixed(1)}%`;
 }
 
+function calcEff(s: { points: number; totalReb: number; assists: number; steals: number; blocks: number; threePointMade: number; threePointAttempt: number; twoPointMade: number; twoPointAttempt: number; ftMade: number; ftAttempt: number; turnovers: number }) {
+  const fgm = s.threePointMade + s.twoPointMade;
+  const fga = s.threePointAttempt + s.twoPointAttempt;
+  return (s.points + s.totalReb + s.assists + s.steals + s.blocks) - ((fga - fgm) + (s.ftAttempt - s.ftMade) + s.turnovers);
+}
+
 interface PlayerDetailClientProps {
   summary: PlayerSummary;
   games: { opponent: string; date: string; stat: GamePlayerStat }[];
@@ -42,13 +48,20 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
     AST: g.stat.assists,
   }));
 
+  const seasonEff = calcEff({
+    points: p.totalPoints, totalReb: p.totalReb, assists: p.assists, steals: p.steals, blocks: p.blocks,
+    threePointMade: p.threePointMade, threePointAttempt: p.threePointAttempt,
+    twoPointMade: p.twoPointMade, twoPointAttempt: p.twoPointAttempt,
+    ftMade: p.ftMade, ftAttempt: p.ftAttempt, turnovers: p.turnovers,
+  });
+
   const mainStats = [
     { label: "PPG", value: p.ppg, decimals: 1 },
     { label: "RPG", value: p.totalReb / p.games, decimals: 1 },
     { label: "APG", value: p.assists / p.games, decimals: 1 },
     { label: "SPG", value: p.steals / p.games, decimals: 1 },
     { label: "BPG", value: p.blocks / p.games, decimals: 1 },
-    { label: "TPG", value: p.turnovers / p.games, decimals: 1 },
+    { label: "EFF", value: seasonEff / p.games, decimals: 1 },
   ];
 
   const totals = useMemo(() => {
@@ -153,6 +166,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                     <th className={th} scope="col">PF</th>
                     <th className={th} scope="col">FD</th>
                     <th className={th} scope="col">MIN</th>
+                    <th className={th} scope="col">EFF</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -175,6 +189,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                     <td className={td}>{totals.personalFouls}</td>
                     <td className={td}>{totals.foulsDrawn}</td>
                     <td className={`${td} text-neutral-400`}>{formatMinutes(totals.totalMinutes)}</td>
+                    <td className={`${td} font-bold text-accent-purple`}>{seasonEff}</td>
                   </tr>
                 </tbody>
               </table>
@@ -234,6 +249,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                     <th className={th} scope="col">PF</th>
                     <th className={th} scope="col">FD</th>
                     <th className={th} scope="col">MIN</th>
+                    <th className={th} scope="col">EFF</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -260,6 +276,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                       <td className={td}>{g.stat.personalFouls}</td>
                       <td className={td}>{g.stat.foulsDrawn}</td>
                       <td className={`${td} text-neutral-400`}>{g.stat.minutes}</td>
+                      <td className={`${td} font-bold text-accent-purple`}>{calcEff(g.stat)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -284,6 +301,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                     <td className={td}>{totals.personalFouls}</td>
                     <td className={td}>{totals.foulsDrawn}</td>
                     <td className={`${td} text-neutral-400`}>{formatMinutes(totals.totalMinutes)}</td>
+                    <td className={`${td} font-bold text-accent-purple`}>{seasonEff}</td>
                   </tr>
                 </tfoot>
               </table>
