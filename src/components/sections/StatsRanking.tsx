@@ -1,6 +1,6 @@
 "use client";
 
-import { Trophy, Crosshair, ArrowDownUp, HandHelping, ShieldAlert, Shield, AlertTriangle } from "lucide-react";
+import { Trophy, Crosshair, ArrowUp, ArrowDown, HandHelping, ShieldAlert, Shield, AlertTriangle, UserX, Flame } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { PlayerSummary } from "@/lib/types";
@@ -14,11 +14,14 @@ interface Category {
 const categories: Category[] = [
   { label: "得点", key: "totalPoints", icon: <Trophy size={18} /> },
   { label: "3PM", key: "threePointMade", icon: <Crosshair size={18} /> },
-  { label: "リバウンド", key: "totalReb", icon: <ArrowDownUp size={18} /> },
+  { label: "オフェンスリバウンド", key: "offReb", icon: <ArrowUp size={18} /> },
+  { label: "ディフェンスリバウンド", key: "defReb", icon: <ArrowDown size={18} /> },
   { label: "アシスト", key: "assists", icon: <HandHelping size={18} /> },
   { label: "スティール", key: "steals", icon: <ShieldAlert size={18} /> },
   { label: "ブロック", key: "blocks", icon: <Shield size={18} /> },
   { label: "ターンオーバー", key: "turnovers", icon: <AlertTriangle size={18} /> },
+  { label: "ファール", key: "personalFouls", icon: <UserX size={18} /> },
+  { label: "ファールドローン", key: "foulsDrawn", icon: <Flame size={18} /> },
 ];
 
 interface StatsRankingProps {
@@ -49,19 +52,24 @@ export default function StatsRanking({ players }: StatsRankingProps) {
                   {sorted.map((p, rank) => {
                     const val = p[cat.key] as number;
                     const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                    const isFirst = rank === 0;
                     return (
                       <li key={p.number} className="flex items-center gap-2 text-sm">
-                        <span className="w-5 text-right text-neutral-500 text-xs font-mono">
+                        <span className={`w-5 text-right text-xs font-mono ${isFirst ? "text-accent-purple font-bold" : "text-neutral-500"}`}>
                           {rank + 1}
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between mb-0.5">
-                            <span className="truncate">{p.name}</span>
-                            <span className="font-bold ml-2 shrink-0">{val}</span>
+                            <span className={`truncate ${isFirst ? "text-accent-purple font-semibold" : ""}`}>
+                              {p.name}
+                            </span>
+                            <span className={`font-bold ml-2 shrink-0 ${isFirst ? "text-accent-purple" : ""}`}>
+                              {val}
+                            </span>
                           </div>
                           <div className="h-1 rounded-full bg-white/5">
                             <div
-                              className="h-full rounded-full bg-accent-purple/60"
+                              className={`h-full rounded-full ${isFirst ? "bg-accent-purple" : "bg-accent-purple/60"}`}
                               style={{ width: `${pct}%` }}
                             />
                           </div>

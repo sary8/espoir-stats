@@ -20,6 +20,8 @@ export interface PlayerSummary {
   steals: number;
   blocks: number;
   turnovers: number;
+  personalFouls: number;
+  foulsDrawn: number;
 }
 
 export interface GamePlayerStat {

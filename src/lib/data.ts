@@ -13,29 +13,47 @@ export function getPlayerSummaries(): PlayerSummary[] {
   const csv = readCsv("選手別サマリ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
 
-  return data.map((row) => ({
-    number: parseInt(row["No."], 10),
-    name: row["選手名"],
-    games: parseInt(row["試合数"], 10),
-    totalPoints: parseInt(row["合計得点"], 10),
-    ppg: parseFloat(row["平均得点"]),
-    threePointMade: parseInt(row["3PM"], 10),
-    threePointAttempt: parseInt(row["3PA"], 10),
-    threePointPct: parsePctString(row["3P%"]),
-    twoPointMade: parseInt(row["2PM"], 10),
-    twoPointAttempt: parseInt(row["2PA"], 10),
-    twoPointPct: parsePctString(row["2P%"]),
-    ftMade: parseInt(row["FTM"], 10),
-    ftAttempt: parseInt(row["FTA"], 10),
-    ftPct: parsePctString(row["FT%"]),
-    offReb: parseInt(row["OR"], 10),
-    defReb: parseInt(row["DR"], 10),
-    totalReb: parseInt(row["TOT REB"], 10),
-    assists: parseInt(row["AST"], 10),
-    steals: parseInt(row["STL"], 10),
-    blocks: parseInt(row["BLK"], 10),
-    turnovers: parseInt(row["TO"], 10),
-  }));
+  // サマリCSVにPF/FOがないため全試合スタッツから集計
+  const gameCsv = readCsv("全試合スタッツ.csv");
+  const { data: gameData } = Papa.parse<Record<string, string>>(gameCsv, { header: true, skipEmptyLines: true });
+  const foulMap = new Map<number, { pf: number; fo: number }>();
+  for (const row of gameData) {
+    const num = parseInt(row["No."], 10);
+    const entry = foulMap.get(num) ?? { pf: 0, fo: 0 };
+    entry.pf += parseInt(row["PF"], 10) || 0;
+    entry.fo += parseInt(row["FO"], 10) || 0;
+    foulMap.set(num, entry);
+  }
+
+  return data.map((row) => {
+    const num = parseInt(row["No."], 10);
+    const fouls = foulMap.get(num) ?? { pf: 0, fo: 0 };
+    return {
+      number: num,
+      name: row["選手名"],
+      games: parseInt(row["試合数"], 10),
+      totalPoints: parseInt(row["合計得点"], 10),
+      ppg: parseFloat(row["平均得点"]),
+      threePointMade: parseInt(row["3PM"], 10),
+      threePointAttempt: parseInt(row["3PA"], 10),
+      threePointPct: parsePctString(row["3P%"]),
+      twoPointMade: parseInt(row["2PM"], 10),
+      twoPointAttempt: parseInt(row["2PA"], 10),
+      twoPointPct: parsePctString(row["2P%"]),
+      ftMade: parseInt(row["FTM"], 10),
+      ftAttempt: parseInt(row["FTA"], 10),
+      ftPct: parsePctString(row["FT%"]),
+      offReb: parseInt(row["OR"], 10),
+      defReb: parseInt(row["DR"], 10),
+      totalReb: parseInt(row["TOT REB"], 10),
+      assists: parseInt(row["AST"], 10),
+      steals: parseInt(row["STL"], 10),
+      blocks: parseInt(row["BLK"], 10),
+      turnovers: parseInt(row["TO"], 10),
+      personalFouls: fouls.pf,
+      foulsDrawn: fouls.fo,
+    };
+  });
 }
 
 const GAME_DATES: Record<string, string> = {
