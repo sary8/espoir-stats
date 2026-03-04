@@ -1,6 +1,6 @@
 "use client";
 
-import { Crown, CircleDot, MoveUp, MoveDown, Handshake, Scissors, Ban, RotateCcw, AlertTriangle, Zap } from "lucide-react";
+import { Trophy, Crosshair, ArrowUp, ArrowDown, HandHelping, ShieldAlert, Shield, AlertTriangle, UserX, Flame } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { PlayerSummary } from "@/lib/types";
@@ -12,16 +12,16 @@ interface Category {
 }
 
 const categories: Category[] = [
-  { label: "得点", key: "totalPoints", icon: <Crown size={18} /> },
-  { label: "3PM", key: "threePointMade", icon: <CircleDot size={18} /> },
-  { label: "オフェンスリバウンド", key: "offReb", icon: <MoveUp size={18} /> },
-  { label: "ディフェンスリバウンド", key: "defReb", icon: <MoveDown size={18} /> },
-  { label: "アシスト", key: "assists", icon: <Handshake size={18} /> },
-  { label: "スティール", key: "steals", icon: <Scissors size={18} /> },
-  { label: "ブロック", key: "blocks", icon: <Ban size={18} /> },
-  { label: "ターンオーバー", key: "turnovers", icon: <RotateCcw size={18} /> },
-  { label: "ファール", key: "personalFouls", icon: <AlertTriangle size={18} /> },
-  { label: "ファールドローン", key: "foulsDrawn", icon: <Zap size={18} /> },
+  { label: "得点", key: "totalPoints", icon: <Trophy size={18} /> },
+  { label: "3PM", key: "threePointMade", icon: <Crosshair size={18} /> },
+  { label: "オフェンスリバウンド", key: "offReb", icon: <ArrowUp size={18} /> },
+  { label: "ディフェンスリバウンド", key: "defReb", icon: <ArrowDown size={18} /> },
+  { label: "アシスト", key: "assists", icon: <HandHelping size={18} /> },
+  { label: "スティール", key: "steals", icon: <ShieldAlert size={18} /> },
+  { label: "ブロック", key: "blocks", icon: <Shield size={18} /> },
+  { label: "ターンオーバー", key: "turnovers", icon: <AlertTriangle size={18} /> },
+  { label: "ファール", key: "personalFouls", icon: <UserX size={18} /> },
+  { label: "ファールドローン", key: "foulsDrawn", icon: <Flame size={18} /> },
 ];
 
 interface StatsRankingProps {
@@ -55,21 +55,21 @@ export default function StatsRanking({ players }: StatsRankingProps) {
                     const isFirst = rank === 0;
                     return (
                       <li key={p.number} className="flex items-center gap-2 text-sm">
-                        <span className={`w-5 text-right text-xs font-mono ${isFirst ? "text-orange-400 font-bold" : "text-neutral-500"}`}>
+                        <span className={`w-5 text-right text-xs font-mono ${isFirst ? "text-accent-purple font-bold" : "text-neutral-500"}`}>
                           {rank + 1}
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between mb-0.5">
-                            <span className={`truncate ${isFirst ? "text-orange-400 font-semibold" : ""}`}>
+                            <span className={`truncate ${isFirst ? "text-accent-purple font-semibold" : ""}`}>
                               {p.name}
                             </span>
-                            <span className={`font-bold ml-2 shrink-0 ${isFirst ? "text-orange-400" : ""}`}>
+                            <span className={`font-bold ml-2 shrink-0 ${isFirst ? "text-accent-purple" : ""}`}>
                               {val}
                             </span>
                           </div>
                           <div className="h-1 rounded-full bg-white/5">
                             <div
-                              className={`h-full rounded-full ${isFirst ? "bg-orange-400" : "bg-accent-purple/60"}`}
+                              className={`h-full rounded-full ${isFirst ? "bg-accent-purple" : "bg-accent-purple/60"}`}
                               style={{ width: `${pct}%` }}
                             />
                           </div>
