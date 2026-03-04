@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import TeamOverview from "@/components/sections/TeamOverview";
 import PlayerCards from "@/components/sections/PlayerCards";
+import StatsRanking from "@/components/sections/StatsRanking";
 import LazyCharts from "@/components/sections/LazyCharts";
 
 export default function Home() {
@@ -17,6 +18,8 @@ export default function Home() {
   let totalRebounds = 0;
   let totalAssists = 0;
   let totalSteals = 0;
+  let totalBlocks = 0;
+  let totalTurnovers = 0;
   for (const p of players) {
     totalPoints += p.totalPoints;
     total3PM += p.threePointMade;
@@ -24,6 +27,8 @@ export default function Home() {
     totalRebounds += p.totalReb;
     totalAssists += p.assists;
     totalSteals += p.steals;
+    totalBlocks += p.blocks;
+    totalTurnovers += p.turnovers;
   }
 
   const totalGames = games.length;
@@ -71,6 +76,8 @@ export default function Home() {
           totalRebounds={totalRebounds}
           totalAssists={totalAssists}
           totalSteals={totalSteals}
+          totalBlocks={totalBlocks}
+          totalTurnovers={totalTurnovers}
         />
         <LazyCharts
           scoringData={scoringData}
@@ -84,6 +91,7 @@ export default function Home() {
           topRebounder={topRebounder}
           topAssister={topAssister}
         />
+        <StatsRanking players={players} />
       </main>
       <Footer />
     </>

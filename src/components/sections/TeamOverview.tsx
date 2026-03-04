@@ -1,6 +1,6 @@
 "use client";
 
-import { Trophy, Target, Percent, ArrowDownUp, HandHelping, ShieldAlert } from "lucide-react";
+import { Trophy, Target, Percent, ArrowDownUp, HandHelping, ShieldAlert, Shield, AlertTriangle } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import StatCounter from "../ui/StatCounter";
@@ -21,6 +21,8 @@ interface TeamOverviewProps {
   totalRebounds: number;
   totalAssists: number;
   totalSteals: number;
+  totalBlocks: number;
+  totalTurnovers: number;
 }
 
 export default function TeamOverview(props: TeamOverviewProps) {
@@ -31,6 +33,8 @@ export default function TeamOverview(props: TeamOverviewProps) {
     { label: "リバウンド", value: props.totalRebounds, icon: <ArrowDownUp size={20} />, color: "text-neutral-400" },
     { label: "アシスト", value: props.totalAssists, icon: <HandHelping size={20} />, color: "text-neutral-400" },
     { label: "スティール", value: props.totalSteals, icon: <ShieldAlert size={20} />, color: "text-neutral-400" },
+    { label: "ブロック", value: props.totalBlocks, icon: <Shield size={20} />, color: "text-neutral-400" },
+    { label: "ターンオーバー", value: props.totalTurnovers, icon: <AlertTriangle size={20} />, color: "text-neutral-400" },
   ];
 
   return (
@@ -38,7 +42,7 @@ export default function TeamOverview(props: TeamOverviewProps) {
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Team <span className="text-accent-purple">Overview</span>
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-4">
         {stats.map((stat, i) => (
           <AnimatedSection key={stat.label} delay={i * 0.1}>
             <GlassCard className="text-center">
