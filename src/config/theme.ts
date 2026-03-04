@@ -1,19 +1,19 @@
 export const chartColors = {
-  orange: "#c8845e",
-  blue: "#6b8fbe",
-  green: "#5ea87a",
-  purple: "#9b7cb8",
-  red: "#c47272",
-  cyan: "#5a9eaa",
-  yellow: "#bfa254",
-  pink: "#b87a96",
-  teal: "#5aaa98",
+  purple: "#A855F7",
+  blue: "#60A5FA",
+  green: "#34D399",
+  pink: "#F472B6",
+  red: "#F87171",
+  cyan: "#22D3EE",
+  yellow: "#FBBF24",
+  indigo: "#818CF8",
+  teal: "#2DD4BF",
 };
 
 export const playerColors = Object.values(chartColors);
 
 export const shootingColors = {
-  threePoint: "#c8845e",
-  twoPoint: "#6b8fbe",
-  freeThrow: "#5ea87a",
+  threePoint: "#A855F7",
+  twoPoint: "#60A5FA",
+  freeThrow: "#34D399",
 };

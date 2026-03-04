@@ -21,7 +21,7 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
   return (
     <AnimatedSection id="players" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
-        Player <span className="text-accent-orange">Roster</span>
+        Player <span className="text-accent-purple">Roster</span>
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {sorted.map((p, i) => (
@@ -30,12 +30,12 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
               <GlassCard hover className="cursor-pointer">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <div className="text-4xl font-bold text-accent-orange/80">#{p.number}</div>
+                    <div className="text-4xl font-bold text-accent-purple/80">#{p.number}</div>
                     <div className="text-lg font-semibold mt-1">{p.name}</div>
                     <div className="text-xs text-neutral-400">{p.games} games played</div>
                   </div>
                   <div className="flex flex-col gap-1">
-                    {p.number === topScorer && <Badge variant="orange">Top Scorer</Badge>}
+                    {p.number === topScorer && <Badge variant="purple">Top Scorer</Badge>}
                     {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
                     {p.number === topAssister && <Badge variant="green">Top Assists</Badge>}
                   </div>

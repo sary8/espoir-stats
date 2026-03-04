@@ -57,7 +57,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
               <ArrowLeft size={18} /> Back to Roster
             </Link>
             <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }}>
-              <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-orange/20">#{p.number}</div>
+              <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-purple/20">#{p.number}</div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6">{p.name}</h1>
               <p className="text-sm sm:text-base text-neutral-400 mt-2">{p.games} Games Played | Total {p.totalPoints} Points</p>
             </motion.div>
@@ -100,9 +100,9 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                     contentStyle={tooltipStyle}
                     labelStyle={tooltipLabelStyle}
                   />
-                  <Line type="monotone" dataKey="PTS" stroke="#c8845e" strokeWidth={3} dot={{ r: 5, fill: "#c8845e" }} />
-                  <Line type="monotone" dataKey="REB" stroke="#6b8fbe" strokeWidth={2} dot={{ r: 4, fill: "#6b8fbe" }} />
-                  <Line type="monotone" dataKey="AST" stroke="#5ea87a" strokeWidth={2} dot={{ r: 4, fill: "#5ea87a" }} />
+                  <Line type="monotone" dataKey="PTS" stroke="#A855F7" strokeWidth={3} dot={{ r: 5, fill: "#A855F7" }} />
+                  <Line type="monotone" dataKey="REB" stroke="#60A5FA" strokeWidth={2} dot={{ r: 4, fill: "#60A5FA" }} />
+                  <Line type="monotone" dataKey="AST" stroke="#34D399" strokeWidth={2} dot={{ r: 4, fill: "#34D399" }} />
                 </LineChart>
               </ResponsiveContainer>
             </GlassCard>
@@ -137,7 +137,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                     <tr key={g.opponent} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                       <td className="py-2 px-1 sm:py-3 sm:px-2 font-medium whitespace-nowrap">vs {g.opponent}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{g.stat.starter ? <span aria-label="スターター">●</span> : ""}</td>
-                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 font-bold text-accent-orange">{g.stat.points}</td>
+                      <td className="text-center py-2 px-1 sm:py-3 sm:px-2 font-bold text-accent-purple">{g.stat.points}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.threePointMade}/{g.stat.threePointAttempt}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{g.stat.twoPointMade}/{g.stat.twoPointAttempt}</td>
                       <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{g.stat.ftMade}/{g.stat.ftAttempt}</td>

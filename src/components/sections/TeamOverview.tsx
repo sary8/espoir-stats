@@ -25,8 +25,8 @@ interface TeamOverviewProps {
 
 export default function TeamOverview(props: TeamOverviewProps) {
   const stats: Stat[] = [
-    { label: "合計得点", value: props.totalPoints, icon: <Trophy size={20} />, color: "text-accent-orange" },
-    { label: "平均得点", value: props.avgPoints, decimals: 1, icon: <Target size={20} />, color: "text-accent-blue" },
+    { label: "合計得点", value: props.totalPoints, icon: <Trophy size={20} />, color: "text-accent-purple" },
+    { label: "平均得点", value: props.avgPoints, decimals: 1, icon: <Target size={20} />, color: "text-accent-purple-light" },
     { label: "チーム3P%", value: props.team3pPct, decimals: 1, suffix: "%", icon: <Percent size={20} />, color: "text-neutral-400" },
     { label: "リバウンド", value: props.totalRebounds, icon: <ArrowDownUp size={20} />, color: "text-neutral-400" },
     { label: "アシスト", value: props.totalAssists, icon: <HandHelping size={20} />, color: "text-neutral-400" },
@@ -36,7 +36,7 @@ export default function TeamOverview(props: TeamOverviewProps) {
   return (
     <AnimatedSection id="overview" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
-        Team <span className="text-accent-orange">Overview</span>
+        Team <span className="text-accent-purple">Overview</span>
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
         {stats.map((stat, i) => (

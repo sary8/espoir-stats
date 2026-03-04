@@ -37,7 +37,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
   return (
     <AnimatedSection id="games" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
-        Game <span className="text-accent-orange">Breakdown</span>
+        Game <span className="text-accent-purple">Breakdown</span>
       </h2>
       <GlassCard>
         <div className="flex flex-wrap gap-2 mb-6">
@@ -48,7 +48,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               aria-pressed={i === activeGame}
               className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                 i === activeGame
-                  ? "bg-accent-orange text-white"
+                  ? "bg-accent-purple text-white"
                   : "bg-white/5 text-neutral-400 hover:bg-white/10"
               }`}
             >
@@ -81,12 +81,12 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               {game.players.map((p) => (
                 <tr key={p.number} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                   <td className="py-2 px-1 sm:py-3 sm:px-2 font-medium whitespace-nowrap">
-                    <span className="text-accent-orange mr-1 sm:mr-2">#{p.number}</span>
+                    <span className="text-accent-purple mr-1 sm:mr-2">#{p.number}</span>
                     <span className="hidden sm:inline">{p.name}</span>
                     <span className="sm:hidden">{p.name.split(" ").pop()}</span>
                   </td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{p.starter ? <span aria-label="スターター">●</span> : ""}</td>
-                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2 font-bold text-accent-orange">{p.points}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2 font-bold text-accent-purple">{p.points}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.threePointMade}/{p.threePointAttempt}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.twoPointMade}/{p.twoPointAttempt}</td>
                   <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{p.ftMade}/{p.ftAttempt}</td>
@@ -103,7 +103,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               <tr className="border-t border-white/10 font-semibold">
                 <td className="py-2 px-1 sm:py-3 sm:px-2">TEAM</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell"></td>
-                <td className="text-center py-2 px-1 sm:py-3 sm:px-2 text-accent-orange">{game.teamPoints}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2 text-accent-purple">{game.teamPoints}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.threePointMade}/{teamTotals.threePointAttempt}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.twoPointMade}/{teamTotals.twoPointAttempt}</td>
                 <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{teamTotals.ftMade}/{teamTotals.ftAttempt}</td>

@@ -23,7 +23,7 @@ export default function HeroSection({ totalPoints, totalGames, totalPlayers }: H
           transition={prefersReducedMotion ? noMotion : { duration: 0.8 }}
         >
           <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold tracking-wider mb-4">
-            <span className="text-accent-orange">E</span>SPOIR
+            <span className="text-accent-purple">E</span>SPOIR
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-neutral-400 mb-8 sm:mb-12 tracking-wide">
             BASKETBALL TEAM STATS
@@ -37,13 +37,13 @@ export default function HeroSection({ totalPoints, totalGames, totalPlayers }: H
           transition={prefersReducedMotion ? noMotion : { duration: 0.8, delay: 0.3 }}
         >
           <div className="text-center">
-            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent-orange">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent-purple">
               <StatCounter end={totalPoints} />
             </div>
             <div className="text-xs sm:text-sm text-neutral-400 mt-1">TOTAL PTS</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent-blue">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent-purple-light">
               <StatCounter end={totalGames} />
             </div>
             <div className="text-xs sm:text-sm text-neutral-400 mt-1">GAMES</div>

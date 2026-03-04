@@ -17,14 +17,14 @@ export function parseIntOrNull(value: string): number | null {
 
 export function pctColor(pct: number | null): string {
   if (pct === null) return "#6b7280";
-  if (pct >= 50) return "#5ea87a";
-  if (pct >= 33) return "#c8845e";
-  return "#c47272";
+  if (pct >= 50) return "#34D399";
+  if (pct >= 33) return "#FBBF24";
+  return "#F87171";
 }
 
 export const CHART_COLORS = [
-  "#c8845e", "#6b8fbe", "#5ea87a", "#9b7cb8",
-  "#c47272", "#5a9eaa", "#bfa254", "#b87a96", "#5aaa98",
+  "#A855F7", "#60A5FA", "#34D399", "#F472B6",
+  "#F87171", "#22D3EE", "#FBBF24", "#818CF8", "#2DD4BF",
 ];
 
 export function getPlayerColor(index: number): string {
