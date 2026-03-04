@@ -3,7 +3,7 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
-import { playerColors } from "@/config/theme";
+import { chartColors } from "@/config/theme";
 
 const tooltipStyle = {
   background: "#1a1a2e",
@@ -11,7 +11,7 @@ const tooltipStyle = {
   borderRadius: 8,
 } as const;
 const tooltipLabelStyle = { color: "#fff" } as const;
-const tooltipItemStyle = { color: "#f97316" } as const;
+const tooltipItemStyle = { color: "#d4885c" } as const;
 
 interface ScoringLeadersProps {
   data: { name: string; ppg: number; number: number }[];
@@ -37,7 +37,7 @@ export default function ScoringLeaders({ data }: ScoringLeadersProps) {
             />
             <Bar dataKey="ppg" radius={[0, 6, 6, 0]} barSize={20}>
               {data.map((_, i) => (
-                <Cell key={i} fill={playerColors[i % playerColors.length]} />
+                <Cell key={i} fill={chartColors.orange} fillOpacity={1 - i * 0.08} />
               ))}
             </Bar>
           </BarChart>

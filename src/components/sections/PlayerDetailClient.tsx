@@ -100,9 +100,9 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                     contentStyle={tooltipStyle}
                     labelStyle={tooltipLabelStyle}
                   />
-                  <Line type="monotone" dataKey="PTS" stroke="#f97316" strokeWidth={3} dot={{ r: 5, fill: "#f97316" }} />
-                  <Line type="monotone" dataKey="REB" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4, fill: "#3b82f6" }} />
-                  <Line type="monotone" dataKey="AST" stroke="#22c55e" strokeWidth={2} dot={{ r: 4, fill: "#22c55e" }} />
+                  <Line type="monotone" dataKey="PTS" stroke="#c8845e" strokeWidth={3} dot={{ r: 5, fill: "#c8845e" }} />
+                  <Line type="monotone" dataKey="REB" stroke="#6b8fbe" strokeWidth={2} dot={{ r: 4, fill: "#6b8fbe" }} />
+                  <Line type="monotone" dataKey="AST" stroke="#5ea87a" strokeWidth={2} dot={{ r: 4, fill: "#5ea87a" }} />
                 </LineChart>
               </ResponsiveContainer>
             </GlassCard>

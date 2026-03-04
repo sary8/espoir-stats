@@ -15,7 +15,7 @@ export default function ProgressRing({
   percentage,
   size = 80,
   strokeWidth = 6,
-  color = "#f97316",
+  color = "#c8845e",
   label,
 }: ProgressRingProps) {
   const ref = useRef<SVGSVGElement>(null);

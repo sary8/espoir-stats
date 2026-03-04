@@ -25,12 +25,12 @@ interface TeamOverviewProps {
 
 export default function TeamOverview(props: TeamOverviewProps) {
   const stats: Stat[] = [
-    { label: "合計得点", value: props.totalPoints, icon: <Trophy size={20} />, color: "text-orange-400" },
-    { label: "平均得点", value: props.avgPoints, decimals: 1, icon: <Target size={20} />, color: "text-blue-400" },
-    { label: "チーム3P%", value: props.team3pPct, decimals: 1, suffix: "%", icon: <Percent size={20} />, color: "text-green-400" },
-    { label: "リバウンド", value: props.totalRebounds, icon: <ArrowDownUp size={20} />, color: "text-purple-400" },
-    { label: "アシスト", value: props.totalAssists, icon: <HandHelping size={20} />, color: "text-cyan-400" },
-    { label: "スティール", value: props.totalSteals, icon: <ShieldAlert size={20} />, color: "text-yellow-400" },
+    { label: "合計得点", value: props.totalPoints, icon: <Trophy size={20} />, color: "text-accent-orange" },
+    { label: "平均得点", value: props.avgPoints, decimals: 1, icon: <Target size={20} />, color: "text-accent-blue" },
+    { label: "チーム3P%", value: props.team3pPct, decimals: 1, suffix: "%", icon: <Percent size={20} />, color: "text-neutral-400" },
+    { label: "リバウンド", value: props.totalRebounds, icon: <ArrowDownUp size={20} />, color: "text-neutral-400" },
+    { label: "アシスト", value: props.totalAssists, icon: <HandHelping size={20} />, color: "text-neutral-400" },
+    { label: "スティール", value: props.totalSteals, icon: <ShieldAlert size={20} />, color: "text-neutral-400" },
   ];
 
   return (
