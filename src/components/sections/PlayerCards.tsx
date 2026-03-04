@@ -19,8 +19,8 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
   const sorted = [...players].sort((a, b) => b.ppg - a.ppg);
 
   return (
-    <AnimatedSection id="players" className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-      <h2 className="text-3xl font-bold mb-8 text-center">
+    <AnimatedSection id="players" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Player <span className="text-accent-orange">Roster</span>
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -56,10 +56,10 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
                   </div>
                 </div>
 
-                <div className="flex justify-around">
-                  <ProgressRing percentage={p.threePointPct} size={60} strokeWidth={5} color={shootingColors.threePoint} label="3P%" />
-                  <ProgressRing percentage={p.twoPointPct} size={60} strokeWidth={5} color={shootingColors.twoPoint} label="2P%" />
-                  <ProgressRing percentage={p.ftPct} size={60} strokeWidth={5} color={shootingColors.freeThrow} label="FT%" />
+                <div className="flex justify-center gap-4 sm:gap-6">
+                  <ProgressRing percentage={p.threePointPct} size={50} strokeWidth={4} color={shootingColors.threePoint} label="3P%" />
+                  <ProgressRing percentage={p.twoPointPct} size={50} strokeWidth={4} color={shootingColors.twoPoint} label="2P%" />
+                  <ProgressRing percentage={p.ftPct} size={50} strokeWidth={4} color={shootingColors.freeThrow} label="FT%" />
                 </div>
               </GlassCard>
             </Link>

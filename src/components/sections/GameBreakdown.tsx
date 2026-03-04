@@ -35,8 +35,8 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
   }, [game]);
 
   return (
-    <AnimatedSection id="games" className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-      <h2 className="text-3xl font-bold mb-8 text-center">
+    <AnimatedSection id="games" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Game <span className="text-accent-orange">Breakdown</span>
       </h2>
       <GlassCard>
@@ -58,59 +58,61 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
           ))}
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm" aria-label={`vs ${game.opponent} 個人スタッツ`}>
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <table className="w-full text-xs sm:text-sm" aria-label={`vs ${game.opponent} 個人スタッツ`}>
             <caption className="sr-only">vs {game.opponent} の試合における各選手のスタッツ</caption>
             <thead>
               <tr className="border-b border-white/10 text-neutral-400">
-                <th className="text-left py-3 px-2" scope="col">選手</th>
-                <th className="text-center py-3 px-2" scope="col">GS</th>
-                <th className="text-center py-3 px-2" scope="col">PTS</th>
-                <th className="text-center py-3 px-2" scope="col">3PM</th>
-                <th className="text-center py-3 px-2" scope="col">2PM</th>
-                <th className="text-center py-3 px-2" scope="col">FTM</th>
-                <th className="text-center py-3 px-2" scope="col">REB</th>
-                <th className="text-center py-3 px-2" scope="col">AST</th>
-                <th className="text-center py-3 px-2" scope="col">STL</th>
-                <th className="text-center py-3 px-2" scope="col">BLK</th>
-                <th className="text-center py-3 px-2" scope="col">TO</th>
-                <th className="text-center py-3 px-2" scope="col">MIN</th>
+                <th className="text-left py-2 px-1 sm:py-3 sm:px-2 whitespace-nowrap" scope="col">選手</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">GS</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">PTS</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">3PM</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">2PM</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">FTM</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">REB</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">AST</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">STL</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">BLK</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2" scope="col">TO</th>
+                <th className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell" scope="col">MIN</th>
               </tr>
             </thead>
             <tbody>
               {game.players.map((p) => (
                 <tr key={p.number} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                  <td className="py-3 px-2 font-medium">
-                    <span className="text-accent-orange mr-2">#{p.number}</span>
-                    {p.name}
+                  <td className="py-2 px-1 sm:py-3 sm:px-2 font-medium whitespace-nowrap">
+                    <span className="text-accent-orange mr-1 sm:mr-2">#{p.number}</span>
+                    <span className="hidden sm:inline">{p.name}</span>
+                    <span className="sm:hidden">{p.name.split(" ").pop()}</span>
                   </td>
-                  <td className="text-center py-3 px-2">{p.starter ? <span aria-label="スターター">●</span> : ""}</td>
-                  <td className="text-center py-3 px-2 font-bold text-accent-orange">{p.points}</td>
-                  <td className="text-center py-3 px-2">{p.threePointMade}/{p.threePointAttempt}</td>
-                  <td className="text-center py-3 px-2">{p.twoPointMade}/{p.twoPointAttempt}</td>
-                  <td className="text-center py-3 px-2">{p.ftMade}/{p.ftAttempt}</td>
-                  <td className="text-center py-3 px-2">{p.totalReb}</td>
-                  <td className="text-center py-3 px-2">{p.assists}</td>
-                  <td className="text-center py-3 px-2">{p.steals}</td>
-                  <td className="text-center py-3 px-2">{p.blocks}</td>
-                  <td className="text-center py-3 px-2">{p.turnovers}</td>
-                  <td className="text-center py-3 px-2 text-neutral-400">{p.minutes}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{p.starter ? <span aria-label="スターター">●</span> : ""}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2 font-bold text-accent-orange">{p.points}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.threePointMade}/{p.threePointAttempt}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.twoPointMade}/{p.twoPointAttempt}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.ftMade}/{p.ftAttempt}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.totalReb}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.assists}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.steals}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{p.blocks}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{p.turnovers}</td>
+                  <td className="text-center py-2 px-1 sm:py-3 sm:px-2 text-neutral-400 hidden sm:table-cell">{p.minutes}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr className="border-t border-white/10 font-semibold">
-                <td className="py-3 px-2" colSpan={2}>TEAM</td>
-                <td className="text-center py-3 px-2 text-accent-orange">{game.teamPoints}</td>
-                <td className="text-center py-3 px-2">{teamTotals.threePointMade}/{teamTotals.threePointAttempt}</td>
-                <td className="text-center py-3 px-2">{teamTotals.twoPointMade}/{teamTotals.twoPointAttempt}</td>
-                <td className="text-center py-3 px-2">{teamTotals.ftMade}/{teamTotals.ftAttempt}</td>
-                <td className="text-center py-3 px-2">{teamTotals.totalReb}</td>
-                <td className="text-center py-3 px-2">{teamTotals.assists}</td>
-                <td className="text-center py-3 px-2">{teamTotals.steals}</td>
-                <td className="text-center py-3 px-2">{teamTotals.blocks}</td>
-                <td className="text-center py-3 px-2">{teamTotals.turnovers}</td>
-                <td className="text-center py-3 px-2"></td>
+                <td className="py-2 px-1 sm:py-3 sm:px-2">TEAM</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell"></td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2 text-accent-orange">{game.teamPoints}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.threePointMade}/{teamTotals.threePointAttempt}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.twoPointMade}/{teamTotals.twoPointAttempt}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.ftMade}/{teamTotals.ftAttempt}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.totalReb}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.assists}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.steals}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell">{teamTotals.blocks}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2">{teamTotals.turnovers}</td>
+                <td className="text-center py-2 px-1 sm:py-3 sm:px-2 hidden sm:table-cell"></td>
               </tr>
             </tfoot>
           </table>

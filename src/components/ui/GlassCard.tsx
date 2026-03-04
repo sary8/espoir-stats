@@ -14,7 +14,7 @@ const hoverTransition = { duration: 0.2 };
 export default function GlassCard({ children, className = "", hover = false }: GlassCardProps) {
   return (
     <motion.div
-      className={`glass-card p-6 ${className}`}
+      className={`glass-card p-4 sm:p-6 ${className}`}
       whileHover={hover ? hoverEffect : undefined}
       transition={hoverTransition}
     >

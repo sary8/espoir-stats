@@ -19,23 +19,23 @@ interface ScoringLeadersProps {
 
 export default function ScoringLeaders({ data }: ScoringLeadersProps) {
   return (
-    <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-      <h2 className="text-3xl font-bold mb-8 text-center">
+    <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Scoring <span className="text-accent-orange">Leaders</span>
       </h2>
       <GlassCard>
         <p className="sr-only">選手別の平均得点を示す横棒グラフ。{data.map((d) => `${d.name}: ${d.ppg} PPG`).join("、")}。</p>
-        <ResponsiveContainer width="100%" height={360}>
-          <BarChart data={data} layout="vertical" margin={{ left: 80, right: 30, top: 10, bottom: 10 }}>
-            <XAxis type="number" domain={[0, "auto"]} />
-            <YAxis type="category" dataKey="name" width={75} tick={{ fontSize: 13 }} />
+        <ResponsiveContainer width="100%" height={280}>
+          <BarChart data={data} layout="vertical" margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+            <XAxis type="number" domain={[0, "auto"]} tick={{ fontSize: 11 }} />
+            <YAxis type="category" dataKey="name" width={60} tick={{ fontSize: 11 }} />
             <Tooltip
               contentStyle={tooltipStyle}
               labelStyle={tooltipLabelStyle}
               itemStyle={tooltipItemStyle}
               formatter={(value) => [`${value} PPG`, "平均得点"]}
             />
-            <Bar dataKey="ppg" radius={[0, 6, 6, 0]} barSize={24}>
+            <Bar dataKey="ppg" radius={[0, 6, 6, 0]} barSize={20}>
               {data.map((_, i) => (
                 <Cell key={i} fill={playerColors[i % playerColors.length]} />
               ))}

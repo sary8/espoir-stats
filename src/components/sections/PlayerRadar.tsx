@@ -46,8 +46,8 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
   };
 
   return (
-    <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-      <h2 className="text-3xl font-bold mb-8 text-center">
+    <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Player <span className="text-accent-orange">Comparison</span>
       </h2>
       <GlassCard>
@@ -57,7 +57,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
               key={p.number}
               onClick={() => togglePlayer(p.number)}
               aria-pressed={selected.includes(p.number)}
-              className={`px-4 py-2.5 min-h-[44px] rounded-full text-sm font-medium transition-all border cursor-pointer ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-full text-xs sm:text-sm font-medium transition-all border cursor-pointer ${
                 selected.includes(p.number)
                   ? "bg-accent-orange/20 border-accent-orange/50 text-orange-300"
                   : "border-white/10 text-neutral-400 hover:border-white/30"
@@ -68,10 +68,10 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
           ))}
         </div>
         <p className="sr-only">選手の能力比較レーダーチャート（PTS、REB、AST、STL、BLK）。</p>
-        <ResponsiveContainer width="100%" height={360}>
+        <ResponsiveContainer width="100%" height={280}>
           <RadarChart data={radarData}>
             <PolarGrid stroke="rgba(255,255,255,0.1)" />
-            <PolarAngleAxis dataKey="stat" tick={{ fill: "#a3a3a3", fontSize: 13 }} />
+            <PolarAngleAxis dataKey="stat" tick={{ fill: "#a3a3a3", fontSize: 12 }} />
             <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
             {selectedPlayers.map((p) => (
               <Radar
