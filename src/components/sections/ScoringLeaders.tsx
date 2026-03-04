@@ -24,6 +24,7 @@ export default function ScoringLeaders({ data }: ScoringLeadersProps) {
         Scoring <span className="text-accent-orange">Leaders</span>
       </h2>
       <GlassCard>
+        <p className="sr-only">選手別の平均得点を示す横棒グラフ。{data.map((d) => `${d.name}: ${d.ppg} PPG`).join("、")}。</p>
         <ResponsiveContainer width="100%" height={360}>
           <BarChart data={data} layout="vertical" margin={{ left: 80, right: 30, top: 10, bottom: 10 }}>
             <XAxis type="number" domain={[0, "auto"]} />

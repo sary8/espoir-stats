@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import GlassCard from "../ui/GlassCard";
@@ -26,6 +26,7 @@ interface PlayerDetailClientProps {
 }
 
 export default function PlayerDetailClient({ summary, games }: PlayerDetailClientProps) {
+  const prefersReducedMotion = useReducedMotion();
   const p = summary;
 
   const lineData = games.map((g) => ({
@@ -55,7 +56,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
             <Link href="/" className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-8">
               <ArrowLeft size={18} /> Back to Roster
             </Link>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }}>
               <div className="text-8xl sm:text-9xl font-bold text-accent-orange/20">#{p.number}</div>
               <h1 className="text-4xl sm:text-5xl font-bold -mt-6">{p.name}</h1>
               <p className="text-neutral-400 mt-2">{p.games} Games Played | Total {p.totalPoints} Points</p>
@@ -72,7 +73,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                 <div className="text-2xl font-bold">
                   <StatCounter end={s.value} decimals={s.decimals} />
                 </div>
-                <div className="text-xs text-neutral-500 mt-1">{s.label}</div>
+                <div className="text-xs text-neutral-400 mt-1">{s.label}</div>
               </GlassCard>
             ))}
           </div>
@@ -89,6 +90,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
             <h2 className="text-2xl font-bold mb-6">Game-by-Game</h2>
             <GlassCard>
+              <p className="sr-only">試合ごとの得点・リバウンド・アシストの推移を示すラインチャート。</p>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={lineData} margin={{ left: 10, right: 30, top: 10, bottom: 10 }}>
                   <CartesianGrid stroke="rgba(255,255,255,0.06)" />
@@ -112,28 +114,29 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
           <h2 className="text-2xl font-bold mb-6">Game Log</h2>
           <GlassCard>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label={`${p.name} ゲームログ`}>
+                <caption className="sr-only">{p.name}の各試合スタッツ</caption>
                 <thead>
                   <tr className="border-b border-white/10 text-neutral-400">
-                    <th className="text-left py-3 px-2">対戦</th>
-                    <th className="text-center py-3 px-2">GS</th>
-                    <th className="text-center py-3 px-2">PTS</th>
-                    <th className="text-center py-3 px-2">3P</th>
-                    <th className="text-center py-3 px-2">2P</th>
-                    <th className="text-center py-3 px-2">FT</th>
-                    <th className="text-center py-3 px-2">REB</th>
-                    <th className="text-center py-3 px-2">AST</th>
-                    <th className="text-center py-3 px-2">STL</th>
-                    <th className="text-center py-3 px-2">BLK</th>
-                    <th className="text-center py-3 px-2">TO</th>
-                    <th className="text-center py-3 px-2">MIN</th>
+                    <th className="text-left py-3 px-2" scope="col">対戦</th>
+                    <th className="text-center py-3 px-2" scope="col">GS</th>
+                    <th className="text-center py-3 px-2" scope="col">PTS</th>
+                    <th className="text-center py-3 px-2" scope="col">3P</th>
+                    <th className="text-center py-3 px-2" scope="col">2P</th>
+                    <th className="text-center py-3 px-2" scope="col">FT</th>
+                    <th className="text-center py-3 px-2" scope="col">REB</th>
+                    <th className="text-center py-3 px-2" scope="col">AST</th>
+                    <th className="text-center py-3 px-2" scope="col">STL</th>
+                    <th className="text-center py-3 px-2" scope="col">BLK</th>
+                    <th className="text-center py-3 px-2" scope="col">TO</th>
+                    <th className="text-center py-3 px-2" scope="col">MIN</th>
                   </tr>
                 </thead>
                 <tbody>
                   {games.map((g) => (
                     <tr key={g.opponent} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                       <td className="py-3 px-2 font-medium">vs {g.opponent}</td>
-                      <td className="text-center py-3 px-2">{g.stat.starter ? "●" : ""}</td>
+                      <td className="text-center py-3 px-2">{g.stat.starter ? <span aria-label="スターター">●</span> : ""}</td>
                       <td className="text-center py-3 px-2 font-bold text-accent-orange">{g.stat.points}</td>
                       <td className="text-center py-3 px-2">{g.stat.threePointMade}/{g.stat.threePointAttempt}</td>
                       <td className="text-center py-3 px-2">{g.stat.twoPointMade}/{g.stat.twoPointAttempt}</td>

@@ -56,7 +56,8 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
             <button
               key={p.number}
               onClick={() => togglePlayer(p.number)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+              aria-pressed={selected.includes(p.number)}
+              className={`px-4 py-2.5 min-h-[44px] rounded-full text-sm font-medium transition-all border cursor-pointer ${
                 selected.includes(p.number)
                   ? "bg-accent-orange/20 border-accent-orange/50 text-orange-300"
                   : "border-white/10 text-neutral-400 hover:border-white/30"
@@ -66,6 +67,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
             </button>
           ))}
         </div>
+        <p className="sr-only">選手の能力比較レーダーチャート（PTS、REB、AST、STL、BLK）。</p>
         <ResponsiveContainer width="100%" height={360}>
           <RadarChart data={radarData}>
             <PolarGrid stroke="rgba(255,255,255,0.1)" />

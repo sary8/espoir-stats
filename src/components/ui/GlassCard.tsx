@@ -8,7 +8,7 @@ interface GlassCardProps {
   hover?: boolean;
 }
 
-const hoverEffect = { scale: 1.02, borderColor: "rgba(249,115,22,0.3)" };
+const hoverEffect = { borderColor: "rgba(249,115,22,0.3)", boxShadow: "0 4px 24px rgba(249,115,22,0.1)" };
 const hoverTransition = { duration: 0.2 };
 
 export default function GlassCard({ children, className = "", hover = false }: GlassCardProps) {

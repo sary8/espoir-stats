@@ -23,6 +23,7 @@ export default function ShootingChart({ data }: ShootingChartProps) {
         Shooting <span className="text-accent-orange">Comparison</span>
       </h2>
       <GlassCard>
+        <p className="sr-only">選手別のシュート成功率を示す棒グラフ（3P%、2P%、FT%）。</p>
         <ResponsiveContainer width="100%" height={360}>
           <BarChart data={data} margin={{ left: 10, right: 30, top: 10, bottom: 10 }}>
             <XAxis dataKey="name" tick={{ fontSize: 12 }} />

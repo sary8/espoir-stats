@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
 
 interface ProgressRingProps {
@@ -20,14 +20,17 @@ export default function ProgressRing({
 }: ProgressRingProps) {
   const ref = useRef<SVGSVGElement>(null);
   const isInView = useInView(ref, { once: true });
+  const prefersReducedMotion = useReducedMotion();
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const pct = percentage ?? 0;
   const offset = circumference - (pct / 100) * circumference;
+  const displayValue = percentage !== null ? `${percentage.toFixed(1)}%` : "-";
+  const ariaLabel = label ? `${label}: ${displayValue}` : displayValue;
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <svg ref={ref} width={size} height={size} className="-rotate-90">
+      <svg ref={ref} width={size} height={size} className="-rotate-90" role="img" aria-label={ariaLabel}>
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -45,15 +48,15 @@ export default function ProgressRing({
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
+          initial={{ strokeDashoffset: prefersReducedMotion ? offset : circumference }}
           animate={isInView ? { strokeDashoffset: offset } : { strokeDashoffset: circumference }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
+          transition={prefersReducedMotion ? { duration: 0 } : { duration: 1.2, ease: "easeOut" }}
         />
       </svg>
       <span className="text-sm font-semibold" style={{ color }}>
-        {percentage !== null ? `${percentage.toFixed(1)}%` : "-"}
+        {displayValue}
       </span>
-      {label && <span className="text-xs text-neutral-500">{label}</span>}
+      {label && <span className="text-xs text-neutral-400">{label}</span>}
     </div>
   );
 }

@@ -26,7 +26,7 @@ export default function Home() {
     totalSteals += p.steals;
   }
 
-  const totalGames = 4;
+  const totalGames = games.length;
   const team3pPct = total3PA > 0 ? (total3PM / total3PA) * 100 : 0;
 
   const sortedByPpg = [...players].sort((a, b) => b.ppg - a.ppg);

@@ -53,11 +53,31 @@ body {
     radial-gradient(ellipse at 50% 80%, rgba(249, 115, 22, 0.08) 0%, transparent 50%);
 }
 
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--accent-orange);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* Recharts overrides */
 .recharts-text {
-  fill: #a3a3a3 !important;
+  fill: #a3a3a3;
   font-size: 12px;
 }
 .recharts-cartesian-grid line {
-  stroke: rgba(255, 255, 255, 0.06) !important;
+  stroke: rgba(255, 255, 255, 0.06);
 }

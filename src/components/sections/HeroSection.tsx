@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import StatCounter from "../ui/StatCounter";
 
 interface HeroProps {
@@ -10,14 +10,17 @@ interface HeroProps {
 }
 
 export default function HeroSection({ totalPoints, totalGames, totalPlayers }: HeroProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const noMotion = { duration: 0 };
+
   return (
-    <section className="relative min-h-[70vh] flex items-center justify-center gradient-mesh overflow-hidden">
+    <section className="relative min-h-[70vh] flex items-center justify-center gradient-mesh overflow-hidden pt-16">
       <div className="absolute inset-0 bg-[#0a0a0f]/40" />
       <div className="relative z-10 text-center px-4">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={prefersReducedMotion ? noMotion : { duration: 0.8 }}
         >
           <h1 className="text-7xl sm:text-9xl font-bold tracking-wider mb-4">
             <span className="text-accent-orange">E</span>SPOIR
@@ -29,9 +32,9 @@ export default function HeroSection({ totalPoints, totalGames, totalPlayers }: H
 
         <motion.div
           className="flex flex-wrap justify-center gap-8 sm:gap-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          transition={prefersReducedMotion ? noMotion : { duration: 0.8, delay: 0.3 }}
         >
           <div className="text-center">
             <div className="text-4xl sm:text-5xl font-bold text-accent-orange">

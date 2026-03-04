@@ -32,7 +32,7 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
                   <div>
                     <div className="text-4xl font-bold text-accent-orange/80">#{p.number}</div>
                     <div className="text-lg font-semibold mt-1">{p.name}</div>
-                    <div className="text-xs text-neutral-500">{p.games} games played</div>
+                    <div className="text-xs text-neutral-400">{p.games} games played</div>
                   </div>
                   <div className="flex flex-col gap-1">
                     {p.number === topScorer && <Badge variant="orange">Top Scorer</Badge>}
@@ -44,15 +44,15 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
                 <div className="grid grid-cols-3 gap-2 mb-4 text-center">
                   <div>
                     <div className="text-xl font-bold">{p.ppg}</div>
-                    <div className="text-xs text-neutral-500">PPG</div>
+                    <div className="text-xs text-neutral-400">PPG</div>
                   </div>
                   <div>
                     <div className="text-xl font-bold">{(p.totalReb / p.games).toFixed(1)}</div>
-                    <div className="text-xs text-neutral-500">RPG</div>
+                    <div className="text-xs text-neutral-400">RPG</div>
                   </div>
                   <div>
                     <div className="text-xl font-bold">{(p.assists / p.games).toFixed(1)}</div>
-                    <div className="text-xs text-neutral-500">APG</div>
+                    <div className="text-xs text-neutral-400">APG</div>
                   </div>
                 </div>
 

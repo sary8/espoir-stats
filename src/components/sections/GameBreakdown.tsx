@@ -45,7 +45,8 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
             <button
               key={g.opponent}
               onClick={() => setActiveGame(i)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              aria-pressed={i === activeGame}
+              className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition-all cursor-pointer ${
                 i === activeGame
                   ? "bg-accent-orange text-white"
                   : "bg-white/5 text-neutral-400 hover:bg-white/10"
@@ -58,21 +59,22 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label={`vs ${game.opponent} 個人スタッツ`}>
+            <caption className="sr-only">vs {game.opponent} の試合における各選手のスタッツ</caption>
             <thead>
               <tr className="border-b border-white/10 text-neutral-400">
-                <th className="text-left py-3 px-2">選手</th>
-                <th className="text-center py-3 px-2">GS</th>
-                <th className="text-center py-3 px-2">PTS</th>
-                <th className="text-center py-3 px-2">3PM</th>
-                <th className="text-center py-3 px-2">2PM</th>
-                <th className="text-center py-3 px-2">FTM</th>
-                <th className="text-center py-3 px-2">REB</th>
-                <th className="text-center py-3 px-2">AST</th>
-                <th className="text-center py-3 px-2">STL</th>
-                <th className="text-center py-3 px-2">BLK</th>
-                <th className="text-center py-3 px-2">TO</th>
-                <th className="text-center py-3 px-2">MIN</th>
+                <th className="text-left py-3 px-2" scope="col">選手</th>
+                <th className="text-center py-3 px-2" scope="col">GS</th>
+                <th className="text-center py-3 px-2" scope="col">PTS</th>
+                <th className="text-center py-3 px-2" scope="col">3PM</th>
+                <th className="text-center py-3 px-2" scope="col">2PM</th>
+                <th className="text-center py-3 px-2" scope="col">FTM</th>
+                <th className="text-center py-3 px-2" scope="col">REB</th>
+                <th className="text-center py-3 px-2" scope="col">AST</th>
+                <th className="text-center py-3 px-2" scope="col">STL</th>
+                <th className="text-center py-3 px-2" scope="col">BLK</th>
+                <th className="text-center py-3 px-2" scope="col">TO</th>
+                <th className="text-center py-3 px-2" scope="col">MIN</th>
               </tr>
             </thead>
             <tbody>
@@ -82,7 +84,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                     <span className="text-accent-orange mr-2">#{p.number}</span>
                     {p.name}
                   </td>
-                  <td className="text-center py-3 px-2">{p.starter ? "●" : ""}</td>
+                  <td className="text-center py-3 px-2">{p.starter ? <span aria-label="スターター">●</span> : ""}</td>
                   <td className="text-center py-3 px-2 font-bold text-accent-orange">{p.points}</td>
                   <td className="text-center py-3 px-2">{p.threePointMade}/{p.threePointAttempt}</td>
                   <td className="text-center py-3 px-2">{p.twoPointMade}/{p.twoPointAttempt}</td>

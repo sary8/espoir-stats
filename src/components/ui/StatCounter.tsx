@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useInView } from "framer-motion";
+import { useInView, useReducedMotion } from "framer-motion";
 
 interface StatCounterProps {
   end: number;
@@ -14,10 +14,16 @@ interface StatCounterProps {
 export default function StatCounter({ end, decimals = 0, suffix = "", duration = 1.5, className = "" }: StatCounterProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true });
+  const prefersReducedMotion = useReducedMotion();
   const [display, setDisplay] = useState("0");
 
   useEffect(() => {
     if (!isInView) return;
+
+    if (prefersReducedMotion) {
+      setDisplay(end.toFixed(decimals));
+      return;
+    }
 
     const startTime = performance.now();
     const animate = (now: number) => {
@@ -29,7 +35,7 @@ export default function StatCounter({ end, decimals = 0, suffix = "", duration =
       if (progress < 1) requestAnimationFrame(animate);
     };
     requestAnimationFrame(animate);
-  }, [isInView, end, decimals, duration]);
+  }, [isInView, end, decimals, duration, prefersReducedMotion]);
 
   return (
     <span ref={ref} className={className}>
