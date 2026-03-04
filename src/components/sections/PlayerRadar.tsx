@@ -4,16 +4,20 @@ import { useState } from "react";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
-import type { PlayerSummary } from "@/lib/types";
 import { playerColors } from "@/config/theme";
 
-interface PlayerRadarProps {
-  players: PlayerSummary[];
+interface RadarPlayer {
+  number: number;
+  name: string;
+  ppg: number;
+  rpg: number;
+  apg: number;
+  spg: number;
+  bpg: number;
 }
 
-function normalize(values: number[]): number[] {
-  const max = Math.max(...values, 1);
-  return values.map((v) => Math.round((v / max) * 100));
+interface PlayerRadarProps {
+  players: RadarPlayer[];
 }
 
 export default function PlayerRadar({ players }: PlayerRadarProps) {
@@ -21,24 +25,18 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
 
   const selectedPlayers = players.filter((p) => selected.includes(p.number));
 
-  const allPts = players.map((p) => p.ppg);
-  const allReb = players.map((p) => p.totalReb / p.games);
-  const allAst = players.map((p) => p.assists / p.games);
-  const allStl = players.map((p) => p.steals / p.games);
-  const allBlk = players.map((p) => p.blocks / p.games);
-
-  const maxPts = Math.max(...allPts, 1);
-  const maxReb = Math.max(...allReb, 1);
-  const maxAst = Math.max(...allAst, 1);
-  const maxStl = Math.max(...allStl, 1);
-  const maxBlk = Math.max(...allBlk, 1);
+  const maxPts = Math.max(...players.map((p) => p.ppg), 1);
+  const maxReb = Math.max(...players.map((p) => p.rpg), 1);
+  const maxAst = Math.max(...players.map((p) => p.apg), 1);
+  const maxStl = Math.max(...players.map((p) => p.spg), 1);
+  const maxBlk = Math.max(...players.map((p) => p.bpg), 1);
 
   const radarData = [
     { stat: "PTS", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.ppg / maxPts) * 100)])) },
-    { stat: "REB", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round(((p.totalReb / p.games) / maxReb) * 100)])) },
-    { stat: "AST", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round(((p.assists / p.games) / maxAst) * 100)])) },
-    { stat: "STL", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round(((p.steals / p.games) / maxStl) * 100)])) },
-    { stat: "BLK", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round(((p.blocks / p.games) / maxBlk) * 100)])) },
+    { stat: "REB", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.rpg / maxReb) * 100)])) },
+    { stat: "AST", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.apg / maxAst) * 100)])) },
+    { stat: "STL", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.spg / maxStl) * 100)])) },
+    { stat: "BLK", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.bpg / maxBlk) * 100)])) },
   ];
 
   const togglePlayer = (num: number) => {
@@ -73,7 +71,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
             <PolarGrid stroke="rgba(255,255,255,0.1)" />
             <PolarAngleAxis dataKey="stat" tick={{ fill: "#a3a3a3", fontSize: 13 }} />
             <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
-            {selectedPlayers.map((p, i) => (
+            {selectedPlayers.map((p) => (
               <Radar
                 key={p.number}
                 name={p.name}

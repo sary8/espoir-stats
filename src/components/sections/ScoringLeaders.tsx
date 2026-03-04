@@ -3,18 +3,21 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
-import type { PlayerSummary } from "@/lib/types";
 import { playerColors } from "@/config/theme";
 
+const tooltipStyle = {
+  background: "#1a1a2e",
+  border: "1px solid rgba(255,255,255,0.1)",
+  borderRadius: 8,
+} as const;
+const tooltipLabelStyle = { color: "#fff" } as const;
+const tooltipItemStyle = { color: "#f97316" } as const;
+
 interface ScoringLeadersProps {
-  players: PlayerSummary[];
+  data: { name: string; ppg: number; number: number }[];
 }
 
-export default function ScoringLeaders({ players }: ScoringLeadersProps) {
-  const data = [...players]
-    .sort((a, b) => b.ppg - a.ppg)
-    .map((p) => ({ name: p.name, ppg: p.ppg, number: p.number }));
-
+export default function ScoringLeaders({ data }: ScoringLeadersProps) {
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
       <h2 className="text-3xl font-bold mb-8 text-center">
@@ -26,9 +29,9 @@ export default function ScoringLeaders({ players }: ScoringLeadersProps) {
             <XAxis type="number" domain={[0, "auto"]} />
             <YAxis type="category" dataKey="name" width={75} tick={{ fontSize: 13 }} />
             <Tooltip
-              contentStyle={{ background: "#1a1a2e", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8 }}
-              labelStyle={{ color: "#fff" }}
-              itemStyle={{ color: "#f97316" }}
+              contentStyle={tooltipStyle}
+              labelStyle={tooltipLabelStyle}
+              itemStyle={tooltipItemStyle}
               formatter={(value) => [`${value} PPG`, "平均得点"]}
             />
             <Bar dataKey="ppg" radius={[0, 6, 6, 0]} barSize={24}>

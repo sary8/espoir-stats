@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { GameResult } from "@/lib/types";
@@ -12,6 +12,27 @@ interface GameBreakdownProps {
 export default function GameBreakdown({ games }: GameBreakdownProps) {
   const [activeGame, setActiveGame] = useState(0);
   const game = games[activeGame];
+
+  const teamTotals = useMemo(() => {
+    let threePointMade = 0, threePointAttempt = 0;
+    let twoPointMade = 0, twoPointAttempt = 0;
+    let ftMade = 0, ftAttempt = 0;
+    let totalReb = 0, assists = 0, steals = 0, blocks = 0, turnovers = 0;
+    for (const p of game.players) {
+      threePointMade += p.threePointMade;
+      threePointAttempt += p.threePointAttempt;
+      twoPointMade += p.twoPointMade;
+      twoPointAttempt += p.twoPointAttempt;
+      ftMade += p.ftMade;
+      ftAttempt += p.ftAttempt;
+      totalReb += p.totalReb;
+      assists += p.assists;
+      steals += p.steals;
+      blocks += p.blocks;
+      turnovers += p.turnovers;
+    }
+    return { threePointMade, threePointAttempt, twoPointMade, twoPointAttempt, ftMade, ftAttempt, totalReb, assists, steals, blocks, turnovers };
+  }, [game]);
 
   return (
     <AnimatedSection id="games" className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
@@ -79,14 +100,14 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               <tr className="border-t border-white/10 font-semibold">
                 <td className="py-3 px-2" colSpan={2}>TEAM</td>
                 <td className="text-center py-3 px-2 text-accent-orange">{game.teamPoints}</td>
-                <td className="text-center py-3 px-2">{game.players.reduce((s, p) => s + p.threePointMade, 0)}/{game.players.reduce((s, p) => s + p.threePointAttempt, 0)}</td>
-                <td className="text-center py-3 px-2">{game.players.reduce((s, p) => s + p.twoPointMade, 0)}/{game.players.reduce((s, p) => s + p.twoPointAttempt, 0)}</td>
-                <td className="text-center py-3 px-2">{game.players.reduce((s, p) => s + p.ftMade, 0)}/{game.players.reduce((s, p) => s + p.ftAttempt, 0)}</td>
-                <td className="text-center py-3 px-2">{game.players.reduce((s, p) => s + p.totalReb, 0)}</td>
-                <td className="text-center py-3 px-2">{game.players.reduce((s, p) => s + p.assists, 0)}</td>
-                <td className="text-center py-3 px-2">{game.players.reduce((s, p) => s + p.steals, 0)}</td>
-                <td className="text-center py-3 px-2">{game.players.reduce((s, p) => s + p.blocks, 0)}</td>
-                <td className="text-center py-3 px-2">{game.players.reduce((s, p) => s + p.turnovers, 0)}</td>
+                <td className="text-center py-3 px-2">{teamTotals.threePointMade}/{teamTotals.threePointAttempt}</td>
+                <td className="text-center py-3 px-2">{teamTotals.twoPointMade}/{teamTotals.twoPointAttempt}</td>
+                <td className="text-center py-3 px-2">{teamTotals.ftMade}/{teamTotals.ftAttempt}</td>
+                <td className="text-center py-3 px-2">{teamTotals.totalReb}</td>
+                <td className="text-center py-3 px-2">{teamTotals.assists}</td>
+                <td className="text-center py-3 px-2">{teamTotals.steals}</td>
+                <td className="text-center py-3 px-2">{teamTotals.blocks}</td>
+                <td className="text-center py-3 px-2">{teamTotals.turnovers}</td>
                 <td className="text-center py-3 px-2"></td>
               </tr>
             </tfoot>

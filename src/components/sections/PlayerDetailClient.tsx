@@ -13,6 +13,13 @@ import Footer from "../layout/Footer";
 import { shootingColors } from "@/config/theme";
 import type { PlayerSummary, GamePlayerStat } from "@/lib/types";
 
+const tooltipStyle = {
+  background: "#1a1a2e",
+  border: "1px solid rgba(255,255,255,0.1)",
+  borderRadius: 8,
+} as const;
+const tooltipLabelStyle = { color: "#fff" } as const;
+
 interface PlayerDetailClientProps {
   summary: PlayerSummary;
   games: { opponent: string; stat: GamePlayerStat }[];
@@ -88,8 +95,8 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                   <XAxis dataKey="game" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
-                    contentStyle={{ background: "#1a1a2e", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8 }}
-                    labelStyle={{ color: "#fff" }}
+                    contentStyle={tooltipStyle}
+                    labelStyle={tooltipLabelStyle}
                   />
                   <Line type="monotone" dataKey="PTS" stroke="#f97316" strokeWidth={3} dot={{ r: 5, fill: "#f97316" }} />
                   <Line type="monotone" dataKey="REB" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4, fill: "#3b82f6" }} />
