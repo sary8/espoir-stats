@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
 
 interface StatCounterProps {
@@ -15,15 +15,11 @@ export default function StatCounter({ end, decimals = 0, suffix = "", duration =
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true });
   const prefersReducedMotion = useReducedMotion();
-  const [display, setDisplay] = useState("0");
+  const finalValue = useMemo(() => end.toFixed(decimals), [end, decimals]);
+  const [display, setDisplay] = useState(() => prefersReducedMotion ? finalValue : "0");
 
   useEffect(() => {
-    if (!isInView) return;
-
-    if (prefersReducedMotion) {
-      setDisplay(end.toFixed(decimals));
-      return;
-    }
+    if (!isInView || prefersReducedMotion) return;
 
     const startTime = performance.now();
     const animate = (now: number) => {
