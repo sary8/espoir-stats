@@ -16,7 +16,7 @@ interface PlayerCardsProps {
 }
 
 export default function PlayerCards({ players, topScorer, topRebounder, topAssister }: PlayerCardsProps) {
-  const sorted = [...players].sort((a, b) => b.ppg - a.ppg);
+  const sorted = [...players].sort((a, b) => a.number - b.number);
 
   return (
     <AnimatedSection id="players" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">

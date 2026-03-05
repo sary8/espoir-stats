@@ -1,14 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-
-const navLinks = [
-  { href: "#overview", label: "Overview", isPage: false },
-  { href: "/players", label: "Players", isPage: true },
-  { href: "#games", label: "Games", isPage: false },
-];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -19,8 +13,6 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   return (
     <header
@@ -33,17 +25,9 @@ export default function Header() {
           <span className="text-accent-purple">E</span>SPOIR
         </Link>
         <nav className="hidden sm:flex items-center gap-6 text-sm text-neutral-400" aria-label="メインナビゲーション">
-          {navLinks.map((link) =>
-            link.isPage ? (
-              <Link key={link.href} href={link.href} className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-                {link.label}
-              </Link>
-            ) : (
-              <a key={link.href} href={link.href} className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-                {link.label}
-              </a>
-            )
-          )}
+          <Link href="/players" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
+            Players
+          </Link>
         </nav>
         <button
           className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
@@ -57,27 +41,13 @@ export default function Header() {
       {menuOpen && (
         <nav className="sm:hidden bg-[#0a0a0f]/95 backdrop-blur-md border-t border-white/5" aria-label="モバイルナビゲーション">
           <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4">
-            {navLinks.map((link) =>
-              link.isPage ? (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={closeMenu}
-                  className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
-                >
-                  {link.label}
-                </Link>
-              ) : (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={closeMenu}
-                  className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
-                >
-                  {link.label}
-                </a>
-              )
-            )}
+            <Link
+              href="/players"
+              onClick={() => setMenuOpen(false)}
+              className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
+            >
+              Players
+            </Link>
           </div>
         </nav>
       )}
