@@ -50,6 +50,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Player <span className="text-accent-purple">Comparison</span>
       </h2>
+      <p className="text-center text-sm text-neutral-400 -mt-4 mb-6">※ 1試合あたりの平均値で比較</p>
       <GlassCard>
         <div className="flex flex-wrap gap-2 mb-6 justify-center">
           {players.map((p) => (
