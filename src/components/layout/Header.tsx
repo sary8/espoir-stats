@@ -25,6 +25,9 @@ export default function Header() {
           <span className="text-accent-purple">E</span>SPOIR
         </Link>
         <nav className="hidden sm:flex items-center gap-6 text-sm text-neutral-400" aria-label="メインナビゲーション">
+          <Link href="/" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
+            Top
+          </Link>
           <Link href="/players" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
             Players
           </Link>
@@ -41,6 +44,13 @@ export default function Header() {
       {menuOpen && (
         <nav className="sm:hidden bg-[#0a0a0f]/95 backdrop-blur-md border-t border-white/5" aria-label="モバイルナビゲーション">
           <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4">
+            <Link
+              href="/"
+              onClick={() => setMenuOpen(false)}
+              className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
+            >
+              Top
+            </Link>
             <Link
               href="/players"
               onClick={() => setMenuOpen(false)}
