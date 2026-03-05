@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import GlassCard from "../ui/GlassCard";
 import AnimatedSection from "../ui/AnimatedSection";
@@ -105,6 +107,9 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
         <section className="relative gradient-mesh py-12 sm:py-20">
           <div className="absolute inset-0 bg-[#0a0a0f]/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
+            <Link href="/" className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-6 sm:mb-8">
+              <ArrowLeft size={18} /> Back to Roster
+            </Link>
             <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }}>
               <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-purple/20">#{p.number}</div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6">{p.name}</h1>
