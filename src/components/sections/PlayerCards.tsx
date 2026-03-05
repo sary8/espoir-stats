@@ -41,7 +41,7 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
                       <div className="text-xs text-neutral-400">{p.games} games played</div>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-1 mt-2 min-h-[28px]">
+                  <div className="flex flex-wrap items-start content-start gap-1 mt-2 h-[52px]">
                     {p.number === topScorer && <Badge variant="purple">Top Scorer</Badge>}
                     {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
                     {p.number === topAssister && <Badge variant="green">Top Assists</Badge>}
