@@ -33,13 +33,15 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
           <AnimatedSection key={p.number} delay={i * 0.05}>
             <Link href={`/player/${p.number}`}>
               <GlassCard hover className="cursor-pointer">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <div className="text-4xl font-bold text-accent-purple/80">#{p.number}</div>
-                    <div className="text-lg font-semibold mt-1">{p.name}</div>
-                    <div className="text-xs text-neutral-400">{p.games} games played</div>
+                <div className="mb-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-4xl font-bold text-accent-purple/80">#{p.number}</div>
+                      <div className="text-lg font-semibold mt-1">{p.name}</div>
+                      <div className="text-xs text-neutral-400">{p.games} games played</div>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-wrap gap-1 mt-2">
                     {p.number === topScorer && <Badge variant="purple">Top Scorer</Badge>}
                     {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
                     {p.number === topAssister && <Badge variant="green">Top Assists</Badge>}
