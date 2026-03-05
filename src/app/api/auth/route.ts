@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { password } = await request.json();
+  const body = await request.json();
+  const password = typeof body?.password === "string" ? body.password : "";
   const sitePassword = process.env.SITE_PASSWORD;
 
   if (!sitePassword) {

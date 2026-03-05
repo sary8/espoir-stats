@@ -39,28 +39,37 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold text-center mb-2">
           Espoir Stats
         </h1>
-        <p className="text-sm text-white/50 text-center mb-6">
+        <p className="text-sm text-white/60 text-center mb-6">
           閲覧にはパスワードが必要です
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="パスワード"
-            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-accent-purple transition-colors"
-            autoFocus
-          />
+          <div>
+            <label htmlFor="password" className="sr-only">
+              パスワード
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="パスワード"
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-accent-purple focus:ring-2 focus:ring-accent-purple/50 focus:outline-none transition-colors"
+              autoFocus
+              aria-describedby={error ? "auth-error" : undefined}
+            />
+          </div>
 
           {error && (
-            <p className="text-red-400 text-sm text-center">{error}</p>
+            <p id="auth-error" role="alert" className="text-red-400 text-sm text-center">
+              {error}
+            </p>
           )}
 
           <button
             type="submit"
             disabled={loading || !password}
-            className="w-full py-3 rounded-xl bg-accent-purple text-white font-semibold hover:bg-accent-purple-light transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full py-3 rounded-xl bg-accent-purple text-white font-semibold hover:bg-accent-purple-light transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {loading ? "認証中..." : "ログイン"}
           </button>
