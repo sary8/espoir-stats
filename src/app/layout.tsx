@@ -22,6 +22,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Espoir Basketball Stats",
   description: "Espoir バスケットボールチームのシーズンスタッツダッシュボード",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
