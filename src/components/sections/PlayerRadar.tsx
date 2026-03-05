@@ -32,11 +32,11 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
   const maxBlk = Math.max(...players.map((p) => p.bpg), 1);
 
   const radarData = [
-    { stat: "PTS", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.ppg / maxPts) * 100)])) },
-    { stat: "REB", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.rpg / maxReb) * 100)])) },
-    { stat: "AST", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.apg / maxAst) * 100)])) },
-    { stat: "STL", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.spg / maxStl) * 100)])) },
-    { stat: "BLK", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.bpg / maxBlk) * 100)])) },
+    { stat: "PPG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.ppg / maxPts) * 100)])) },
+    { stat: "RPG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.rpg / maxReb) * 100)])) },
+    { stat: "APG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.apg / maxAst) * 100)])) },
+    { stat: "SPG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.spg / maxStl) * 100)])) },
+    { stat: "BPG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.bpg / maxBlk) * 100)])) },
   ];
 
   const togglePlayer = (num: number) => {
@@ -50,7 +50,6 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Player <span className="text-accent-purple">Comparison</span>
       </h2>
-      <p className="text-center text-sm text-neutral-400 -mt-4 mb-6">※ 1試合あたりの平均値で比較</p>
       <GlassCard>
         <div className="flex flex-wrap gap-2 mb-6 justify-center">
           {players.map((p) => (
@@ -68,7 +67,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
             </button>
           ))}
         </div>
-        <p className="sr-only">選手の能力比較レーダーチャート（PTS、REB、AST、STL、BLK）。</p>
+        <p className="sr-only">選手の能力比較レーダーチャート（PPG、RPG、APG、SPG、BPG）。1試合あたりの平均値で比較。</p>
         <ResponsiveContainer width="100%" height={280}>
           <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
             <PolarGrid stroke="rgba(255,255,255,0.1)" />
