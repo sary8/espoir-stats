@@ -31,8 +31,8 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {sorted.map((p, i) => (
           <AnimatedSection key={p.number} delay={i * 0.05}>
-            <Link href={`/player/${p.number}`}>
-              <GlassCard hover className="cursor-pointer">
+            <Link href={`/player/${p.number}`} className="block h-full">
+              <GlassCard hover className="cursor-pointer h-full">
                 <div className="mb-4">
                   <div className="flex items-start justify-between">
                     <div>
@@ -41,7 +41,7 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
                       <div className="text-xs text-neutral-400">{p.games} games played</div>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-1 mt-2">
+                  <div className="flex flex-wrap gap-1 mt-2 min-h-[28px]">
                     {p.number === topScorer && <Badge variant="purple">Top Scorer</Badge>}
                     {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
                     {p.number === topAssister && <Badge variant="green">Top Assists</Badge>}
