@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { createToken } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -20,8 +21,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const token = await createToken();
   const response = NextResponse.json({ success: true });
-  response.cookies.set("espoir-auth", "authenticated", {
+  response.cookies.set("espoir-auth", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
