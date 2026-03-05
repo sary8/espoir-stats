@@ -3,12 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { ArrowLeft, Menu, X } from "lucide-react";
 
-const sections = [
-  { id: "overview", label: "Overview" },
-  { id: "players", label: "Players" },
-  { id: "games", label: "Games" },
+const navLinks = [
+  { href: "#overview", label: "Overview" },
+  { href: "#players", label: "Players" },
+  { href: "#games", label: "Games" },
 ];
 
 export default function Header() {
@@ -25,10 +25,6 @@ export default function Header() {
 
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const navLinks = sections.map((s) => ({
-    href: isHome ? `#${s.id}` : `/#${s.id}`,
-    label: s.label,
-  }));
 
   return (
     <header
@@ -40,34 +36,42 @@ export default function Header() {
         <Link href="/" className="text-xl font-bold tracking-wider focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
           <span className="text-accent-purple">E</span>SPOIR
         </Link>
-        <nav className="hidden sm:flex items-center gap-6 text-sm text-neutral-400" aria-label="メインナビゲーション">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-        <button
-          className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
-          onClick={() => setMenuOpen((v) => !v)}
-          aria-expanded={menuOpen}
-          aria-label={menuOpen ? "メニューを閉じる" : "メニューを開く"}
-        >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {isHome ? (
+          <>
+            <nav className="hidden sm:flex items-center gap-6 text-sm text-neutral-400" aria-label="メインナビゲーション">
+              {navLinks.map((link) => (
+                <a key={link.href} href={link.href} className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+            <button
+              className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-expanded={menuOpen}
+              aria-label={menuOpen ? "メニューを閉じる" : "メニューを開く"}
+            >
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </>
+        ) : (
+          <Link href="/" className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
+            <ArrowLeft size={16} /> Back to Top
+          </Link>
+        )}
       </div>
-      {menuOpen && (
+      {isHome && menuOpen && (
         <nav className="sm:hidden bg-[#0a0a0f]/95 backdrop-blur-md border-t border-white/5" aria-label="モバイルナビゲーション">
           <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.href}
                 href={link.href}
                 onClick={closeMenu}
                 className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
           </div>
         </nav>
