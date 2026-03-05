@@ -32,28 +32,26 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
         {sorted.map((p, i) => (
           <AnimatedSection key={p.number} delay={i * 0.05}>
             <Link href={`/player/${p.number}`} className="block h-full">
-              <GlassCard hover className="cursor-pointer h-full">
-                <div className="mb-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="text-4xl font-bold text-accent-purple/80">#{p.number}</div>
-                      <div className="text-lg font-semibold mt-1">{p.name}</div>
-                      <div className="text-xs text-neutral-400">{p.games} games played</div>
+              <GlassCard hover className="cursor-pointer h-full flex flex-col">
+                <div>
+                  <div className="text-4xl font-bold text-accent-purple/80">#{p.number}</div>
+                  <div className="text-lg font-semibold mt-1">{p.name}</div>
+                  <div className="text-xs text-neutral-400">{p.games} games played</div>
+                  {(p.number === topScorer || p.number === topRebounder || p.number === topAssister || p.number === top3P || p.number === topStealer || p.number === topBlocker || p.number === topFoul || p.number === topTurnover) && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {p.number === topScorer && <Badge variant="purple">Top Scorer</Badge>}
+                      {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
+                      {p.number === topAssister && <Badge variant="green">Top Assists</Badge>}
+                      {p.number === top3P && <Badge variant="pink">Top 3P</Badge>}
+                      {p.number === topStealer && <Badge variant="cyan">Top Steal</Badge>}
+                      {p.number === topBlocker && <Badge variant="yellow">Top Block</Badge>}
+                      {p.number === topFoul && <Badge variant="red">Top Foul</Badge>}
+                      {p.number === topTurnover && <Badge variant="orange">Top Turnovers</Badge>}
                     </div>
-                  </div>
-                  <div className="flex flex-wrap items-start content-start gap-1 mt-2 h-[52px]">
-                    {p.number === topScorer && <Badge variant="purple">Top Scorer</Badge>}
-                    {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
-                    {p.number === topAssister && <Badge variant="green">Top Assists</Badge>}
-                    {p.number === top3P && <Badge variant="pink">Top 3P</Badge>}
-                    {p.number === topStealer && <Badge variant="cyan">Top Steal</Badge>}
-                    {p.number === topBlocker && <Badge variant="yellow">Top Block</Badge>}
-                    {p.number === topFoul && <Badge variant="red">Top Foul</Badge>}
-                    {p.number === topTurnover && <Badge variant="orange">Top Turnovers</Badge>}
-                  </div>
+                  )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+                <div className="grid grid-cols-3 gap-2 mb-4 text-center mt-auto pt-4">
                   <div>
                     <div className="text-xl font-bold">{p.ppg}</div>
                     <div className="text-xs text-neutral-400">PPG</div>
