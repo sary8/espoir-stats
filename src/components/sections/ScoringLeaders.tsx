@@ -34,6 +34,7 @@ export default function ScoringLeaders({ data }: ScoringLeadersProps) {
               labelStyle={tooltipLabelStyle}
               itemStyle={tooltipItemStyle}
               formatter={(value) => [`${value} PPG`, "平均得点"]}
+              cursor={{ fill: "rgba(168, 85, 247, 0.08)" }}
             />
             <Bar dataKey="ppg" radius={[0, 6, 6, 0]} barSize={20}>
               {data.map((_, i) => (

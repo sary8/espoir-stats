@@ -32,6 +32,7 @@ export default function ShootingChart({ data }: ShootingChartProps) {
               contentStyle={tooltipStyle}
               labelStyle={tooltipLabelStyle}
               formatter={(value) => `${Number(value).toFixed(1)}%`}
+              cursor={{ fill: "rgba(168, 85, 247, 0.08)" }}
             />
             <Legend />
             <Bar dataKey="threePointPct" name="3P%" fill={shootingColors.threePoint} radius={[4, 4, 0, 0]} barSize={14} />
