@@ -224,13 +224,13 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
         {/* Game Log */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
           <h2 className="text-2xl font-bold mb-6">Game Log</h2>
-          <GlassCard>
-            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <GlassCard className="!p-0">
+            <div className="overflow-x-auto">
               <table className="w-full text-xs sm:text-sm min-w-[900px]" aria-label={`${p.name} ゲームログ`}>
                 <caption className="sr-only">{p.name}の各試合スタッツ</caption>
                 <thead>
                   <tr className="border-b border-white/10 text-neutral-400">
-                    <th className="text-left py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10" scope="col">対戦</th>
+                    <th className="text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10" scope="col">対戦</th>
                     <th className={th} scope="col">GS</th>
                     <th className={th} scope="col">PTS</th>
                     <th className={th} scope="col">3P</th>
@@ -255,7 +255,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                 <tbody>
                   {games.map((g) => (
                     <tr key={g.opponent} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="py-2 px-1.5 sm:py-3 sm:px-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
+                      <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
                         <span className="text-neutral-400 mr-2 text-xs">{(g.date ?? "").replace(/-/g, "/")}</span>vs {g.opponent}
                       </td>
                       <td className={td}>{g.stat.starter ? <span aria-label="スターター">●</span> : ""}</td>
@@ -282,7 +282,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-white/10 font-semibold">
-                    <td className="py-2 px-1.5 sm:py-3 sm:px-2 sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">TOTAL</td>
+                    <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">TOTAL</td>
                     <td className={td}></td>
                     <td className={`${td} text-accent-purple`}>{totals.points}</td>
                     <td className={td}>{totals.threePointMade}/{totals.threePointAttempt}</td>
