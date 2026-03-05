@@ -13,9 +13,14 @@ interface PlayerCardsProps {
   topScorer: number;
   topRebounder: number;
   topAssister: number;
+  top3P: number;
+  topStealer: number;
+  topBlocker: number;
+  topFoul: number;
+  topTurnover: number;
 }
 
-export default function PlayerCards({ players, topScorer, topRebounder, topAssister }: PlayerCardsProps) {
+export default function PlayerCards({ players, topScorer, topRebounder, topAssister, top3P, topStealer, topBlocker, topFoul, topTurnover }: PlayerCardsProps) {
   const sorted = [...players].sort((a, b) => a.number - b.number);
 
   return (
@@ -38,6 +43,11 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
                     {p.number === topScorer && <Badge variant="purple">Top Scorer</Badge>}
                     {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
                     {p.number === topAssister && <Badge variant="green">Top Assists</Badge>}
+                    {p.number === top3P && <Badge variant="pink">Top 3P</Badge>}
+                    {p.number === topStealer && <Badge variant="cyan">Top Steal</Badge>}
+                    {p.number === topBlocker && <Badge variant="yellow">Top Block</Badge>}
+                    {p.number === topFoul && <Badge variant="red">Top Foul</Badge>}
+                    {p.number === topTurnover && <Badge variant="orange">Top Turnovers</Badge>}
                   </div>
                 </div>
 

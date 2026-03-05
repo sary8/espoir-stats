@@ -38,6 +38,11 @@ export default function Home() {
   const topScorer = sortedByPpg[0].number;
   const topRebounder = [...players].sort((a, b) => b.totalReb - a.totalReb)[0].number;
   const topAssister = [...players].sort((a, b) => b.assists - a.assists)[0].number;
+  const top3P = [...players].sort((a, b) => b.threePointMade - a.threePointMade)[0].number;
+  const topStealer = [...players].sort((a, b) => b.steals - a.steals)[0].number;
+  const topBlocker = [...players].sort((a, b) => b.blocks - a.blocks)[0].number;
+  const topFoul = [...players].sort((a, b) => b.personalFouls - a.personalFouls)[0].number;
+  const topTurnover = [...players].sort((a, b) => b.turnovers - a.turnovers)[0].number;
 
   const sortedByNumber = [...players].sort((a, b) => a.number - b.number);
 
@@ -90,6 +95,11 @@ export default function Home() {
           topScorer={topScorer}
           topRebounder={topRebounder}
           topAssister={topAssister}
+          top3P={top3P}
+          topStealer={topStealer}
+          topBlocker={topBlocker}
+          topFoul={topFoul}
+          topTurnover={topTurnover}
         />
         <StatsRanking players={players} />
       </main>
