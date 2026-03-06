@@ -226,55 +226,55 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Game <span className="text-accent-purple">Breakdown</span>
       </h2>
-      <GlassCard>
-        <div className="flex flex-wrap gap-2 mb-6">
-          <button
-            onClick={() => { setActiveGame(games.length); setSortKey("number"); setSortAsc(true); }}
-            aria-pressed={isAllGames}
-            className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
-              isAllGames
-                ? "bg-accent-purple text-white"
-                : "bg-white/5 text-neutral-400 hover:bg-white/10"
-            }`}
-          >
-            ALL
-          </button>
-          {games.map((g, i) => (
-            <div key={g.opponent} className="flex items-center gap-1">
-              <button
-                onClick={() => { setActiveGame(i); setSortKey("number"); setSortAsc(true); }}
-                aria-pressed={i === activeGame}
-                className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
-                  i === activeGame && !isAllGames
-                    ? "bg-accent-purple text-white"
-                    : "bg-white/5 text-neutral-400 hover:bg-white/10"
-                }`}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <button
+          onClick={() => { setActiveGame(games.length); setSortKey("number"); setSortAsc(true); }}
+          aria-pressed={isAllGames}
+          className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
+            isAllGames
+              ? "bg-accent-purple text-white"
+              : "bg-white/5 text-neutral-400 hover:bg-white/10"
+          }`}
+        >
+          ALL
+        </button>
+        {games.map((g, i) => (
+          <div key={g.opponent} className="flex items-center gap-1">
+            <button
+              onClick={() => { setActiveGame(i); setSortKey("number"); setSortAsc(true); }}
+              aria-pressed={i === activeGame}
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
+                i === activeGame && !isAllGames
+                  ? "bg-accent-purple text-white"
+                  : "bg-white/5 text-neutral-400 hover:bg-white/10"
+              }`}
+            >
+              <span className="block">{(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}</span>
+              <span className="text-xs opacity-75">{g.teamPoints}pts</span>
+            </button>
+            {g.youtubeUrl && (
+              <a
+                href={g.youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${g.opponent}戦の試合動画`}
+                className="p-1.5 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors"
               >
-                <span className="block">{(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}</span>
-                <span className="text-xs opacity-75">{g.teamPoints}pts</span>
-              </button>
-              {g.youtubeUrl && (
-                <a
-                  href={g.youtubeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${g.opponent}戦の試合動画`}
-                  className="p-1.5 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors"
-                >
-                  <Youtube size={18} />
-                </a>
-              )}
-            </div>
-          ))}
-        </div>
+                <Youtube size={18} />
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
 
-        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+      <GlassCard className="!p-0">
+        <div className="overflow-x-auto">
           <table className="w-full text-xs sm:text-sm min-w-[900px]" aria-label={`${label} 個人スタッツ`}>
             <caption className="sr-only">{label} における各選手のスタッツ</caption>
             <thead>
               <tr className="border-b border-white/10 text-neutral-400">
                 <th
-                  className="text-left py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap sticky left-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10 cursor-pointer select-none hover:text-white transition-colors"
+                  className="text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10 cursor-pointer select-none hover:text-white transition-colors"
                   scope="col"
                   onClick={() => handleSort("number")}
                 >
@@ -306,7 +306,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
             <tbody>
               {sortedPlayers.map((p) => (
                 <tr key={p.number} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                  <td className="py-2 px-1.5 sm:py-3 sm:px-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10">
+                  <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
                     <span className="text-accent-purple mr-1 sm:mr-2">#{p.number}</span>
                     {p.name}
                   </td>
@@ -333,7 +333,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
             </tbody>
             <tfoot>
               <tr className="border-t border-white/10 font-semibold">
-                <td className="py-2 px-1.5 sm:py-3 sm:px-2 sticky left-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-10">TEAM</td>
+                <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">TEAM</td>
                 {isAllGames && <td className={td}></td>}
                 <td className={`${td} text-accent-purple`}>{teamTotals.points}</td>
                 <td className={td}>{teamTotals.threePointMade}/{teamTotals.threePointAttempt}</td>
