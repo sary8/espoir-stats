@@ -1,6 +1,6 @@
 # F003 - 選手詳細ページ
 
-**ステータス:** ✅ 実装済み
+**ステータス:** 実装済み
 **優先度:** P0
 
 ## 概要
@@ -38,7 +38,7 @@
 - 横スクロール対応
 
 ## データソース
-- `getPlayerByNumber(number)` → `{ summary: PlayerSummary, games: GamePlayerStat[] }`
+- `getPlayerByNumber(number)` → `{ summary: PlayerSummary, games: { opponent, date, stat }[] }`
 
 ## 受け入れ条件
 - [x] 全選手のページが静的生成される

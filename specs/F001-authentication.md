@@ -1,6 +1,6 @@
 # F001 - 認証機能
 
-**ステータス:** ✅ 実装済み
+**ステータス:** 実装済み
 **優先度:** P0
 
 ## 概要
@@ -26,7 +26,12 @@
 - 属性: httpOnly, secure(本番), sameSite=lax
 - 有効期限: 30日
 
-### Middleware (`src/middleware.ts`)
+### 認証ライブラリ (`src/lib/auth.ts`)
+- `createToken()` - UUIDを生成しHMAC-SHA256で署名
+- `verifyToken()` - トークン署名を固定時間比較で検証
+
+### Proxy (`src/proxy.ts`)
+- Next.js 16の規約に準拠（旧`middleware.ts` → `proxy.ts`にリネーム）
 - 全リクエストで `espoir-auth` cookie を検証
 - 除外パス: `/login`, `/api/auth`, 静的アセット (`_next/`, favicon等)
 - 無効トークン: cookie削除 + `/login` リダイレクト
