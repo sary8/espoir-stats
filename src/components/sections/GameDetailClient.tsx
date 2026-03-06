@@ -64,12 +64,117 @@ interface GameDetailClientProps {
   game: GameResult;
 }
 
+function ComparisonBar({ label, espoirVal, opponentVal, format = "number", opponentName }: {
+  label: string;
+  espoirVal: number;
+  opponentVal: number;
+  format?: "number" | "pct";
+  opponentName: string;
+}) {
+  const max = Math.max(espoirVal, opponentVal, 1);
+  const espoirPct = (espoirVal / max) * 100;
+  const opponentPct = (opponentVal / max) * 100;
+  const fmt = (v: number) => format === "pct" ? `${v.toFixed(1)}%` : String(v);
+  const espoirWins = espoirVal > opponentVal;
+  const opponentWins = opponentVal > espoirVal;
+
+  return (
+    <div className="py-2.5">
+      <div className="flex justify-between text-xs text-neutral-400 mb-1.5">
+        <span className={espoirWins ? "text-accent-purple font-bold" : ""}>{fmt(espoirVal)}</span>
+        <span className="font-medium text-neutral-300">{label}</span>
+        <span className={opponentWins ? "text-white font-bold" : ""}>{fmt(opponentVal)}</span>
+      </div>
+      <div className="flex gap-1 h-2">
+        <div className="flex-1 flex justify-end">
+          <div
+            className={`h-full rounded-l-full transition-all ${espoirWins ? "bg-accent-purple" : "bg-accent-purple/40"}`}
+            style={{ width: `${espoirPct}%` }}
+          />
+        </div>
+        <div className="flex-1">
+          <div
+            className={`h-full rounded-r-full transition-all ${opponentWins ? "bg-white/70" : "bg-white/20"}`}
+            style={{ width: `${opponentPct}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LeaderCard({ category, players, espoirTeam }: {
+  category: string;
+  players: { name: string; value: number; team: string }[];
+  espoirTeam: boolean[];
+}) {
+  return (
+    <div className="bg-white/5 rounded-lg p-3 border border-white/5">
+      <p className="text-[10px] text-neutral-500 uppercase tracking-wider mb-2">{category}</p>
+      {players.map((p, i) => (
+        <div key={i} className={`flex items-center justify-between ${i > 0 ? "mt-1.5" : ""}`}>
+          <span className={`text-sm ${espoirTeam[i] ? "text-accent-purple" : "text-neutral-300"}`}>
+            {p.name}
+            <span className="text-[10px] text-neutral-500 ml-1">{p.team}</span>
+          </span>
+          <span className={`text-sm font-bold ${espoirTeam[i] ? "text-accent-purple" : "text-white"}`}>{p.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function GameDetailClient({ game }: GameDetailClientProps) {
   const [activeTab, setActiveTab] = useState<"espoir" | "opponent">("espoir");
   const [sortKey, setSortKey] = useState<SortKey>("number");
   const [sortAsc, setSortAsc] = useState(true);
 
   const players = activeTab === "espoir" ? game.players : game.opponentPlayers;
+
+  const espoirTotals = useMemo(() => {
+    const t = { threePointMade: 0, threePointAttempt: 0, twoPointMade: 0, twoPointAttempt: 0, ftMade: 0, ftAttempt: 0, offReb: 0, defReb: 0, totalReb: 0, assists: 0, steals: 0, blocks: 0, turnovers: 0, personalFouls: 0, foulsDrawn: 0, points: 0, totalMinutes: 0 };
+    for (const p of game.players) {
+      t.points += p.points; t.threePointMade += p.threePointMade; t.threePointAttempt += p.threePointAttempt;
+      t.twoPointMade += p.twoPointMade; t.twoPointAttempt += p.twoPointAttempt;
+      t.ftMade += p.ftMade; t.ftAttempt += p.ftAttempt;
+      t.offReb += p.offReb; t.defReb += p.defReb; t.totalReb += p.totalReb;
+      t.assists += p.assists; t.steals += p.steals; t.blocks += p.blocks;
+      t.turnovers += p.turnovers; t.personalFouls += p.personalFouls; t.foulsDrawn += p.foulsDrawn;
+      t.totalMinutes += parseMinutes(p.minutes);
+    }
+    return t;
+  }, [game.players]);
+
+  const opponentTotals = useMemo(() => {
+    const t = { threePointMade: 0, threePointAttempt: 0, twoPointMade: 0, twoPointAttempt: 0, ftMade: 0, ftAttempt: 0, offReb: 0, defReb: 0, totalReb: 0, assists: 0, steals: 0, blocks: 0, turnovers: 0, personalFouls: 0, foulsDrawn: 0, points: 0, totalMinutes: 0 };
+    for (const p of game.opponentPlayers) {
+      t.points += p.points; t.threePointMade += p.threePointMade; t.threePointAttempt += p.threePointAttempt;
+      t.twoPointMade += p.twoPointMade; t.twoPointAttempt += p.twoPointAttempt;
+      t.ftMade += p.ftMade; t.ftAttempt += p.ftAttempt;
+      t.offReb += p.offReb; t.defReb += p.defReb; t.totalReb += p.totalReb;
+      t.assists += p.assists; t.steals += p.steals; t.blocks += p.blocks;
+      t.turnovers += p.turnovers; t.personalFouls += p.personalFouls; t.foulsDrawn += p.foulsDrawn;
+      t.totalMinutes += parseMinutes(p.minutes);
+    }
+    return t;
+  }, [game.opponentPlayers]);
+
+  const gameLeaders = useMemo(() => {
+    const all = [
+      ...game.players.map(p => ({ ...p, team: "ESP" })),
+      ...game.opponentPlayers.map(p => ({ ...p, team: game.opponent })),
+    ];
+    const topN = (key: keyof GamePlayerStat, n = 3) =>
+      [...all].sort((a, b) => (b[key] as number) - (a[key] as number)).slice(0, n);
+
+    return {
+      points: topN("points"),
+      rebounds: topN("totalReb"),
+      assists: topN("assists"),
+      steals: topN("steals"),
+      blocks: topN("blocks"),
+    };
+  }, [game.players, game.opponentPlayers, game.opponent]);
 
   const sortedPlayers = useMemo(() => {
     return [...players].sort((a, b) => {
@@ -91,29 +196,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
     });
   }, [players, sortKey, sortAsc]);
 
-  const teamTotals = useMemo(() => {
-    const t = { threePointMade: 0, threePointAttempt: 0, twoPointMade: 0, twoPointAttempt: 0, ftMade: 0, ftAttempt: 0, offReb: 0, defReb: 0, totalReb: 0, assists: 0, steals: 0, blocks: 0, turnovers: 0, personalFouls: 0, foulsDrawn: 0, points: 0, totalMinutes: 0 };
-    for (const p of players) {
-      t.points += p.points;
-      t.threePointMade += p.threePointMade;
-      t.threePointAttempt += p.threePointAttempt;
-      t.twoPointMade += p.twoPointMade;
-      t.twoPointAttempt += p.twoPointAttempt;
-      t.ftMade += p.ftMade;
-      t.ftAttempt += p.ftAttempt;
-      t.offReb += p.offReb;
-      t.defReb += p.defReb;
-      t.totalReb += p.totalReb;
-      t.assists += p.assists;
-      t.steals += p.steals;
-      t.blocks += p.blocks;
-      t.turnovers += p.turnovers;
-      t.personalFouls += p.personalFouls;
-      t.foulsDrawn += p.foulsDrawn;
-      t.totalMinutes += parseMinutes(p.minutes);
-    }
-    return t;
-  }, [players]);
+  const teamTotals = activeTab === "espoir" ? espoirTotals : opponentTotals;
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -247,6 +330,50 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
               <p className="text-sm">{game.date.replace(/-/g, "/")}</p>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Team Comparison */}
+      {game.opponentPlayers.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+          <GlassCard>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-bold text-accent-purple">Espoir</span>
+              <span className="text-xs text-neutral-400 font-medium">Team Comparison</span>
+              <span className="text-sm font-bold text-neutral-300">{game.opponent}</span>
+            </div>
+            <div className="divide-y divide-white/5">
+              <ComparisonBar label="FG%" espoirVal={pctVal(espoirTotals.twoPointMade + espoirTotals.threePointMade, espoirTotals.twoPointAttempt + espoirTotals.threePointAttempt)} opponentVal={pctVal(opponentTotals.twoPointMade + opponentTotals.threePointMade, opponentTotals.twoPointAttempt + opponentTotals.threePointAttempt)} format="pct" opponentName={game.opponent} />
+              <ComparisonBar label="3P%" espoirVal={pctVal(espoirTotals.threePointMade, espoirTotals.threePointAttempt)} opponentVal={pctVal(opponentTotals.threePointMade, opponentTotals.threePointAttempt)} format="pct" opponentName={game.opponent} />
+              <ComparisonBar label="FT%" espoirVal={pctVal(espoirTotals.ftMade, espoirTotals.ftAttempt)} opponentVal={pctVal(opponentTotals.ftMade, opponentTotals.ftAttempt)} format="pct" opponentName={game.opponent} />
+              <ComparisonBar label="REB" espoirVal={espoirTotals.totalReb} opponentVal={opponentTotals.totalReb} opponentName={game.opponent} />
+              <ComparisonBar label="AST" espoirVal={espoirTotals.assists} opponentVal={opponentTotals.assists} opponentName={game.opponent} />
+              <ComparisonBar label="STL" espoirVal={espoirTotals.steals} opponentVal={opponentTotals.steals} opponentName={game.opponent} />
+              <ComparisonBar label="BLK" espoirVal={espoirTotals.blocks} opponentVal={opponentTotals.blocks} opponentName={game.opponent} />
+              <ComparisonBar label="TO" espoirVal={espoirTotals.turnovers} opponentVal={opponentTotals.turnovers} opponentName={game.opponent} />
+            </div>
+          </GlassCard>
+
+          {/* Game Leaders */}
+          <GlassCard>
+            <p className="text-xs text-neutral-400 font-medium mb-3 text-center">Game Leaders</p>
+            <div className="grid grid-cols-1 gap-2">
+              {(["points", "rebounds", "assists", "steals", "blocks"] as const).map((cat) => {
+                const labels = { points: "PTS", rebounds: "REB", assists: "AST", steals: "STL", blocks: "BLK" } as const;
+                const keys = { points: "points", rebounds: "totalReb", assists: "assists", steals: "steals", blocks: "blocks" } as const;
+                const top = gameLeaders[cat];
+                if (top.length === 0 || (top[0][keys[cat]] as number) === 0) return null;
+                return (
+                  <LeaderCard
+                    key={cat}
+                    category={labels[cat]}
+                    players={top.map(p => ({ name: p.name, value: p[keys[cat]] as number, team: p.team }))}
+                    espoirTeam={top.map(p => p.team === "ESP")}
+                  />
+                );
+              })}
+            </div>
+          </GlassCard>
         </div>
       )}
 
