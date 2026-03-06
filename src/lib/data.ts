@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import Papa from "papaparse";
-import type { PlayerSummary, GamePlayerStat, GameResult } from "./types";
+import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo } from "./types";
 import { parsePctString } from "./utils";
 
 function readCsv(filename: string): string {
@@ -94,14 +94,35 @@ export function getPlayerSummaries(): PlayerSummary[] {
   return result;
 }
 
-function getGameInfoMap(): Map<string, { date: string; youtubeUrl: string | null }> {
+interface GameInfoRow {
+  date: string;
+  youtubeUrl: string | null;
+  quarterScores: QuarterScore[];
+  gameInfo: GameInfo;
+}
+
+function getGameInfoMap(): Map<string, GameInfoRow> {
   const csv = readCsv("試合情報.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
-  const map = new Map<string, { date: string; youtubeUrl: string | null }>();
+  const map = new Map<string, GameInfoRow>();
   for (const row of data) {
+    const quarters: QuarterScore[] = [];
+    for (const q of ["1Q", "2Q", "3Q", "4Q"]) {
+      const espoir = parseInt(row[`${q}_自`], 10);
+      const opp = parseInt(row[`${q}_相手`], 10);
+      if (!isNaN(espoir) && !isNaN(opp)) {
+        quarters.push({ quarter: q, espoir, opponent: opp });
+      }
+    }
     map.set(row["対戦相手"], {
       date: row["日付"] ?? "9999-12-31",
       youtubeUrl: row["YouTube"] || null,
+      quarterScores: quarters,
+      gameInfo: {
+        tournament: row["大会名"] || null,
+        venue: row["会場"] || null,
+        gameType: row["試合種別"] || null,
+      },
     });
   }
   return map;
@@ -184,6 +205,8 @@ export function getGameStats(): GameResult[] {
         opponentPlayers: sortedOpp,
         opponentPoints: oppPlayers.reduce((sum, p) => sum + p.points, 0),
         youtubeUrl: info?.youtubeUrl ?? null,
+        quarterScores: info?.quarterScores ?? [],
+        gameInfo: info?.gameInfo ?? { tournament: null, venue: null, gameType: null },
       };
     })
     .sort((a, b) => a.date.localeCompare(b.date));

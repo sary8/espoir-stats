@@ -55,6 +55,18 @@ export interface GamePlayerStat {
   minutes: string;
 }
 
+export interface QuarterScore {
+  quarter: string;
+  espoir: number;
+  opponent: number;
+}
+
+export interface GameInfo {
+  tournament: string | null;
+  venue: string | null;
+  gameType: string | null;
+}
+
 export interface GameResult {
   opponent: string;
   date: string;
@@ -63,4 +75,6 @@ export interface GameResult {
   opponentPlayers: GamePlayerStat[];
   opponentPoints: number;
   youtubeUrl: string | null;
+  quarterScores: QuarterScore[];
+  gameInfo: GameInfo;
 }

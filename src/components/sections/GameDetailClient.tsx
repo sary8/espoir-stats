@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronUp, ChevronDown, Youtube, ArrowLeft } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
+import { MapPin, Trophy, Calendar, Shield } from "lucide-react";
 import type { GameResult, GamePlayerStat } from "@/lib/types";
 
 function fmtPct(made: number, attempt: number): string {
@@ -167,6 +168,87 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
           </a>
         ) : null}
       </div>
+
+      {game.quarterScores.length > 0 && (
+        <GlassCard className="mb-6">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table className="w-full text-sm sm:text-base" aria-label="クォータースコア">
+              <thead>
+                <tr className="border-b border-white/10 text-neutral-400">
+                  <th className="text-left py-2 px-3 sm:py-3 sm:px-4 w-1/3" scope="col"></th>
+                  {game.quarterScores.map((q) => (
+                    <th key={q.quarter} className="text-center py-2 px-2 sm:py-3 sm:px-4 font-medium" scope="col">{q.quarter}</th>
+                  ))}
+                  <th className="text-center py-2 px-2 sm:py-3 sm:px-4 font-bold" scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-white/5">
+                  <td className="py-2 px-3 sm:py-3 sm:px-4 font-bold">Espoir</td>
+                  {game.quarterScores.map((q) => (
+                    <td key={q.quarter} className={`text-center py-2 px-2 sm:py-3 sm:px-4 ${q.espoir > q.opponent ? "text-accent-purple font-semibold" : ""}`}>
+                      {q.espoir}
+                    </td>
+                  ))}
+                  <td className={`text-center py-2 px-2 sm:py-3 sm:px-4 font-bold ${game.teamPoints > game.opponentPoints ? "text-accent-purple" : ""}`}>
+                    {game.teamPoints}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-2 px-3 sm:py-3 sm:px-4 font-bold">{game.opponent}</td>
+                  {game.quarterScores.map((q) => (
+                    <td key={q.quarter} className={`text-center py-2 px-2 sm:py-3 sm:px-4 ${q.opponent > q.espoir ? "text-neutral-200 font-semibold" : ""}`}>
+                      {q.opponent}
+                    </td>
+                  ))}
+                  <td className={`text-center py-2 px-2 sm:py-3 sm:px-4 font-bold ${game.opponentPoints > game.teamPoints ? "text-neutral-200" : ""}`}>
+                    {game.opponentPoints}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </GlassCard>
+      )}
+
+      {(game.gameInfo.tournament || game.gameInfo.venue || game.gameInfo.gameType) && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          {game.gameInfo.tournament && (
+            <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
+              <Trophy size={14} className="text-accent-purple shrink-0" />
+              <div>
+                <p className="text-[10px] text-neutral-500 uppercase tracking-wider">大会</p>
+                <p className="text-sm">{game.gameInfo.tournament}</p>
+              </div>
+            </div>
+          )}
+          {game.gameInfo.venue && (
+            <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
+              <MapPin size={14} className="text-accent-purple shrink-0" />
+              <div>
+                <p className="text-[10px] text-neutral-500 uppercase tracking-wider">会場</p>
+                <p className="text-sm">{game.gameInfo.venue}</p>
+              </div>
+            </div>
+          )}
+          {game.gameInfo.gameType && (
+            <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
+              <Shield size={14} className="text-accent-purple shrink-0" />
+              <div>
+                <p className="text-[10px] text-neutral-500 uppercase tracking-wider">種別</p>
+                <p className="text-sm">{game.gameInfo.gameType}</p>
+              </div>
+            </div>
+          )}
+          <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
+            <Calendar size={14} className="text-accent-purple shrink-0" />
+            <div>
+              <p className="text-[10px] text-neutral-500 uppercase tracking-wider">対戦日</p>
+              <p className="text-sm">{game.date.replace(/-/g, "/")}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <GlassCard>
         <div className="flex gap-2 mb-6">
