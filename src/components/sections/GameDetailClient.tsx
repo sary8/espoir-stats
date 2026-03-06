@@ -37,7 +37,7 @@ type SortKey =
   | "assists" | "steals" | "blocks" | "turnovers"
   | "personalFouls" | "foulsDrawn";
 
-const TH_SORTABLE = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap cursor-pointer select-none hover:text-white transition-colors underline decoration-dotted underline-offset-4 decoration-neutral-600";
+const TH_SORTABLE = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap cursor-pointer select-none text-neutral-200 hover:text-white transition-colors";
 
 function SortTh({ k, sortKey, sortAsc, onSort, children }: {
   k: SortKey;
