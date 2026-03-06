@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getPlayerSummaries, getGameStats, getPlayerByNumber, getAllPlayerNumbers } from "./data";
+import { getPlayerSummaries, getGameStats, getPlayerByNumber, getAllPlayerNumbers, getGameByOpponent, getAllOpponents } from "./data";
 
 describe("getPlayerSummaries", () => {
   const summaries = getPlayerSummaries();
@@ -50,6 +50,46 @@ describe("getGameStats", () => {
     for (const g of games) {
       const sum = g.players.reduce((acc, p) => acc + p.points, 0);
       expect(g.teamPoints).toBe(sum);
+    }
+  });
+
+  it("相手チームデータが含まれている", () => {
+    for (const g of games) {
+      expect(g.opponentPlayers).toBeDefined();
+      expect(g.opponentPoints).toBeTypeOf("number");
+    }
+  });
+
+  it("相手チーム合計得点が選手の得点合計と一致する", () => {
+    for (const g of games) {
+      if (g.opponentPlayers.length > 0) {
+        const sum = g.opponentPlayers.reduce((acc, p) => acc + p.points, 0);
+        expect(g.opponentPoints).toBe(sum);
+      }
+    }
+  });
+});
+
+describe("getGameByOpponent", () => {
+  it("存在する対戦相手で試合データを返す", () => {
+    const opponents = getAllOpponents();
+    const game = getGameByOpponent(opponents[0]);
+    expect(game).not.toBeNull();
+    expect(game!.opponent).toBe(opponents[0]);
+  });
+
+  it("存在しない対戦相手でnullを返す", () => {
+    const game = getGameByOpponent("存在しないチーム");
+    expect(game).toBeNull();
+  });
+});
+
+describe("getAllOpponents", () => {
+  it("対戦相手の配列を返す", () => {
+    const opponents = getAllOpponents();
+    expect(opponents.length).toBeGreaterThan(0);
+    for (const o of opponents) {
+      expect(o).toBeTypeOf("string");
     }
   });
 });

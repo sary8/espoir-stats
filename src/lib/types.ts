@@ -60,5 +60,7 @@ export interface GameResult {
   date: string;
   players: GamePlayerStat[];
   teamPoints: number;
+  opponentPlayers: GamePlayerStat[];
+  opponentPoints: number;
   youtubeUrl: string | null;
 }

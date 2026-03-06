@@ -9,6 +9,39 @@ function readCsv(filename: string): string {
   return fs.readFileSync(filePath, "utf-8");
 }
 
+function parseGamePlayerStat(row: Record<string, string>): GamePlayerStat {
+  return {
+    opponent: row["対戦相手"],
+    number: parseInt(row["No."], 10),
+    name: row["選手名"],
+    starter: row["GS"] === "●",
+    points: parseInt(row["PTS"], 10),
+    threePointMade: parseInt(row["3PM"], 10),
+    threePointAttempt: parseInt(row["3PA"], 10),
+    threePointPct: parseInt(row["3P%"], 10),
+    twoPointMade: parseInt(row["2PM"], 10),
+    twoPointAttempt: parseInt(row["2PA"], 10),
+    twoPointPct: parseInt(row["2P%"], 10),
+    dunk: parseInt(row["DK"], 10),
+    ftMade: parseInt(row["FTM"], 10),
+    ftAttempt: parseInt(row["FTA"], 10),
+    ftPct: parseInt(row["FT%"], 10),
+    offReb: parseInt(row["OR"], 10),
+    defReb: parseInt(row["DR"], 10),
+    totalReb: parseInt(row["TOT"], 10),
+    assists: parseInt(row["AST"], 10),
+    steals: parseInt(row["STL"], 10),
+    blocks: parseInt(row["BLK"], 10),
+    turnovers: parseInt(row["TO"], 10),
+    personalFouls: parseInt(row["PF"], 10),
+    technicalFouls: parseInt(row["TF"], 10),
+    offensiveFouls: parseInt(row["OF"], 10),
+    foulsDrawn: parseInt(row["FO"], 10) || 0,
+    disqualifications: parseInt(row["DQ"], 10),
+    minutes: row["MIN"],
+  };
+}
+
 export function getPlayerSummaries(): PlayerSummary[] {
   const csv = readCsv("選手別サマリ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
@@ -69,62 +102,56 @@ function getGameInfoMap(): Map<string, { date: string; youtubeUrl: string | null
   return map;
 }
 
+function getOpponentStatsMap(): Map<string, GamePlayerStat[]> {
+  const csv = readCsv("相手チームスタッツ.csv");
+  const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
+  const map = new Map<string, GamePlayerStat[]>();
+  for (const row of data) {
+    const opponent = row["対戦相手"];
+    if (!map.has(opponent)) map.set(opponent, []);
+    map.get(opponent)!.push(parseGamePlayerStat(row));
+  }
+  return map;
+}
+
 export function getGameStats(): GameResult[] {
   const csv = readCsv("全試合スタッツ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
   const gameInfo = getGameInfoMap();
+  const opponentStats = getOpponentStatsMap();
 
   const gameMap = new Map<string, GamePlayerStat[]>();
 
   for (const row of data) {
     const opponent = row["対戦相手"];
-    const stat: GamePlayerStat = {
-      opponent,
-      number: parseInt(row["No."], 10),
-      name: row["選手名"],
-      starter: row["GS"] === "●",
-      points: parseInt(row["PTS"], 10),
-      threePointMade: parseInt(row["3PM"], 10),
-      threePointAttempt: parseInt(row["3PA"], 10),
-      threePointPct: parseInt(row["3P%"], 10),
-      twoPointMade: parseInt(row["2PM"], 10),
-      twoPointAttempt: parseInt(row["2PA"], 10),
-      twoPointPct: parseInt(row["2P%"], 10),
-      dunk: parseInt(row["DK"], 10),
-      ftMade: parseInt(row["FTM"], 10),
-      ftAttempt: parseInt(row["FTA"], 10),
-      ftPct: parseInt(row["FT%"], 10),
-      offReb: parseInt(row["OR"], 10),
-      defReb: parseInt(row["DR"], 10),
-      totalReb: parseInt(row["TOT"], 10),
-      assists: parseInt(row["AST"], 10),
-      steals: parseInt(row["STL"], 10),
-      blocks: parseInt(row["BLK"], 10),
-      turnovers: parseInt(row["TO"], 10),
-      personalFouls: parseInt(row["PF"], 10),
-      technicalFouls: parseInt(row["TF"], 10),
-      offensiveFouls: parseInt(row["OF"], 10),
-      foulsDrawn: parseInt(row["FO"], 10) || 0,
-      disqualifications: parseInt(row["DQ"], 10),
-      minutes: row["MIN"],
-    };
-
     if (!gameMap.has(opponent)) gameMap.set(opponent, []);
-    gameMap.get(opponent)!.push(stat);
+    gameMap.get(opponent)!.push(parseGamePlayerStat(row));
   }
 
   return Array.from(gameMap.entries())
     .map(([opponent, players]) => {
       const info = gameInfo.get(opponent);
+      const oppPlayers = opponentStats.get(opponent) ?? [];
       return {
         opponent,
         date: info?.date ?? "9999-12-31",
         players: players.sort((a, b) => a.number - b.number),
         teamPoints: players.reduce((sum, p) => sum + p.points, 0),
+        opponentPlayers: oppPlayers.sort((a, b) => a.number - b.number),
+        opponentPoints: oppPlayers.reduce((sum, p) => sum + p.points, 0),
         youtubeUrl: info?.youtubeUrl ?? null,
       };
     })
     .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export function getGameByOpponent(opponent: string): GameResult | null {
+  const games = getGameStats();
+  return games.find((g) => g.opponent === opponent) ?? null;
+}
+
+export function getAllOpponents(): string[] {
+  return getGameStats().map((g) => g.opponent);
 }
 
 export function getPlayerByNumber(number: number) {
