@@ -391,9 +391,9 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
 
       {/* Advanced Stats */}
       <GlassCard className="mb-6">
-        <div className="flex justify-between items-center mb-3">
+        <div className="relative flex justify-between items-center mb-3">
           <span className="text-sm font-bold text-accent-purple">Espoir</span>
-          <span className="text-xs text-neutral-400 font-medium">Advanced Stats</span>
+          <span className="absolute left-1/2 -translate-x-1/2 text-xs text-neutral-400 font-medium">Advanced Stats</span>
           <span className="text-sm font-bold text-neutral-300">{game.opponent}</span>
         </div>
         <div className="divide-y divide-white/5">
@@ -423,9 +423,9 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
       {game.opponentPlayers.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
           <GlassCard>
-            <div className="flex justify-between items-center mb-3">
+            <div className="relative flex justify-between items-center mb-3">
               <span className="text-sm font-bold text-accent-purple">Espoir</span>
-              <span className="text-xs text-neutral-400 font-medium">Team Comparison</span>
+              <span className="absolute left-1/2 -translate-x-1/2 text-xs text-neutral-400 font-medium">Team Comparison</span>
               <span className="text-sm font-bold text-neutral-300">{game.opponent}</span>
             </div>
             <div className="divide-y divide-white/5">
