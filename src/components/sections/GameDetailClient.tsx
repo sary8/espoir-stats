@@ -71,12 +71,14 @@ function ComparisonBar({ label, espoirVal, opponentVal, format = "number", oppon
   format?: "number" | "pct";
   opponentName: string;
 }) {
-  const max = Math.max(espoirVal, opponentVal, 1);
-  const espoirPct = (espoirVal / max) * 100;
-  const opponentPct = (opponentVal / max) * 100;
-  const fmt = (v: number) => format === "pct" ? `${v.toFixed(1)}%` : String(v);
-  const espoirWins = espoirVal > opponentVal;
-  const opponentWins = opponentVal > espoirVal;
+  const eVal = Math.max(espoirVal, 0);
+  const oVal = Math.max(opponentVal, 0);
+  const max = Math.max(eVal, oVal, 1);
+  const espoirPct = (eVal / max) * 100;
+  const opponentPct = (oVal / max) * 100;
+  const fmt = (v: number) => format === "pct" ? (v < 0 ? "-" : `${v.toFixed(1)}%`) : String(v);
+  const espoirWins = eVal > oVal;
+  const opponentWins = oVal > eVal;
 
   return (
     <div className="py-2.5">
