@@ -114,7 +114,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
           ))}
         </div>
         <p className="sr-only">選手の能力比較レーダーチャート（PPG、RPG、APG、SPG、BPG）。1試合あたりの平均値で比較。</p>
-        <ResponsiveContainer width="100%" height={280}>
+        <ResponsiveContainer width="100%" height={320}>
           <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
             <PolarGrid stroke="rgba(255,255,255,0.1)" />
             <PolarAngleAxis dataKey="stat" tick={{ fill: "#a3a3a3", fontSize: 11 }} />
