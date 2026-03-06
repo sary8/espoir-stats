@@ -16,7 +16,7 @@ function isTeamCoaches(row: Record<string, string>): boolean {
 function parseGamePlayerStat(row: Record<string, string>): GamePlayerStat {
   return {
     opponent: row["対戦相手"],
-    number: parseInt(row["No."], 10) || 0,
+    number: parseInt(row["No."], 10) || -1,
     name: row["選手名"],
     starter: row["GS"] === "●",
     points: parseInt(row["PTS"], 10),
