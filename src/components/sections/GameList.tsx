@@ -44,31 +44,29 @@ export default function GameList({ games }: GameListProps) {
               className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple"
             >
               <GlassCard hover className="cursor-pointer !py-4 !px-5 sm:!py-5 sm:!px-6">
-                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                <div className="flex items-center">
                   {/* 左: バッジ + 日付 */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <ResultBadge team={game.teamPoints} opponent={game.opponentPoints} />
                     <p className="text-xs text-neutral-500 hidden sm:block">{game.date.replace(/-/g, "/")}</p>
                   </div>
 
-                  {/* 中央: スコア */}
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <span className="text-sm sm:text-base font-semibold text-neutral-300">Espoir</span>
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-2xl sm:text-3xl font-bold tabular-nums text-accent-purple">
-                        {game.teamPoints}
-                      </span>
-                      <span className="text-neutral-600 text-xs">–</span>
-                      <span className="text-2xl sm:text-3xl font-bold tabular-nums text-neutral-300">
-                        {game.opponentPoints}
-                      </span>
-                    </div>
-                    <span className="text-sm sm:text-base font-semibold text-neutral-300">{game.opponent}</span>
+                  {/* 中央: スコア（flex-1で残りを占め、内部で中央揃え） */}
+                  <div className="flex-1 flex items-center justify-center">
+                    <span className="text-sm sm:text-base font-semibold text-neutral-300 w-16 sm:w-20 text-right shrink-0">Espoir</span>
+                    <span className="w-10 sm:w-12 text-right text-2xl sm:text-3xl font-bold tabular-nums text-accent-purple shrink-0">
+                      {game.teamPoints}
+                    </span>
+                    <span className="w-5 text-center text-neutral-600 text-xs shrink-0">–</span>
+                    <span className="w-10 sm:w-12 text-left text-2xl sm:text-3xl font-bold tabular-nums text-neutral-300 shrink-0">
+                      {game.opponentPoints}
+                    </span>
+                    <span className="text-sm sm:text-base font-semibold text-neutral-300 w-16 sm:w-20 shrink-0">{game.opponent}</span>
                   </div>
 
                   {/* 右: YouTube */}
-                  <div className="flex justify-end">
-                    {game.youtubeUrl && (
+                  <div className="shrink-0">
+                    {game.youtubeUrl ? (
                       <a
                         href={game.youtubeUrl}
                         target="_blank"
@@ -79,6 +77,8 @@ export default function GameList({ games }: GameListProps) {
                       >
                         <Youtube size={18} />
                       </a>
+                    ) : (
+                      <div className="w-[34px]" />
                     )}
                   </div>
                 </div>
