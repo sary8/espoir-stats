@@ -347,12 +347,18 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
             <div className="divide-y divide-white/5">
               <ComparisonBar label="FG%" espoirVal={pctVal(espoirTotals.twoPointMade + espoirTotals.threePointMade, espoirTotals.twoPointAttempt + espoirTotals.threePointAttempt)} opponentVal={pctVal(opponentTotals.twoPointMade + opponentTotals.threePointMade, opponentTotals.twoPointAttempt + opponentTotals.threePointAttempt)} format="pct" opponentName={game.opponent} />
               <ComparisonBar label="3P%" espoirVal={pctVal(espoirTotals.threePointMade, espoirTotals.threePointAttempt)} opponentVal={pctVal(opponentTotals.threePointMade, opponentTotals.threePointAttempt)} format="pct" opponentName={game.opponent} />
+              <ComparisonBar label="2P%" espoirVal={pctVal(espoirTotals.twoPointMade, espoirTotals.twoPointAttempt)} opponentVal={pctVal(opponentTotals.twoPointMade, opponentTotals.twoPointAttempt)} format="pct" opponentName={game.opponent} />
               <ComparisonBar label="FT%" espoirVal={pctVal(espoirTotals.ftMade, espoirTotals.ftAttempt)} opponentVal={pctVal(opponentTotals.ftMade, opponentTotals.ftAttempt)} format="pct" opponentName={game.opponent} />
+              <ComparisonBar label="PTS" espoirVal={espoirTotals.points} opponentVal={opponentTotals.points} opponentName={game.opponent} />
               <ComparisonBar label="REB" espoirVal={espoirTotals.totalReb} opponentVal={opponentTotals.totalReb} opponentName={game.opponent} />
+              <ComparisonBar label="OR" espoirVal={espoirTotals.offReb} opponentVal={opponentTotals.offReb} opponentName={game.opponent} />
+              <ComparisonBar label="DR" espoirVal={espoirTotals.defReb} opponentVal={opponentTotals.defReb} opponentName={game.opponent} />
               <ComparisonBar label="AST" espoirVal={espoirTotals.assists} opponentVal={opponentTotals.assists} opponentName={game.opponent} />
               <ComparisonBar label="STL" espoirVal={espoirTotals.steals} opponentVal={opponentTotals.steals} opponentName={game.opponent} />
               <ComparisonBar label="BLK" espoirVal={espoirTotals.blocks} opponentVal={opponentTotals.blocks} opponentName={game.opponent} />
               <ComparisonBar label="TO" espoirVal={espoirTotals.turnovers} opponentVal={opponentTotals.turnovers} opponentName={game.opponent} />
+              <ComparisonBar label="PF" espoirVal={espoirTotals.personalFouls} opponentVal={opponentTotals.personalFouls} opponentName={game.opponent} />
+              <ComparisonBar label="FD" espoirVal={espoirTotals.foulsDrawn} opponentVal={opponentTotals.foulsDrawn} opponentName={game.opponent} />
             </div>
           </GlassCard>
 
