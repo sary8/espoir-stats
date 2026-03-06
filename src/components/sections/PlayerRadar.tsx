@@ -129,6 +129,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
                 fill={playerColors[players.indexOf(p) % playerColors.length]}
                 fillOpacity={0.15}
                 strokeWidth={2}
+                isAnimationActive={false}
               />
             ))}
             {selectedPlayers.length > 0 && (
