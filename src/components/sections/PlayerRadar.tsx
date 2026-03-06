@@ -135,7 +135,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
               <Tooltip content={renderTooltip} cursor={false} isAnimationActive={false} />
             )}
             <Legend content={() => (
-              <div className="flex justify-center gap-4 mt-2">
+              <div className="flex justify-center gap-4 mt-2 min-h-[24px]">
                 {selectedPlayers.map((p) => (
                   <div key={p.number} className="flex items-center gap-1.5 text-sm">
                     <span className="w-3 h-3 rounded-sm shrink-0" style={{ background: colorMap.get(p.name) }} />
