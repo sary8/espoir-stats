@@ -127,7 +127,7 @@ function ComparisonBar({ label, espoirVal, opponentVal, format = "number", oppon
 
 function LeaderCard({ category, players, espoirTeam }: {
   category: string;
-  players: { name: string; value: number; team: string }[];
+  players: { name: string; number: number; value: number; team: string }[];
   espoirTeam: boolean[];
 }) {
   return (
@@ -136,6 +136,7 @@ function LeaderCard({ category, players, espoirTeam }: {
       {players.map((p, i) => (
         <div key={i} className={`flex items-center justify-between ${i > 0 ? "mt-1.5" : ""}`}>
           <span className={`text-sm ${espoirTeam[i] ? "text-accent-purple" : "text-neutral-300"}`}>
+            <span className="text-neutral-500 mr-1">#{p.number}</span>
             {p.name}
             <span className="text-[10px] text-neutral-500 ml-1">{p.team}</span>
           </span>
@@ -183,7 +184,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
 
   const gameLeaders = useMemo(() => {
     const all = [
-      ...game.players.map(p => ({ ...p, team: "ESP" })),
+      ...game.players.map(p => ({ ...p, team: "Espoir" })),
       ...game.opponentPlayers.map(p => ({ ...p, team: game.opponent })),
     ];
     const topN = (key: keyof GamePlayerStat, n = 3) =>
@@ -199,14 +200,22 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
   }, [game.players, game.opponentPlayers, game.opponent]);
 
   const advancedStats = useMemo(() => {
-    const ePoss = calcTeamPossEst(espoirTotals, opponentTotals.defReb);
-    const oPoss = calcTeamPossEst(opponentTotals, espoirTotals.defReb);
-    const poss = 0.5 * (ePoss + oPoss);
-    const teamMinDecimal = espoirTotals.totalMinutes / 60;
-    const pace = teamMinDecimal > 0 ? 40 * (ePoss + oPoss) / (2 * (teamMinDecimal / 5)) : 0;
-    const offRtg = poss > 0 ? 100 * game.teamPoints / poss : 0;
-    const defRtg = poss > 0 ? 100 * game.opponentPoints / poss : 0;
-    return { poss: Math.round(poss), pace: pace.toFixed(1), offRtg: offRtg.toFixed(1), defRtg: defRtg.toFixed(1), netRtg: (offRtg - defRtg).toFixed(1) };
+    const ePossEst = calcTeamPossEst(espoirTotals, opponentTotals.defReb);
+    const oPossEst = calcTeamPossEst(opponentTotals, espoirTotals.defReb);
+    const poss = 0.5 * (ePossEst + oPossEst);
+    const eMinDec = espoirTotals.totalMinutes / 60;
+    const oMinDec = opponentTotals.totalMinutes / 60;
+    const ePace = eMinDec > 0 ? 40 * (ePossEst + oPossEst) / (2 * (eMinDec / 5)) : 0;
+    const oPace = oMinDec > 0 ? 40 * (ePossEst + oPossEst) / (2 * (oMinDec / 5)) : 0;
+    const eOffRtg = poss > 0 ? 100 * game.teamPoints / poss : 0;
+    const eDefRtg = poss > 0 ? 100 * game.opponentPoints / poss : 0;
+    const oOffRtg = eDefRtg;
+    const oDefRtg = eOffRtg;
+    return {
+      poss: Math.round(poss),
+      espoir: { pace: ePace.toFixed(1), offRtg: eOffRtg.toFixed(1), defRtg: eDefRtg.toFixed(1), netRtg: (eOffRtg - eDefRtg).toFixed(1) },
+      opponent: { pace: oPace.toFixed(1), offRtg: oOffRtg.toFixed(1), defRtg: oDefRtg.toFixed(1), netRtg: (oOffRtg - oDefRtg).toFixed(1) },
+    };
   }, [espoirTotals, opponentTotals, game.teamPoints, game.opponentPoints]);
 
   const sortedPlayers = useMemo(() => {
@@ -371,23 +380,43 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
       )}
 
       {/* Advanced Stats */}
-      <div className="grid grid-cols-5 gap-2 sm:gap-3 mb-6">
-        {([
-          { label: "PACE", value: advancedStats.pace, desc: "試合ペース" },
-          { label: "POSS", value: advancedStats.poss, desc: "ポゼッション" },
-          { label: "OFFRTG", value: advancedStats.offRtg, desc: "攻撃効率" },
-          { label: "DEFRTG", value: advancedStats.defRtg, desc: "守備効率" },
-          { label: "NETRTG", value: advancedStats.netRtg, desc: "得失点効率" },
-        ]).map(({ label, value, desc }) => (
-          <div key={label} className="bg-white/5 rounded-lg p-2.5 sm:p-3 border border-white/5 text-center">
-            <p className="text-[10px] text-neutral-500 uppercase tracking-wider">{label}</p>
-            <p className={`text-lg sm:text-xl font-bold tabular-nums ${label === "NETRTG" ? (parseFloat(String(value)) > 0 ? "text-green-400" : parseFloat(String(value)) < 0 ? "text-red-400" : "text-white") : "text-white"}`}>
-              {label === "NETRTG" && parseFloat(String(value)) > 0 ? "+" : ""}{value}
-            </p>
-            <p className="text-[10px] text-neutral-600 hidden sm:block">{desc}</p>
-          </div>
-        ))}
-      </div>
+      <GlassCard className="mb-6 !p-0">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs sm:text-sm" aria-label="Advanced Stats">
+            <thead>
+              <tr className="border-b border-white/10 text-neutral-400">
+                <th className="text-left py-2.5 px-3 sm:py-3 sm:px-4" scope="col"></th>
+                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">PACE</th>
+                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">POSS</th>
+                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">OFFRTG</th>
+                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">DEFRTG</th>
+                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">NETRTG</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-white/5">
+                <td className="py-2.5 px-3 sm:py-3 sm:px-4 font-bold text-accent-purple">Espoir</td>
+                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.espoir.pace}</td>
+                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums" rowSpan={2}>{advancedStats.poss}</td>
+                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.espoir.offRtg}</td>
+                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.espoir.defRtg}</td>
+                <td className={`text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums font-bold ${parseFloat(advancedStats.espoir.netRtg) > 0 ? "text-green-400" : parseFloat(advancedStats.espoir.netRtg) < 0 ? "text-red-400" : ""}`}>
+                  {parseFloat(advancedStats.espoir.netRtg) > 0 ? "+" : ""}{advancedStats.espoir.netRtg}
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 sm:py-3 sm:px-4 font-bold">{game.opponent}</td>
+                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.opponent.pace}</td>
+                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.opponent.offRtg}</td>
+                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.opponent.defRtg}</td>
+                <td className={`text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums font-bold ${parseFloat(advancedStats.opponent.netRtg) > 0 ? "text-green-400" : parseFloat(advancedStats.opponent.netRtg) < 0 ? "text-red-400" : ""}`}>
+                  {parseFloat(advancedStats.opponent.netRtg) > 0 ? "+" : ""}{advancedStats.opponent.netRtg}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </GlassCard>
 
       {/* Team Comparison */}
       {game.opponentPlayers.length > 0 && (
@@ -429,8 +458,8 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
                   <LeaderCard
                     key={cat}
                     category={labels[cat]}
-                    players={top.map(p => ({ name: p.name, value: p[keys[cat]] as number, team: p.team }))}
-                    espoirTeam={top.map(p => p.team === "ESP")}
+                    players={top.map(p => ({ name: p.name, number: p.number, value: p[keys[cat]] as number, team: p.team }))}
+                    espoirTeam={top.map(p => p.team === "Espoir")}
                   />
                 );
               })}
