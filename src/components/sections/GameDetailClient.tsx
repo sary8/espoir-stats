@@ -163,7 +163,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
             className="inline-flex items-center gap-1 mt-3 text-sm text-red-500 hover:text-red-400 transition-colors"
           >
             <Youtube size={16} />
-            試合動画を見る
+            試合動画
           </a>
         )}
       </div>
