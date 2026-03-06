@@ -1,19 +1,29 @@
 "use client";
 
 import { useMemo } from "react";
-import { Crown, CircleDot, MoveUp, MoveDown, Grab, Handshake, Scissors, Ban, RotateCcw, AlertTriangle, Zap } from "lucide-react";
+import { Crown, CircleDot, MoveUp, MoveDown, Grab, Handshake, Scissors, Ban, RotateCcw, AlertTriangle, Zap, TrendingUp } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { PlayerSummary } from "@/lib/types";
 
+function calcAvgEff(p: PlayerSummary): number {
+  const fgMissed = (p.threePointAttempt + p.twoPointAttempt) - (p.threePointMade + p.twoPointMade);
+  const ftMissed = p.ftAttempt - p.ftMade;
+  const eff = p.totalPoints + p.totalReb + p.assists + p.steals + p.blocks - fgMissed - ftMissed - p.turnovers;
+  return p.games > 0 ? eff / p.games : 0;
+}
+
 interface Category {
   label: string;
-  key: keyof PlayerSummary;
+  key: keyof PlayerSummary | null;
+  computeValue?: (p: PlayerSummary) => number;
+  format?: (v: number) => string;
   icon: React.ReactNode;
 }
 
 const categories: Category[] = [
   { label: "得点", key: "totalPoints", icon: <Crown size={18} aria-hidden="true" /> },
+  { label: "平均EFF", key: null, computeValue: calcAvgEff, format: (v) => v.toFixed(1), icon: <TrendingUp size={18} aria-hidden="true" /> },
   { label: "3PM", key: "threePointMade", icon: <CircleDot size={18} aria-hidden="true" /> },
   { label: "オフェンスリバウンド", key: "offReb", icon: <MoveUp size={18} aria-hidden="true" /> },
   { label: "ディフェンスリバウンド", key: "defReb", icon: <MoveDown size={18} aria-hidden="true" /> },
@@ -31,10 +41,13 @@ interface StatsRankingProps {
 }
 
 export default function StatsRanking({ players }: StatsRankingProps) {
+  const getValue = (cat: Category, p: PlayerSummary): number =>
+    cat.computeValue ? cat.computeValue(p) : (p[cat.key!] as number);
+
   const rankedCategories = useMemo(
     () => categories.map((cat) => {
-      const sorted = [...players].sort((a, b) => (b[cat.key] as number) - (a[cat.key] as number));
-      return { ...cat, sorted, maxVal: sorted[0]?.[cat.key] as number };
+      const sorted = [...players].sort((a, b) => getValue(cat, b) - getValue(cat, a));
+      return { ...cat, sorted, maxVal: getValue(cat, sorted[0]) };
     }),
     [players]
   );
@@ -57,7 +70,7 @@ export default function StatsRanking({ players }: StatsRankingProps) {
                 </div>
                 <ol className="space-y-1.5">
                   {sorted.map((p, rank) => {
-                    const val = p[cat.key] as number;
+                    const val = getValue(cat, p);
                     const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
                     const isFirst = rank === 0;
                     return (
@@ -71,7 +84,7 @@ export default function StatsRanking({ players }: StatsRankingProps) {
                               {p.name}
                             </span>
                             <span className={`font-bold ml-2 shrink-0 ${isFirst ? "text-amber-700" : ""}`}>
-                              {val}
+                              {cat.format ? cat.format(val) : val}
                             </span>
                           </div>
                           <div className="h-1 rounded-full bg-white/5">
