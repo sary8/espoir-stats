@@ -189,8 +189,8 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
 
   const gameLeaders = useMemo(() => {
     const allWithEff = [
-      ...game.players.map(p => ({ ...p, team: "Espoir", eff: calcEff(p) })),
-      ...game.opponentPlayers.map(p => ({ ...p, team: game.opponent, eff: calcEff(p) })),
+      ...game.players.filter(p => p.name !== "Team/Coaches").map(p => ({ ...p, team: "Espoir", eff: calcEff(p) })),
+      ...game.opponentPlayers.filter(p => p.name !== "Team/Coaches").map(p => ({ ...p, team: game.opponent, eff: calcEff(p) })),
     ];
     const topN = (key: keyof GamePlayerStat, n = 3) =>
       [...allWithEff].sort((a, b) => (b[key] as number) - (a[key] as number)).filter(p => (p[key] as number) > 0).slice(0, n);

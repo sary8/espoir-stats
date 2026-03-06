@@ -9,10 +9,14 @@ function readCsv(filename: string): string {
   return fs.readFileSync(filePath, "utf-8");
 }
 
+function isTeamCoaches(row: Record<string, string>): boolean {
+  return row["選手名"] === "Team/Coaches";
+}
+
 function parseGamePlayerStat(row: Record<string, string>): GamePlayerStat {
   return {
     opponent: row["対戦相手"],
-    number: parseInt(row["No."], 10),
+    number: parseInt(row["No."], 10) || 0,
     name: row["選手名"],
     starter: row["GS"] === "●",
     points: parseInt(row["PTS"], 10),
@@ -54,6 +58,7 @@ export function getPlayerSummaries(): PlayerSummary[] {
   const { data: gameData } = Papa.parse<Record<string, string>>(gameCsv, { header: true, skipEmptyLines: true });
   const foulMap = new Map<number, { pf: number; fo: number }>();
   for (const row of gameData) {
+    if (isTeamCoaches(row)) continue;
     const num = parseInt(row["No."], 10);
     const entry = foulMap.get(num) ?? { pf: 0, fo: 0 };
     entry.pf += parseInt(row["PF"], 10) || 0;
@@ -156,17 +161,19 @@ const GAME_TOTAL_SECONDS = 160 * 60; // 1試合 = 160分(8クォーター × 5�
 
 function adjustMinutesTo160(players: GamePlayerStat[]): void {
   if (players.length === 0) return;
-  const totalSeconds = players.reduce((sum, p) => sum + parseMinutesToSeconds(p.minutes), 0);
+  const realPlayers = players.filter(p => p.name !== "Team/Coaches");
+  if (realPlayers.length === 0) return;
+  const totalSeconds = realPlayers.reduce((sum, p) => sum + parseMinutesToSeconds(p.minutes), 0);
   const diff = GAME_TOTAL_SECONDS - totalSeconds;
   if (diff <= 0) return;
 
-  let minIdx = 0;
-  let minSec = parseMinutesToSeconds(players[0].minutes);
-  for (let i = 1; i < players.length; i++) {
-    const sec = parseMinutesToSeconds(players[i].minutes);
+  let minIdx = players.indexOf(realPlayers[0]);
+  let minSec = parseMinutesToSeconds(realPlayers[0].minutes);
+  for (let i = 1; i < realPlayers.length; i++) {
+    const sec = parseMinutesToSeconds(realPlayers[i].minutes);
     if (sec < minSec) {
       minSec = sec;
-      minIdx = i;
+      minIdx = players.indexOf(realPlayers[i]);
     }
   }
   players[minIdx].minutes = secondsToMinutes(minSec + diff);
