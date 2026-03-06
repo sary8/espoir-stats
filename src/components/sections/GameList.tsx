@@ -20,7 +20,7 @@ export default function GameList({ games }: GameListProps) {
       </h1>
       <div className="grid gap-4 sm:gap-6">
         {games.map((game, i) => (
-          <AnimatedSection key={game.opponent} delay={i * 0.1}>
+          <AnimatedSection key={game.opponent} delay={Math.min(i * 0.1, 0.5)}>
             <div
               role="link"
               tabIndex={0}
@@ -31,6 +31,7 @@ export default function GameList({ games }: GameListProps) {
                   router.push(`/games/${encodeURIComponent(game.opponent)}`);
                 }
               }}
+              className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple"
             >
               <GlassCard hover className="cursor-pointer">
                 <div className="flex items-center justify-between gap-4">
@@ -55,7 +56,9 @@ export default function GameList({ games }: GameListProps) {
                       <span className="inline-block mt-1 text-xs font-semibold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded">WIN</span>
                     ) : game.teamPoints < game.opponentPoints ? (
                       <span className="inline-block mt-1 text-xs font-semibold text-red-400 bg-red-400/10 px-2 py-0.5 rounded">LOSE</span>
-                    ) : null}
+                    ) : (
+                      <span className="inline-block mt-1 text-xs font-semibold text-neutral-400 bg-neutral-400/10 px-2 py-0.5 rounded">DRAW</span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     {game.youtubeUrl && (
