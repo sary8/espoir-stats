@@ -160,7 +160,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
             href={game.youtubeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 mt-3 text-sm text-red-500 hover:text-red-400 transition-colors"
+            className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-400 transition-all"
           >
             <Youtube size={16} />
             試合動画
