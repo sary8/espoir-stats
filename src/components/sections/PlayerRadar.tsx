@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
@@ -56,6 +56,21 @@ function CustomTooltip({ active, label, selectedPlayers, colorMap }: {
 
 export default function PlayerRadar({ players }: PlayerRadarProps) {
   const [selected, setSelected] = useState<number[]>([]);
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeTimer = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsResizing(true);
+      if (resizeTimer.current) clearTimeout(resizeTimer.current);
+      resizeTimer.current = setTimeout(() => setIsResizing(false), 200);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (resizeTimer.current) clearTimeout(resizeTimer.current);
+    };
+  }, []);
 
   const selectedPlayers = players.filter((p) => selected.includes(p.number));
 
@@ -129,7 +144,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
                 fill={playerColors[players.indexOf(p) % playerColors.length]}
                 fillOpacity={0.15}
                 strokeWidth={2}
-                isAnimationActive={false}
+                isAnimationActive={!isResizing}
               />
             ))}
             {selectedPlayers.length > 0 && (
