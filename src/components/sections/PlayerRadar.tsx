@@ -97,7 +97,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
         Player <span className="text-accent-purple">Comparison</span>
       </h2>
       <GlassCard>
-        <div className="flex flex-wrap gap-2 mb-6 justify-center">
+        <div className="flex flex-wrap gap-2 mb-2 justify-center">
           {players.map((p) => (
             <button
               key={p.number}
