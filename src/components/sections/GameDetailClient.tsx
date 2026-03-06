@@ -88,7 +88,7 @@ function ComparisonBar({ label, espoirVal, opponentVal, format = "number", oppon
   label: string;
   espoirVal: number;
   opponentVal: number;
-  format?: "number" | "pct";
+  format?: "number" | "pct" | "decimal";
   opponentName: string;
 }) {
   const eVal = Math.max(espoirVal, 0);
@@ -96,9 +96,13 @@ function ComparisonBar({ label, espoirVal, opponentVal, format = "number", oppon
   const max = Math.max(eVal, oVal, 1);
   const espoirPct = (eVal / max) * 100;
   const opponentPct = (oVal / max) * 100;
-  const fmt = (v: number) => format === "pct" ? (v < 0 ? "-" : `${v.toFixed(1)}%`) : String(v);
-  const espoirWins = eVal > oVal;
-  const opponentWins = oVal > eVal;
+  const fmt = (v: number) => {
+    if (format === "pct") return v < 0 ? "-" : `${v.toFixed(1)}%`;
+    if (format === "decimal") return v.toFixed(1);
+    return Number.isInteger(v) ? String(v) : v.toFixed(1);
+  };
+  const espoirWins = espoirVal > opponentVal;
+  const opponentWins = opponentVal > espoirVal;
 
   return (
     <div className="py-2.5">
@@ -125,22 +129,24 @@ function ComparisonBar({ label, espoirVal, opponentVal, format = "number", oppon
   );
 }
 
-function LeaderCard({ category, players, espoirTeam }: {
+function LeaderCard({ category, players, espoirTeam, formatValue }: {
   category: string;
   players: { name: string; number: number; value: number; team: string }[];
   espoirTeam: boolean[];
+  formatValue?: (v: number) => string;
 }) {
+  const fmt = formatValue || ((v: number) => String(v));
   return (
     <div className="bg-white/5 rounded-lg p-3 border border-white/5">
       <p className="text-[10px] text-neutral-500 uppercase tracking-wider mb-2">{category}</p>
       {players.map((p, i) => (
         <div key={i} className={`flex items-center justify-between ${i > 0 ? "mt-1.5" : ""}`}>
-          <span className={`text-sm ${espoirTeam[i] ? "text-accent-purple" : "text-neutral-300"}`}>
-            <span className="text-neutral-500 mr-1">#{p.number}</span>
-            {p.name}
-            <span className="text-[10px] text-neutral-500 ml-1">{p.team}</span>
+          <span className="flex items-center text-sm">
+            <span className="text-neutral-500 w-[28px] text-right mr-1.5 shrink-0 tabular-nums">#{p.number}</span>
+            <span className={`font-bold ${espoirTeam[i] ? "text-accent-purple" : "text-neutral-300"}`}>{p.name}</span>
+            <span className="text-[10px] text-neutral-500 ml-1.5">{p.team}</span>
           </span>
-          <span className={`text-sm font-bold ${espoirTeam[i] ? "text-accent-purple" : "text-white"}`}>{p.value}</span>
+          <span className={`text-sm font-bold ${espoirTeam[i] ? "text-accent-purple" : "text-white"}`}>{fmt(p.value)}</span>
         </div>
       ))}
     </div>
@@ -183,12 +189,14 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
   }, [game.opponentPlayers]);
 
   const gameLeaders = useMemo(() => {
-    const all = [
-      ...game.players.map(p => ({ ...p, team: "Espoir" })),
-      ...game.opponentPlayers.map(p => ({ ...p, team: game.opponent })),
+    const allWithEff = [
+      ...game.players.map(p => ({ ...p, team: "Espoir", eff: calcEff(p) })),
+      ...game.opponentPlayers.map(p => ({ ...p, team: game.opponent, eff: calcEff(p) })),
     ];
     const topN = (key: keyof GamePlayerStat, n = 3) =>
-      [...all].sort((a, b) => (b[key] as number) - (a[key] as number)).slice(0, n);
+      [...allWithEff].sort((a, b) => (b[key] as number) - (a[key] as number)).slice(0, n);
+    const topEff = (n = 3) =>
+      [...allWithEff].sort((a, b) => b.eff - a.eff).slice(0, n);
 
     return {
       points: topN("points"),
@@ -196,6 +204,8 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
       assists: topN("assists"),
       steals: topN("steals"),
       blocks: topN("blocks"),
+      fouls: topN("personalFouls"),
+      eff: topEff(),
     };
   }, [game.players, game.opponentPlayers, game.opponent]);
 
@@ -380,41 +390,32 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
       )}
 
       {/* Advanced Stats */}
-      <GlassCard className="mb-6 !p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs sm:text-sm" aria-label="Advanced Stats">
-            <thead>
-              <tr className="border-b border-white/10 text-neutral-400">
-                <th className="text-left py-2.5 px-3 sm:py-3 sm:px-4" scope="col"></th>
-                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">PACE</th>
-                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">POSS</th>
-                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">OFFRTG</th>
-                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">DEFRTG</th>
-                <th className="text-center py-2.5 px-2 sm:py-3 sm:px-3 font-medium" scope="col">NETRTG</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-white/5">
-                <td className="py-2.5 px-3 sm:py-3 sm:px-4 font-bold text-accent-purple">Espoir</td>
-                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.espoir.pace}</td>
-                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums" rowSpan={2}>{advancedStats.poss}</td>
-                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.espoir.offRtg}</td>
-                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.espoir.defRtg}</td>
-                <td className={`text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums font-bold ${parseFloat(advancedStats.espoir.netRtg) > 0 ? "text-green-400" : parseFloat(advancedStats.espoir.netRtg) < 0 ? "text-red-400" : ""}`}>
-                  {parseFloat(advancedStats.espoir.netRtg) > 0 ? "+" : ""}{advancedStats.espoir.netRtg}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-3 sm:py-3 sm:px-4 font-bold">{game.opponent}</td>
-                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.opponent.pace}</td>
-                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.opponent.offRtg}</td>
-                <td className="text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums">{advancedStats.opponent.defRtg}</td>
-                <td className={`text-center py-2.5 px-2 sm:py-3 sm:px-3 tabular-nums font-bold ${parseFloat(advancedStats.opponent.netRtg) > 0 ? "text-green-400" : parseFloat(advancedStats.opponent.netRtg) < 0 ? "text-red-400" : ""}`}>
-                  {parseFloat(advancedStats.opponent.netRtg) > 0 ? "+" : ""}{advancedStats.opponent.netRtg}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <GlassCard className="mb-6">
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-sm font-bold text-accent-purple">Espoir</span>
+          <span className="text-xs text-neutral-400 font-medium">Advanced Stats</span>
+          <span className="text-sm font-bold text-neutral-300">{game.opponent}</span>
+        </div>
+        <div className="divide-y divide-white/5">
+          {advancedStats.espoir.pace === advancedStats.opponent.pace ? (
+            <div className="py-2.5">
+              <div className="flex justify-center text-xs text-neutral-400 mb-1">
+                <span className="font-medium text-neutral-300">PACE</span>
+              </div>
+              <p className="text-center text-lg font-bold tabular-nums text-white">{advancedStats.espoir.pace}</p>
+            </div>
+          ) : (
+            <ComparisonBar label="PACE" espoirVal={parseFloat(advancedStats.espoir.pace)} opponentVal={parseFloat(advancedStats.opponent.pace)} format="number" opponentName={game.opponent} />
+          )}
+          <div className="py-2.5">
+            <div className="flex justify-center text-xs text-neutral-400 mb-1">
+              <span className="font-medium text-neutral-300">POSS</span>
+            </div>
+            <p className="text-center text-lg font-bold tabular-nums text-white">{advancedStats.poss}</p>
+          </div>
+          <ComparisonBar label="OFFRTG" espoirVal={parseFloat(advancedStats.espoir.offRtg)} opponentVal={parseFloat(advancedStats.opponent.offRtg)} format="number" opponentName={game.opponent} />
+          <ComparisonBar label="DEFRTG" espoirVal={parseFloat(advancedStats.espoir.defRtg)} opponentVal={parseFloat(advancedStats.opponent.defRtg)} format="number" opponentName={game.opponent} />
+          <ComparisonBar label="NETRTG" espoirVal={parseFloat(advancedStats.espoir.netRtg)} opponentVal={parseFloat(advancedStats.opponent.netRtg)} format="number" opponentName={game.opponent} />
         </div>
       </GlassCard>
 
@@ -449,9 +450,21 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
           <GlassCard>
             <p className="text-xs text-neutral-400 font-medium mb-3 text-center">Game Leaders</p>
             <div className="grid grid-cols-1 gap-2">
-              {(["points", "rebounds", "assists", "steals", "blocks"] as const).map((cat) => {
-                const labels = { points: "PTS", rebounds: "REB", assists: "AST", steals: "STL", blocks: "BLK" } as const;
-                const keys = { points: "points", rebounds: "totalReb", assists: "assists", steals: "steals", blocks: "blocks" } as const;
+              {(["points", "rebounds", "assists", "steals", "blocks", "fouls", "eff"] as const).map((cat) => {
+                const labels = { points: "PTS", rebounds: "REB", assists: "AST", steals: "STL", blocks: "BLK", fouls: "PF", eff: "EFF" } as const;
+                if (cat === "eff") {
+                  const top = gameLeaders.eff;
+                  if (top.length === 0) return null;
+                  return (
+                    <LeaderCard
+                      key={cat}
+                      category={labels[cat]}
+                      players={top.map(p => ({ name: p.name, number: p.number, value: p.eff, team: p.team }))}
+                      espoirTeam={top.map(p => p.team === "Espoir")}
+                    />
+                  );
+                }
+                const keys = { points: "points", rebounds: "totalReb", assists: "assists", steals: "steals", blocks: "blocks", fouls: "personalFouls" } as const;
                 const top = gameLeaders[cat];
                 if (top.length === 0 || (top[0][keys[cat]] as number) === 0) return null;
                 return (
