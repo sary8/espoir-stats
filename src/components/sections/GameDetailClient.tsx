@@ -148,13 +148,13 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
       <div className="text-center mb-8">
         <p className="text-sm text-neutral-400 mb-2">{game.date.replace(/-/g, "/")}</p>
         <div className="flex items-center justify-center gap-3 sm:gap-6">
-          <span className="text-xl sm:text-2xl font-bold">Espoir</span>
-          <div className="flex items-baseline gap-2 sm:gap-3">
-            <span className="text-3xl sm:text-4xl font-bold text-accent-purple">{game.teamPoints}</span>
-            <span className="text-neutral-400">-</span>
-            <span className="text-3xl sm:text-4xl font-bold text-neutral-300">{game.opponentPoints}</span>
+          <span className="text-xl sm:text-2xl font-bold min-w-[80px] sm:min-w-[100px] text-right">Espoir</span>
+          <div className="flex items-center">
+            <span className="text-3xl sm:text-4xl font-bold text-accent-purple w-[56px] sm:w-[64px] text-right tabular-nums">{game.teamPoints}</span>
+            <span className="text-neutral-400 w-[24px] sm:w-[32px] text-center">-</span>
+            <span className="text-3xl sm:text-4xl font-bold text-neutral-300 w-[56px] sm:w-[64px] text-left tabular-nums">{game.opponentPoints}</span>
           </div>
-          <span className="text-xl sm:text-2xl font-bold">{game.opponent}</span>
+          <span className="text-xl sm:text-2xl font-bold min-w-[80px] sm:min-w-[100px] text-left">{game.opponent}</span>
         </div>
         {game.youtubeUrl ? (
           <a
