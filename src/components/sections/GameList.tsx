@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Youtube } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
@@ -11,6 +11,8 @@ interface GameListProps {
 }
 
 export default function GameList({ games }: GameListProps) {
+  const router = useRouter();
+
   return (
     <AnimatedSection className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
@@ -19,7 +21,17 @@ export default function GameList({ games }: GameListProps) {
       <div className="grid gap-4 sm:gap-6">
         {games.map((game, i) => (
           <AnimatedSection key={game.opponent} delay={i * 0.1}>
-            <Link href={`/games/${encodeURIComponent(game.opponent)}`}>
+            <div
+              role="link"
+              tabIndex={0}
+              onClick={() => router.push(`/games/${encodeURIComponent(game.opponent)}`)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  router.push(`/games/${encodeURIComponent(game.opponent)}`);
+                }
+              }}
+            >
               <GlassCard hover className="cursor-pointer">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
@@ -61,7 +73,7 @@ export default function GameList({ games }: GameListProps) {
                   </div>
                 </div>
               </GlassCard>
-            </Link>
+            </div>
           </AnimatedSection>
         ))}
       </div>
