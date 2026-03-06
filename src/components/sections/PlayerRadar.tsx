@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
+import { useState, useCallback, useMemo } from "react";
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import { playerColors } from "@/config/theme";
@@ -18,6 +18,40 @@ interface RadarPlayer {
 
 interface PlayerRadarProps {
   players: RadarPlayer[];
+}
+
+type StatKey = "ppg" | "rpg" | "apg" | "spg" | "bpg";
+
+const statKeyMap: Record<string, StatKey> = {
+  PPG: "ppg",
+  RPG: "rpg",
+  APG: "apg",
+  SPG: "spg",
+  BPG: "bpg",
+};
+
+function CustomTooltip({ active, label, selectedPlayers, colorMap }: {
+  active?: boolean;
+  label?: string;
+  selectedPlayers: RadarPlayer[];
+  colorMap: Map<string, string>;
+}) {
+  if (!active || !label || selectedPlayers.length === 0) return null;
+  const key = statKeyMap[label];
+  if (!key) return null;
+
+  return (
+    <div className="rounded-lg bg-neutral-900/95 border border-white/10 px-3 py-2 shadow-lg">
+      <p className="text-xs text-neutral-400 mb-1.5">{label}</p>
+      {selectedPlayers.map((p) => (
+        <div key={p.number} className="flex items-center gap-2 text-sm">
+          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: colorMap.get(p.name) }} />
+          <span className="text-neutral-300">{p.name.split(" ").pop()}</span>
+          <span className="ml-auto font-bold text-white">{p[key].toFixed(1)}</span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default function PlayerRadar({ players }: PlayerRadarProps) {
@@ -39,11 +73,23 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
     { stat: "BPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.bpg / maxBlk) * 100)])) },
   ];
 
+  const colorMap = useMemo(
+    () => new Map(selectedPlayers.map((p) => [p.name, playerColors[players.indexOf(p) % playerColors.length]])),
+    [selectedPlayers, players]
+  );
+
   const togglePlayer = (num: number) => {
     setSelected((prev) =>
       prev.includes(num) ? prev.filter((n) => n !== num) : [...prev, num]
     );
   };
+
+  const renderTooltip = useCallback(
+    (props: { active?: boolean; label?: string | number }) => (
+      <CustomTooltip {...props} label={String(props.label ?? "")} selectedPlayers={selectedPlayers} colorMap={colorMap} />
+    ),
+    [selectedPlayers, colorMap]
+  );
 
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
@@ -85,6 +131,9 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
                 strokeWidth={2}
               />
             ))}
+            {selectedPlayers.length > 0 && (
+              <Tooltip content={renderTooltip} cursor={false} />
+            )}
             <Legend />
           </RadarChart>
         </ResponsiveContainer>
