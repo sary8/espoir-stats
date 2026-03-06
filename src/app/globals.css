@@ -59,11 +59,9 @@ body {
     radial-gradient(ellipse at 50% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
 }
 
-/* Focus visible */
-:focus-visible {
-  outline: 2px solid var(--accent-purple);
-  outline-offset: 2px;
-  border-radius: 4px;
+*:focus,
+*:focus-visible {
+  outline: none;
 }
 
 /* Screen reader only */

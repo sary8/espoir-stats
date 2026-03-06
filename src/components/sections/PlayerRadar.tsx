@@ -32,11 +32,11 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
   const maxBlk = Math.max(...players.map((p) => p.bpg), 1);
 
   const radarData = [
-    { stat: "PPG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.ppg / maxPts) * 100)])) },
-    { stat: "RPG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.rpg / maxReb) * 100)])) },
-    { stat: "APG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.apg / maxAst) * 100)])) },
-    { stat: "SPG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.spg / maxStl) * 100)])) },
-    { stat: "BPG", ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.bpg / maxBlk) * 100)])) },
+    { stat: "PPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.ppg / maxPts) * 100)])) },
+    { stat: "RPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.rpg / maxReb) * 100)])) },
+    { stat: "APG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.apg / maxAst) * 100)])) },
+    { stat: "SPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.spg / maxStl) * 100)])) },
+    { stat: "BPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.bpg / maxBlk) * 100)])) },
   ];
 
   const togglePlayer = (num: number) => {
@@ -57,7 +57,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
               key={p.number}
               onClick={() => togglePlayer(p.number)}
               aria-pressed={selected.includes(p.number)}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-full text-xs sm:text-sm font-medium transition-all border cursor-pointer focus:outline-none focus-visible:outline-none ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-full text-xs sm:text-sm font-medium transition-all border cursor-pointer ${
                 selected.includes(p.number)
                   ? "bg-accent-purple/20 border-accent-purple/50 text-purple-300"
                   : "border-white/10 text-neutral-400 hover:border-white/30"
@@ -73,6 +73,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
             <PolarGrid stroke="rgba(255,255,255,0.1)" />
             <PolarAngleAxis dataKey="stat" tick={{ fill: "#a3a3a3", fontSize: 11 }} />
             <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
+            <Radar dataKey="_grid" stroke="transparent" fill="transparent" />
             {selectedPlayers.map((p) => (
               <Radar
                 key={p.number}
