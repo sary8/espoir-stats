@@ -114,6 +114,38 @@ function getOpponentStatsMap(): Map<string, GamePlayerStat[]> {
   return map;
 }
 
+function parseMinutesToSeconds(min: string): number {
+  if (!min) return 0;
+  const parts = min.split(":");
+  return parseInt(parts[0], 10) * 60 + parseInt(parts[1] || "0", 10);
+}
+
+function secondsToMinutes(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+const GAME_TOTAL_SECONDS = 160 * 60; // 1試合 = 160分(8クォーター × 5人)
+
+function adjustMinutesTo160(players: GamePlayerStat[]): void {
+  if (players.length === 0) return;
+  const totalSeconds = players.reduce((sum, p) => sum + parseMinutesToSeconds(p.minutes), 0);
+  const diff = GAME_TOTAL_SECONDS - totalSeconds;
+  if (diff <= 0) return;
+
+  let minIdx = 0;
+  let minSec = parseMinutesToSeconds(players[0].minutes);
+  for (let i = 1; i < players.length; i++) {
+    const sec = parseMinutesToSeconds(players[i].minutes);
+    if (sec < minSec) {
+      minSec = sec;
+      minIdx = i;
+    }
+  }
+  players[minIdx].minutes = secondsToMinutes(minSec + diff);
+}
+
 export function getGameStats(): GameResult[] {
   const csv = readCsv("全試合スタッツ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
@@ -132,12 +164,16 @@ export function getGameStats(): GameResult[] {
     .map(([opponent, players]) => {
       const info = gameInfo.get(opponent);
       const oppPlayers = opponentStats.get(opponent) ?? [];
+      const sortedPlayers = players.sort((a, b) => a.number - b.number);
+      const sortedOpp = oppPlayers.sort((a, b) => a.number - b.number);
+      adjustMinutesTo160(sortedPlayers);
+      adjustMinutesTo160(sortedOpp);
       return {
         opponent,
         date: info?.date ?? "9999-12-31",
-        players: players.sort((a, b) => a.number - b.number),
+        players: sortedPlayers,
         teamPoints: players.reduce((sum, p) => sum + p.points, 0),
-        opponentPlayers: oppPlayers.sort((a, b) => a.number - b.number),
+        opponentPlayers: sortedOpp,
         opponentPoints: oppPlayers.reduce((sum, p) => sum + p.points, 0),
         youtubeUrl: info?.youtubeUrl ?? null,
       };
