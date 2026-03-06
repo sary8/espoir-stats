@@ -163,11 +163,11 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
               <Tooltip content={renderTooltip} cursor={false} isAnimationActive={false} />
             )}
             <Legend content={() => (
-              <div className="flex justify-center gap-4 mt-2 min-h-[24px]">
+              <div className={`flex flex-wrap justify-center gap-x-3 gap-y-1 mt-2 min-h-[24px] ${selectedPlayers.length > 4 ? "grid grid-cols-3 sm:flex" : ""}`}>
                 {selectedPlayers.map((p) => (
-                  <div key={p.number} className="flex items-center gap-1.5 text-sm">
-                    <span className="w-3 h-3 rounded-sm shrink-0" style={{ background: colorMap.get(p.name) }} />
-                    <span className="text-neutral-300">{p.name}</span>
+                  <div key={p.number} className="flex items-center gap-1 text-xs sm:text-sm">
+                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm shrink-0" style={{ background: colorMap.get(p.name) }} />
+                    <span className="text-neutral-300">{p.name.split(" ").pop()}</span>
                   </div>
                 ))}
               </div>
