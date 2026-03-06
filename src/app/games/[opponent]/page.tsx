@@ -24,7 +24,7 @@ export default async function GameDetailPage({ params }: PageProps) {
   return (
     <>
       <Header />
-      <main className="pt-16">
+      <main id="main-content" className="pt-16">
         <GameDetailClient game={game} />
       </main>
       <Footer />

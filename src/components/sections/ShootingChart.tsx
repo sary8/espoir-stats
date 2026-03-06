@@ -19,7 +19,7 @@ interface ShootingChartProps {
 export default function ShootingChart({ data }: ShootingChartProps) {
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
         Shooting <span className="text-accent-purple">Comparison</span>
       </h2>
       <GlassCard>

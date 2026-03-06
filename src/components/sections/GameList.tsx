@@ -102,7 +102,7 @@ export default function GameList({ games }: GameListProps) {
                             window.open(game.youtubeUrl!, "_blank", "noopener,noreferrer");
                           }}
                         >
-                          <Youtube size={18} />
+                          <Youtube size={18} aria-hidden="true" />
                         </button>
                       ) : (
                         <div className="w-[34px]" />

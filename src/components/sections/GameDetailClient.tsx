@@ -66,12 +66,12 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
 }) {
   const isActive = sortKey === k;
   return (
-    <th className={TH_SORTABLE} scope="col" onClick={() => onSort(k)}>
+    <th className={TH_SORTABLE} scope="col" tabIndex={0} role="button" onClick={() => onSort(k)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSort(k); } }}>
       <span className="inline-flex items-center gap-0.5">
         {children}
         {isActive
-          ? (sortAsc ? <ChevronUp size={12} /> : <ChevronDown size={12} />)
-          : <ChevronDown size={10} className="opacity-30" />}
+          ? (sortAsc ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />)
+          : <ChevronDown size={10} className="opacity-30" aria-hidden="true" />}
       </span>
     </th>
   );
@@ -111,13 +111,13 @@ function ComparisonBar({ label, espoirVal, opponentVal, format = "number", oppon
       <div className="flex gap-1 h-2">
         <div className="flex-1 flex justify-end">
           <div
-            className={`h-full rounded-l-full transition-all ${espoirWins ? "bg-accent-purple" : "bg-accent-purple/40"}`}
+            className={`h-full rounded-l-full transition-[width] ${espoirWins ? "bg-accent-purple" : "bg-accent-purple/40"}`}
             style={{ width: `${espoirPct}%` }}
           />
         </div>
         <div className="flex-1">
           <div
-            className={`h-full rounded-r-full transition-all ${opponentWins ? "bg-white/70" : "bg-white/20"}`}
+            className={`h-full rounded-r-full transition-[width] ${opponentWins ? "bg-white/70" : "bg-white/20"}`}
             style={{ width: `${opponentPct}%` }}
           />
         </div>
@@ -269,16 +269,16 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
   };
 
   const thBase = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
-  const td = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
+  const td = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap tabular-nums";
 
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <div className="flex items-center justify-between mb-6">
         <Link
           href="/games"
-          className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white transition-colors rounded"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={16} aria-hidden="true" />
           Games
         </Link>
         {game.youtubeUrl ? (
@@ -286,9 +286,9 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
             href={game.youtubeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-400 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-400 transition-[background-color,border-color,color]"
           >
-            <Youtube size={16} />
+            <Youtube size={16} aria-hidden="true" />
             試合動画
           </a>
         ) : null}
@@ -353,7 +353,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {game.gameInfo.tournament && (
             <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
-              <Trophy size={14} className="text-accent-purple shrink-0" />
+              <Trophy size={14} className="text-accent-purple shrink-0" aria-hidden="true" />
               <div>
                 <p className="text-[10px] text-neutral-500 uppercase tracking-wider">大会</p>
                 <p className="text-sm">{game.gameInfo.tournament}</p>
@@ -362,7 +362,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
           )}
           {game.gameInfo.venue && (
             <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
-              <MapPin size={14} className="text-accent-purple shrink-0" />
+              <MapPin size={14} className="text-accent-purple shrink-0" aria-hidden="true" />
               <div>
                 <p className="text-[10px] text-neutral-500 uppercase tracking-wider">会場</p>
                 <p className="text-sm">{game.gameInfo.venue}</p>
@@ -371,7 +371,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
           )}
           {game.gameInfo.gameType && (
             <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
-              <Shield size={14} className="text-accent-purple shrink-0" />
+              <Shield size={14} className="text-accent-purple shrink-0" aria-hidden="true" />
               <div>
                 <p className="text-[10px] text-neutral-500 uppercase tracking-wider">種別</p>
                 <p className="text-sm">{game.gameInfo.gameType}</p>
@@ -379,7 +379,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
             </div>
           )}
           <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
-            <Calendar size={14} className="text-accent-purple shrink-0" />
+            <Calendar size={14} className="text-accent-purple shrink-0" aria-hidden="true" />
             <div>
               <p className="text-[10px] text-neutral-500 uppercase tracking-wider">対戦日</p>
               <p className="text-sm">{game.date.replace(/-/g, "/")}</p>
@@ -481,7 +481,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
         <button
           onClick={() => handleTabChange("espoir")}
           aria-pressed={activeTab === "espoir"}
-          className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition-all cursor-pointer ${
+          className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition-[background-color,color] cursor-pointer ${
             activeTab === "espoir"
               ? "bg-accent-purple text-white"
               : "bg-white/5 text-neutral-400 hover:bg-white/10"
@@ -492,7 +492,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
         <button
           onClick={() => handleTabChange("opponent")}
           aria-pressed={activeTab === "opponent"}
-          className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition-all cursor-pointer ${
+          className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition-[background-color,color] cursor-pointer ${
             activeTab === "opponent"
               ? "bg-accent-purple text-white"
               : "bg-white/5 text-neutral-400 hover:bg-white/10"
@@ -513,11 +513,14 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
                   <th
                     className="text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10 cursor-pointer select-none hover:text-white transition-colors"
                     scope="col"
+                    tabIndex={0}
+                    role="button"
                     onClick={() => handleSort("number")}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSort("number"); } }}
                   >
                     <span className="inline-flex items-center gap-0.5">
                       選手
-                      {sortKey === "number" && (sortAsc ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+                      {sortKey === "number" && (sortAsc ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />)}
                     </span>
                   </th>
                   <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="points">PTS</SortTh>

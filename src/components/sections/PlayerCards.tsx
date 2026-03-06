@@ -26,13 +26,13 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
 
   return (
     <AnimatedSection id="players" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
         Player <span className="text-accent-purple">Roster</span>
       </h2>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         {sorted.map((p, i) => (
           <AnimatedSection key={p.number} delay={i * 0.05}>
-            <Link href={`/player/${p.number}`} className="block h-full">
+            <Link href={`/player/${p.number}`} className="block h-full rounded-2xl">
               <GlassCard hover className="cursor-pointer h-full flex flex-col">
                 <div>
                   <div className="text-2xl sm:text-4xl font-bold text-accent-purple/80">#{p.number}</div>

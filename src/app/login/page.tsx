@@ -34,7 +34,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <main id="main-content" className="min-h-screen flex items-center justify-center px-4">
       <div className="glass-card p-8 w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center mb-2">
           Espoir Stats
@@ -50,11 +50,13 @@ export default function LoginPage() {
             </label>
             <input
               id="password"
+              name="password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="パスワード"
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:border-accent-purple focus:ring-2 focus:ring-accent-purple/50 focus:outline-none transition-colors"
+              placeholder="パスワード…"
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus-visible:border-accent-purple focus-visible:ring-2 focus-visible:ring-accent-purple/50 transition-colors"
               autoFocus
               aria-describedby={error ? "auth-error" : undefined}
             />
@@ -71,10 +73,10 @@ export default function LoginPage() {
             disabled={loading || !password}
             className="w-full py-3 rounded-xl bg-accent-purple text-white font-semibold hover:bg-accent-purple-light transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {loading ? "認証中..." : "ログイン"}
+            {loading ? "認証中…" : "ログイン"}
           </button>
         </form>
       </div>
-    </div>
+    </main>
   );
 }

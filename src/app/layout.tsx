@@ -27,6 +27,10 @@ export const metadata: Metadata = {
     index: false,
     follow: false,
   },
+  other: {
+    "theme-color": "#0a0a0f",
+    "color-scheme": "dark",
+  },
 };
 
 export default function RootLayout({
@@ -35,10 +39,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
+    <html lang="ja" className="dark" style={{ colorScheme: "dark" }}>
       <body
         className={`${spaceGrotesk.variable} ${notoSansJP.variable} antialiased`}
       >
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent-purple focus:text-white focus:rounded-lg">
+          メインコンテンツへ
+        </a>
         {children}
         <Analytics />
       </body>

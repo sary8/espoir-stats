@@ -22,7 +22,7 @@ export default function HeroSection({ totalPoints, totalGames, totalPlayers }: H
           animate={{ opacity: 1, y: 0 }}
           transition={prefersReducedMotion ? noMotion : { duration: 0.8 }}
         >
-          <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold tracking-wider mb-4">
+          <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold tracking-wider mb-4 [text-wrap:balance]">
             <span className="text-accent-purple">E</span>SPOIR
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-neutral-400 mb-8 sm:mb-12 tracking-wide">

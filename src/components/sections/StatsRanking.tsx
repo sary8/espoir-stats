@@ -13,16 +13,16 @@ interface Category {
 }
 
 const categories: Category[] = [
-  { label: "得点", key: "totalPoints", icon: <Crown size={18} /> },
-  { label: "3PM", key: "threePointMade", icon: <CircleDot size={18} /> },
-  { label: "オフェンスリバウンド", key: "offReb", icon: <MoveUp size={18} /> },
-  { label: "ディフェンスリバウンド", key: "defReb", icon: <MoveDown size={18} /> },
-  { label: "アシスト", key: "assists", icon: <Handshake size={18} /> },
-  { label: "スティール", key: "steals", icon: <Scissors size={18} /> },
-  { label: "ブロック", key: "blocks", icon: <Ban size={18} /> },
-  { label: "ターンオーバー", key: "turnovers", icon: <RotateCcw size={18} /> },
-  { label: "ファール", key: "personalFouls", icon: <AlertTriangle size={18} /> },
-  { label: "ファールドローン", key: "foulsDrawn", icon: <Zap size={18} /> },
+  { label: "得点", key: "totalPoints", icon: <Crown size={18} aria-hidden="true" /> },
+  { label: "3PM", key: "threePointMade", icon: <CircleDot size={18} aria-hidden="true" /> },
+  { label: "オフェンスリバウンド", key: "offReb", icon: <MoveUp size={18} aria-hidden="true" /> },
+  { label: "ディフェンスリバウンド", key: "defReb", icon: <MoveDown size={18} aria-hidden="true" /> },
+  { label: "アシスト", key: "assists", icon: <Handshake size={18} aria-hidden="true" /> },
+  { label: "スティール", key: "steals", icon: <Scissors size={18} aria-hidden="true" /> },
+  { label: "ブロック", key: "blocks", icon: <Ban size={18} aria-hidden="true" /> },
+  { label: "ターンオーバー", key: "turnovers", icon: <RotateCcw size={18} aria-hidden="true" /> },
+  { label: "ファール", key: "personalFouls", icon: <AlertTriangle size={18} aria-hidden="true" /> },
+  { label: "ファールドローン", key: "foulsDrawn", icon: <Zap size={18} aria-hidden="true" /> },
 ];
 
 interface StatsRankingProps {
@@ -40,7 +40,7 @@ export default function StatsRanking({ players }: StatsRankingProps) {
 
   return (
     <AnimatedSection id="ranking" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
         Stats <span className="text-accent-purple">Ranking</span>
       </h2>
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4">

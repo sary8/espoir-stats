@@ -59,12 +59,12 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
 }) {
   const isActive = sortKey === k;
   return (
-    <th className={TH_SORTABLE} scope="col" onClick={() => onSort(k)}>
+    <th className={TH_SORTABLE} scope="col" tabIndex={0} role="button" onClick={() => onSort(k)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSort(k); } }}>
       <span className="inline-flex items-center gap-0.5">
         {children}
         {isActive
-          ? (sortAsc ? <ChevronUp size={12} /> : <ChevronDown size={12} />)
-          : <ChevronDown size={10} className="opacity-30" />}
+          ? (sortAsc ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />)
+          : <ChevronDown size={10} className="opacity-30" aria-hidden="true" />}
       </span>
     </th>
   );
@@ -217,20 +217,20 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
   };
 
   const thBase = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
-  const td = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
+  const td = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap tabular-nums";
 
   const label = isAllGames ? "全試合合計" : `vs ${games[activeGame].opponent}`;
 
   return (
     <AnimatedSection id="games" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
         Game <span className="text-accent-purple">Breakdown</span>
       </h2>
       <div className="flex flex-wrap gap-2 mb-4">
         <button
           onClick={() => { setActiveGame(games.length); setSortKey("number"); setSortAsc(true); }}
           aria-pressed={isAllGames}
-          className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
+          className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-[background-color,color] cursor-pointer ${
             isAllGames
               ? "bg-accent-purple text-white"
               : "bg-white/5 text-neutral-400 hover:bg-white/10"
@@ -243,7 +243,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
             <button
               onClick={() => { setActiveGame(i); setSortKey("number"); setSortAsc(true); }}
               aria-pressed={i === activeGame}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-[background-color,color] cursor-pointer ${
                 i === activeGame && !isAllGames
                   ? "bg-accent-purple text-white"
                   : "bg-white/5 text-neutral-400 hover:bg-white/10"
@@ -260,7 +260,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                 aria-label={`${g.opponent}戦の試合動画`}
                 className="p-1.5 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors"
               >
-                <Youtube size={18} />
+                <Youtube size={18} aria-hidden="true" />
               </a>
             )}
           </div>
@@ -276,11 +276,14 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                 <th
                   className="text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10 cursor-pointer select-none hover:text-white transition-colors"
                   scope="col"
+                  tabIndex={0}
+                  role="button"
                   onClick={() => handleSort("number")}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSort("number"); } }}
                 >
                   <span className="inline-flex items-center gap-0.5">
                     選手
-                    {sortKey === "number" && (sortAsc ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+                    {sortKey === "number" && (sortAsc ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />)}
                   </span>
                 </th>
                 {isAllGames && <th className={thBase} scope="col">GP</th>}

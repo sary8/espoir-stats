@@ -6,7 +6,7 @@ export default function GlossaryPage() {
   return (
     <>
       <Header />
-      <main className="pt-16">
+      <main id="main-content" className="pt-16">
         <GlossaryContent />
       </main>
       <Footer />

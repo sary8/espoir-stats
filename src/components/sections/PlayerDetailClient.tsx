@@ -92,18 +92,18 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
   }, [games]);
 
   const th = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
-  const td = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap";
+  const td = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap tabular-nums";
 
   return (
     <>
       <Header />
-      <main className="pt-16">
+      <main id="main-content" className="pt-16">
         {/* Hero */}
         <section className="relative gradient-mesh py-12 sm:py-20">
           <div className="absolute inset-0 bg-[#0a0a0f]/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
-            <Link href="/" className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-6 sm:mb-8">
-              <ArrowLeft size={18} /> Back to Roster
+            <Link href="/" className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-6 sm:mb-8 rounded">
+              <ArrowLeft size={18} aria-hidden="true" /> Back to Roster
             </Link>
             <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }}>
               <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-purple/20">#{p.number}</div>
@@ -115,7 +115,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
 
         {/* Season Summary */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-          <h2 className="text-2xl font-bold mb-6">Season Summary</h2>
+          <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Season Summary</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
             {mainStats.map((s) => (
               <GlassCard key={s.label} className="text-center">
@@ -136,7 +136,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
 
         {/* Season Totals */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-          <h2 className="text-2xl font-bold mb-6">Season Totals</h2>
+          <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Season Totals</h2>
           <GlassCard>
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
               <table className="w-full text-xs sm:text-sm min-w-[800px]" aria-label={`${p.name} シーズン合計`}>
@@ -195,7 +195,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
         {/* Scoring Trend */}
         {games.length > 1 && (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-            <h2 className="text-2xl font-bold mb-6">Game-by-Game</h2>
+            <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Game-by-Game</h2>
             <GlassCard>
               <p className="sr-only">試合ごとの得点・リバウンド・アシストの推移を示すラインチャート。</p>
               <PlayerGameChart data={lineData} />
@@ -205,7 +205,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
 
         {/* Game Log */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-          <h2 className="text-2xl font-bold mb-6">Game Log</h2>
+          <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Game Log</h2>
           <GlassCard className="!p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-xs sm:text-sm min-w-[900px]" aria-label={`${p.name} ゲームログ`}>

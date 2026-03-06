@@ -9,7 +9,7 @@ export default function GamesPage() {
   return (
     <>
       <Header />
-      <main className="pt-16">
+      <main id="main-content" className="pt-16">
         <GameList games={games} />
       </main>
       <Footer />

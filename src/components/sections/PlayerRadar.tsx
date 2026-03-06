@@ -120,7 +120,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
 
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
         Player <span className="text-accent-purple">Comparison</span>
       </h2>
       <GlassCard>
@@ -130,7 +130,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
               key={p.number}
               onClick={() => togglePlayer(p.number)}
               aria-pressed={selected.includes(p.number)}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-full text-xs sm:text-sm font-medium transition-all border cursor-pointer ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-full text-xs sm:text-sm font-medium transition-[background-color,border-color,color] border cursor-pointer ${
                 selected.includes(p.number)
                   ? "bg-accent-purple/20 border-accent-purple/50 text-purple-300"
                   : "border-white/10 text-neutral-400 hover:border-white/30"

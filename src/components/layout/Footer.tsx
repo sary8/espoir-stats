@@ -13,14 +13,14 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {isHome ? (
           <nav className="flex justify-center gap-6 mb-4" aria-label="フッターナビゲーション">
-            <a href="#overview" className="hover:text-white transition-colors">Overview</a>
-            <a href="#players" className="hover:text-white transition-colors">Players</a>
-            <a href="#games" className="hover:text-white transition-colors">Games</a>
+            <a href="#overview" className="hover:text-white transition-colors rounded">Overview</a>
+            <a href="#players" className="hover:text-white transition-colors rounded">Players</a>
+            <a href="#games" className="hover:text-white transition-colors rounded">Games</a>
           </nav>
         ) : (
           <div className="mb-4">
-            <Link href="/" className="inline-flex items-center gap-2 hover:text-white transition-colors">
-              <ArrowLeft size={16} /> Back to Top
+            <Link href="/" className="inline-flex items-center gap-2 hover:text-white transition-colors rounded">
+              <ArrowLeft size={16} aria-hidden="true" /> Back to Top
             </Link>
           </div>
         )}
