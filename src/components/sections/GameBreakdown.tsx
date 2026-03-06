@@ -163,7 +163,9 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
   }, [isAllGames, activeGame, games, allGamesAggregated]);
 
   const sortedPlayers = useMemo(() => {
-    const sorted = [...currentPlayers].sort((a, b) => {
+    const real = currentPlayers.filter(p => p.name !== "Team/Coaches");
+    const tc = currentPlayers.filter(p => p.name === "Team/Coaches");
+    const sorted = [...real].sort((a, b) => {
       let va: number, vb: number;
       if (sortKey === "threePointPct") {
         va = pctVal(a.threePointMade, a.threePointAttempt);
@@ -180,7 +182,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
       }
       return sortAsc ? va - vb : vb - va;
     });
-    return sorted;
+    return [...sorted, ...tc];
   }, [currentPlayers, sortKey, sortAsc]);
 
   const teamTotals = useMemo(() => {
@@ -307,32 +309,38 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               </tr>
             </thead>
             <tbody>
-              {sortedPlayers.map((p) => (
-                <tr key={p.number} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+              {sortedPlayers.map((p) => {
+                const isTC = p.name === "Team/Coaches";
+                return (
+                <tr key={isTC ? "team-coaches" : p.number} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${isTC ? "italic text-neutral-500" : ""}`}>
                   <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
-                    <span className="text-accent-purple mr-1 sm:mr-2">#{p.number}</span>
-                    {p.name}
+                    {isTC ? (
+                      <span className="text-neutral-500">Team/Coaches</span>
+                    ) : (
+                      <><span className="text-accent-purple mr-1 sm:mr-2">#{p.number}</span>{p.name}</>
+                    )}
                   </td>
-                  {isAllGames && <td className={td}>{p.gamesPlayed}</td>}
-                  <td className={`${td} font-bold text-accent-purple`}>{p.points}</td>
-                  <td className={td}>{p.threePointMade}/{p.threePointAttempt}</td>
-                  <td className={`${td} text-neutral-400`}>{fmtPct(p.threePointMade, p.threePointAttempt)}</td>
-                  <td className={td}>{p.twoPointMade}/{p.twoPointAttempt}</td>
-                  <td className={`${td} text-neutral-400`}>{fmtPct(p.twoPointMade, p.twoPointAttempt)}</td>
-                  <td className={td}>{p.ftMade}/{p.ftAttempt}</td>
-                  <td className={`${td} text-neutral-400`}>{fmtPct(p.ftMade, p.ftAttempt)}</td>
-                  <td className={td}>{p.offReb}</td>
-                  <td className={td}>{p.defReb}</td>
-                  <td className={`${td} font-semibold`}>{p.totalReb}</td>
-                  <td className={td}>{p.assists}</td>
-                  <td className={td}>{p.steals}</td>
-                  <td className={td}>{p.blocks}</td>
-                  <td className={td}>{p.turnovers}</td>
-                  <td className={td}>{p.personalFouls}</td>
-                  <td className={td}>{p.foulsDrawn}</td>
-                  <td className={`${td} text-neutral-400`}>{formatMinutes(p.totalMinutes)}</td>
+                  {isAllGames && <td className={td}>{isTC ? "" : p.gamesPlayed}</td>}
+                  <td className={`${td} ${isTC ? "" : "font-bold text-accent-purple"}`}>{p.points || ""}</td>
+                  <td className={td}>{isTC ? "" : `${p.threePointMade}/${p.threePointAttempt}`}</td>
+                  <td className={`${td} text-neutral-400`}>{isTC ? "" : fmtPct(p.threePointMade, p.threePointAttempt)}</td>
+                  <td className={td}>{isTC ? "" : `${p.twoPointMade}/${p.twoPointAttempt}`}</td>
+                  <td className={`${td} text-neutral-400`}>{isTC ? "" : fmtPct(p.twoPointMade, p.twoPointAttempt)}</td>
+                  <td className={td}>{isTC ? "" : `${p.ftMade}/${p.ftAttempt}`}</td>
+                  <td className={`${td} text-neutral-400`}>{isTC ? "" : fmtPct(p.ftMade, p.ftAttempt)}</td>
+                  <td className={td}>{p.offReb || ""}</td>
+                  <td className={td}>{p.defReb || ""}</td>
+                  <td className={`${td} font-semibold`}>{p.totalReb || ""}</td>
+                  <td className={td}>{isTC ? "" : p.assists}</td>
+                  <td className={td}>{isTC ? "" : p.steals}</td>
+                  <td className={td}>{isTC ? "" : p.blocks}</td>
+                  <td className={td}>{isTC ? "" : p.turnovers}</td>
+                  <td className={td}>{isTC ? "" : p.personalFouls}</td>
+                  <td className={td}>{isTC ? "" : p.foulsDrawn}</td>
+                  <td className={`${td} text-neutral-400`}>{isTC ? "" : formatMinutes(p.totalMinutes)}</td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
             <tfoot>
               <tr className="border-t border-white/10 font-semibold">

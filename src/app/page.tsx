@@ -15,8 +15,11 @@ export default function Home() {
   let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;
   for (const p of players) {
     totalPoints += p.totalPoints; total3PM += p.threePointMade; total3PA += p.threePointAttempt;
-    totalRebounds += p.totalReb; totalAssists += p.assists; totalSteals += p.steals;
+    totalAssists += p.assists; totalSteals += p.steals;
     totalBlocks += p.blocks; totalTurnovers += p.turnovers;
+  }
+  for (const g of games) {
+    for (const p of g.players) totalRebounds += p.totalReb;
   }
 
   const totalGames = games.length;

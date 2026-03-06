@@ -228,7 +228,9 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
   }, [espoirTotals, opponentTotals, game.teamPoints, game.opponentPoints]);
 
   const sortedPlayers = useMemo(() => {
-    return [...players].sort((a, b) => {
+    const real = players.filter(p => p.name !== "Team/Coaches");
+    const tc = players.filter(p => p.name === "Team/Coaches");
+    const sorted = [...real].sort((a, b) => {
       let va: number, vb: number;
       if (sortKey === "threePointPct") {
         va = pctVal(a.threePointMade, a.threePointAttempt);
@@ -249,6 +251,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
       }
       return sortAsc ? va - vb : vb - va;
     });
+    return [...sorted, ...tc];
   }, [players, sortKey, sortAsc]);
 
   const teamTotals = activeTab === "espoir" ? espoirTotals : opponentTotals;
@@ -545,14 +548,22 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
                 </tr>
               </thead>
               <tbody>
-                {sortedPlayers.map((p: GamePlayerStat) => (
-                  <tr key={p.number} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                {sortedPlayers.map((p: GamePlayerStat) => {
+                  const isTC = p.name === "Team/Coaches";
+                  return (
+                  <tr key={isTC ? "tc" : p.number} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${isTC ? "text-neutral-500 italic" : ""}`}>
                     <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
-                      <span className="text-accent-purple mr-1 sm:mr-2">#{p.number}</span>
-                      {displayName(p.name, p.number)}
-                      {p.starter && <span className="ml-1 text-xs text-yellow-400">S</span>}
+                      {isTC ? (
+                        <span className="text-neutral-500">Team/Coaches</span>
+                      ) : (
+                        <>
+                          <span className="text-accent-purple mr-1 sm:mr-2">#{p.number}</span>
+                          {displayName(p.name, p.number)}
+                          {p.starter && <span className="ml-1 text-xs text-yellow-400">S</span>}
+                        </>
+                      )}
                     </td>
-                    <td className={`${td} font-bold text-accent-purple`}>{p.points}</td>
+                    <td className={`${td} ${isTC ? "" : "font-bold text-accent-purple"}`}>{p.points}</td>
                     <td className={td}>{p.threePointMade}/{p.threePointAttempt}</td>
                     <td className={`${td} text-neutral-400`}>{fmtPct(p.threePointMade, p.threePointAttempt)}</td>
                     <td className={td}>{p.twoPointMade}/{p.twoPointAttempt}</td>
@@ -568,11 +579,12 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
                     <td className={td}>{p.turnovers}</td>
                     <td className={td}>{p.personalFouls}</td>
                     <td className={td}>{p.foulsDrawn}</td>
-                    <td className={`${td} text-neutral-400`}>{p.minutes}</td>
-                    <td className={`${td} font-semibold ${calcEff(p) > 0 ? "text-green-400" : calcEff(p) < 0 ? "text-red-400" : ""}`}>{calcEff(p)}</td>
-                    <td className={`${td} font-semibold ${calcGmSc(p) > 0 ? "text-green-400" : calcGmSc(p) < 0 ? "text-red-400" : ""}`}>{calcGmSc(p).toFixed(1)}</td>
+                    <td className={`${td} text-neutral-400`}>{isTC ? "" : p.minutes}</td>
+                    <td className={`${td} ${isTC ? "" : `font-semibold ${calcEff(p) > 0 ? "text-green-400" : calcEff(p) < 0 ? "text-red-400" : ""}`}`}>{isTC ? "" : calcEff(p)}</td>
+                    <td className={`${td} ${isTC ? "" : `font-semibold ${calcGmSc(p) > 0 ? "text-green-400" : calcGmSc(p) < 0 ? "text-red-400" : ""}`}`}>{isTC ? "" : calcGmSc(p).toFixed(1)}</td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
               <tfoot>
                 <tr className="border-t border-white/10 font-semibold">
