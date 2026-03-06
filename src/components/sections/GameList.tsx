@@ -93,17 +93,16 @@ export default function GameList({ games }: GameListProps) {
                     {/* 右: YouTube */}
                     <div className="z-10">
                       {game.youtubeUrl ? (
-                        <button
-                          type="button"
+                        <a
+                          href={game.youtubeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           aria-label={`${game.opponent}戦の試合動画`}
-                          className="p-2 rounded-full text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            window.open(game.youtubeUrl!, "_blank", "noopener,noreferrer");
-                          }}
+                          className="p-2 rounded-full text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer pointer-events-auto"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Youtube size={18} aria-hidden="true" />
-                        </button>
+                        </a>
                       ) : (
                         <div className="w-[34px]" />
                       )}

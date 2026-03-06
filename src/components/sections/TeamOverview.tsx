@@ -34,18 +34,18 @@ export default function TeamOverview(props: TeamOverviewProps) {
   const stats: Stat[] = useMemo(() => [
     { label: "合計得点", value: props.totalPoints, icon: <Trophy size={20} aria-hidden="true" />, color: "text-accent-purple" },
     { label: "平均得点", value: props.avgPoints, decimals: 1, icon: <Target size={20} aria-hidden="true" />, color: "text-accent-purple-light" },
-    { label: "チーム3P%", value: props.team3pPct, decimals: 1, suffix: "%", icon: <Percent size={20} aria-hidden="true" />, color: "text-neutral-400" },
-    { label: "リバウンド", value: props.totalRebounds, icon: <ArrowDownUp size={20} aria-hidden="true" />, color: "text-neutral-400" },
-    { label: "アシスト", value: props.totalAssists, icon: <HandHelping size={20} aria-hidden="true" />, color: "text-neutral-400" },
-    { label: "スティール", value: props.totalSteals, icon: <ShieldAlert size={20} aria-hidden="true" />, color: "text-neutral-400" },
-    { label: "ブロック", value: props.totalBlocks, icon: <Shield size={20} aria-hidden="true" />, color: "text-neutral-400" },
-    { label: "ターンオーバー", value: props.totalTurnovers, icon: <AlertTriangle size={20} aria-hidden="true" />, color: "text-neutral-400" },
+    { label: "チーム3P%", value: props.team3pPct, decimals: 1, suffix: "%", icon: <Percent size={20} aria-hidden="true" />, color: "text-neutral-300" },
+    { label: "リバウンド", value: props.totalRebounds, icon: <ArrowDownUp size={20} aria-hidden="true" />, color: "text-neutral-300" },
+    { label: "アシスト", value: props.totalAssists, icon: <HandHelping size={20} aria-hidden="true" />, color: "text-neutral-300" },
+    { label: "スティール", value: props.totalSteals, icon: <ShieldAlert size={20} aria-hidden="true" />, color: "text-neutral-300" },
+    { label: "ブロック", value: props.totalBlocks, icon: <Shield size={20} aria-hidden="true" />, color: "text-neutral-300" },
+    { label: "ターンオーバー", value: props.totalTurnovers, icon: <AlertTriangle size={20} aria-hidden="true" />, color: "text-neutral-300" },
   ], [props.totalPoints, props.avgPoints, props.team3pPct, props.totalRebounds, props.totalAssists, props.totalSteals, props.totalBlocks, props.totalTurnovers]);
 
   const advancedStats: Stat[] = useMemo(() => [
     { label: "PACE", value: props.pace, decimals: 1, icon: <Gauge size={20} aria-hidden="true" />, color: "text-accent-purple" },
     { label: "OFFRTG", value: props.offRtg, decimals: 1, icon: <Swords size={20} aria-hidden="true" />, color: "text-accent-purple-light" },
-    { label: "DEFRTG", value: props.defRtg, decimals: 1, icon: <ShieldCheck size={20} aria-hidden="true" />, color: "text-neutral-400" },
+    { label: "DEFRTG", value: props.defRtg, decimals: 1, icon: <ShieldCheck size={20} aria-hidden="true" />, color: "text-neutral-300" },
     { label: "NETRTG", value: props.netRtg, decimals: 1, icon: <TrendingUp size={20} aria-hidden="true" />, color: props.netRtg >= 0 ? "text-green-400" : "text-red-400" },
   ], [props.pace, props.offRtg, props.defRtg, props.netRtg]);
 
@@ -62,7 +62,7 @@ export default function TeamOverview(props: TeamOverviewProps) {
               <div className="text-lg sm:text-2xl md:text-3xl font-bold">
                 <StatCounter end={stat.value} decimals={stat.decimals ?? 0} suffix={stat.suffix ?? ""} />
               </div>
-              <div className="text-xs text-neutral-400 mt-1">{stat.label}</div>
+              <div className="text-xs text-neutral-300 mt-1">{stat.label}</div>
             </GlassCard>
           </AnimatedSection>
         ))}
@@ -75,7 +75,7 @@ export default function TeamOverview(props: TeamOverviewProps) {
               <div className="text-lg sm:text-2xl md:text-3xl font-bold">
                 <StatCounter end={stat.value} decimals={stat.decimals ?? 0} suffix={stat.suffix ?? ""} />
               </div>
-              <div className="text-xs text-neutral-400 mt-1">{stat.label}</div>
+              <div className="text-xs text-neutral-300 mt-1">{stat.label}</div>
             </GlassCard>
           </AnimatedSection>
         ))}

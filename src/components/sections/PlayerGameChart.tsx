@@ -15,6 +15,8 @@ interface PlayerGameChartProps {
 
 export default function PlayerGameChart({ data }: PlayerGameChartProps) {
   return (
+    <>
+    <p className="sr-only">試合ごとの得点・リバウンド・アシストの推移を示す折れ線グラフ。</p>
     <ResponsiveContainer width="100%" height={240}>
       <LineChart data={data} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
         <CartesianGrid stroke="rgba(255,255,255,0.06)" />
@@ -29,5 +31,6 @@ export default function PlayerGameChart({ data }: PlayerGameChartProps) {
         <Line type="monotone" dataKey="AST" stroke="#FBBF24" strokeWidth={2} dot={{ r: 4, fill: "#FBBF24" }} />
       </LineChart>
     </ResponsiveContainer>
+    </>
   );
 }

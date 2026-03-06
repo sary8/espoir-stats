@@ -3,10 +3,14 @@
 import dynamic from "next/dynamic";
 import type { GamePlayerStat } from "@/lib/types";
 
-const ScoringLeaders = dynamic(() => import("./ScoringLeaders"), { ssr: false });
-const ShootingChart = dynamic(() => import("./ShootingChart"), { ssr: false });
-const PlayerRadar = dynamic(() => import("./PlayerRadar"), { ssr: false });
-const GameBreakdown = dynamic(() => import("./GameBreakdown"), { ssr: false });
+function ChartSkeleton() {
+  return <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16"><div className="h-[320px] rounded-2xl bg-white/5 animate-pulse" /></div>;
+}
+
+const ScoringLeaders = dynamic(() => import("./ScoringLeaders"), { ssr: false, loading: () => <ChartSkeleton /> });
+const ShootingChart = dynamic(() => import("./ShootingChart"), { ssr: false, loading: () => <ChartSkeleton /> });
+const PlayerRadar = dynamic(() => import("./PlayerRadar"), { ssr: false, loading: () => <ChartSkeleton /> });
+const GameBreakdown = dynamic(() => import("./GameBreakdown"), { ssr: false, loading: () => <ChartSkeleton /> });
 
 export interface GameSummary {
   opponent: string;

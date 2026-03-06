@@ -48,8 +48,6 @@ interface AggregatedPlayer {
   totalMinutes: number;
 }
 
-const TH_SORTABLE = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap cursor-pointer select-none hover:text-white transition-colors";
-
 function SortTh({ k, sortKey, sortAsc, onSort, children }: {
   k: SortKey;
   sortKey: SortKey;
@@ -59,13 +57,15 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
 }) {
   const isActive = sortKey === k;
   return (
-    <th className={TH_SORTABLE} scope="col" tabIndex={0} role="button" onClick={() => onSort(k)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSort(k); } }}>
-      <span className="inline-flex items-center gap-0.5">
-        {children}
-        {isActive
-          ? (sortAsc ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />)
-          : <ChevronDown size={10} className="opacity-30" aria-hidden="true" />}
-      </span>
+    <th className="text-center py-0 px-0 whitespace-nowrap" scope="col">
+      <button type="button" className="w-full py-2 px-1.5 sm:py-3 sm:px-2 cursor-pointer select-none hover:text-white transition-colors" onClick={() => onSort(k)} aria-label={`${typeof children === 'string' ? children : k}でソート`}>
+        <span className="inline-flex items-center gap-0.5">
+          {children}
+          {isActive
+            ? (sortAsc ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />)
+            : <ChevronDown size={10} className="opacity-30" aria-hidden="true" />}
+        </span>
+      </button>
     </th>
   );
 }
@@ -276,17 +276,15 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
             <thead>
               <tr className="border-b border-white/10 text-neutral-400">
                 <th
-                  className="text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10 cursor-pointer select-none hover:text-white transition-colors"
+                  className="text-left py-0 px-0 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10"
                   scope="col"
-                  tabIndex={0}
-                  role="button"
-                  onClick={() => handleSort("number")}
-                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSort("number"); } }}
                 >
-                  <span className="inline-flex items-center gap-0.5">
-                    選手
-                    {sortKey === "number" && (sortAsc ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />)}
-                  </span>
+                  <button type="button" className="w-full text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 cursor-pointer select-none hover:text-white transition-colors" onClick={() => handleSort("number")} aria-label="選手番号でソート">
+                    <span className="inline-flex items-center gap-0.5">
+                      選手
+                      {sortKey === "number" && (sortAsc ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />)}
+                    </span>
+                  </button>
                 </th>
                 {isAllGames && <th className={thBase} scope="col">GP</th>}
                 <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="points">PTS</SortTh>
