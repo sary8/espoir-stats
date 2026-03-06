@@ -30,13 +30,33 @@ function formatMinutes(totalSeconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+// --- Advanced Stats ---
+function calcTeamPossEst(team: { threePointMade: number; threePointAttempt: number; twoPointMade: number; twoPointAttempt: number; ftAttempt: number; offReb: number; turnovers: number }, oppDefReb: number): number {
+  const fga = team.twoPointAttempt + team.threePointAttempt;
+  const fgm = team.twoPointMade + team.threePointMade;
+  const orebFactor = team.offReb + oppDefReb > 0 ? team.offReb / (team.offReb + oppDefReb) : 0;
+  return fga + 0.4 * team.ftAttempt - 1.07 * orebFactor * (fga - fgm) + team.turnovers;
+}
+
+function calcEff(p: GamePlayerStat): number {
+  const fga = p.twoPointAttempt + p.threePointAttempt;
+  const fgm = p.twoPointMade + p.threePointMade;
+  return (p.points + p.totalReb + p.assists + p.steals + p.blocks) - ((fga - fgm) + (p.ftAttempt - p.ftMade) + p.turnovers);
+}
+
+function calcGmSc(p: GamePlayerStat): number {
+  const fga = p.twoPointAttempt + p.threePointAttempt;
+  const fgm = p.twoPointMade + p.threePointMade;
+  return p.points + 0.4 * fgm - 0.7 * fga - 0.4 * (p.ftAttempt - p.ftMade) + 0.7 * p.offReb + 0.3 * p.defReb + p.steals + 0.7 * p.assists + 0.7 * p.blocks - 0.4 * p.personalFouls - p.turnovers;
+}
+
 type SortKey =
   | "number" | "points"
   | "threePointMade" | "threePointPct" | "twoPointMade" | "twoPointPct"
   | "ftMade" | "ftPct"
   | "offReb" | "defReb" | "totalReb"
   | "assists" | "steals" | "blocks" | "turnovers"
-  | "personalFouls" | "foulsDrawn";
+  | "personalFouls" | "foulsDrawn" | "eff" | "gmSc";
 
 const TH_SORTABLE = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap cursor-pointer select-none hover:text-white transition-colors";
 
@@ -178,6 +198,17 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
     };
   }, [game.players, game.opponentPlayers, game.opponent]);
 
+  const advancedStats = useMemo(() => {
+    const ePoss = calcTeamPossEst(espoirTotals, opponentTotals.defReb);
+    const oPoss = calcTeamPossEst(opponentTotals, espoirTotals.defReb);
+    const poss = 0.5 * (ePoss + oPoss);
+    const teamMinDecimal = espoirTotals.totalMinutes / 60;
+    const pace = teamMinDecimal > 0 ? 40 * (ePoss + oPoss) / (2 * (teamMinDecimal / 5)) : 0;
+    const offRtg = poss > 0 ? 100 * game.teamPoints / poss : 0;
+    const defRtg = poss > 0 ? 100 * game.opponentPoints / poss : 0;
+    return { poss: Math.round(poss), pace: pace.toFixed(1), offRtg: offRtg.toFixed(1), defRtg: defRtg.toFixed(1), netRtg: (offRtg - defRtg).toFixed(1) };
+  }, [espoirTotals, opponentTotals, game.teamPoints, game.opponentPoints]);
+
   const sortedPlayers = useMemo(() => {
     return [...players].sort((a, b) => {
       let va: number, vb: number;
@@ -190,6 +221,10 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
       } else if (sortKey === "ftPct") {
         va = pctVal(a.ftMade, a.ftAttempt);
         vb = pctVal(b.ftMade, b.ftAttempt);
+      } else if (sortKey === "eff") {
+        va = calcEff(a); vb = calcEff(b);
+      } else if (sortKey === "gmSc") {
+        va = calcGmSc(a); vb = calcGmSc(b);
       } else {
         va = a[sortKey];
         vb = b[sortKey];
@@ -335,6 +370,25 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
         </div>
       )}
 
+      {/* Advanced Stats */}
+      <div className="grid grid-cols-5 gap-2 sm:gap-3 mb-6">
+        {([
+          { label: "PACE", value: advancedStats.pace, desc: "試合ペース" },
+          { label: "POSS", value: advancedStats.poss, desc: "ポゼッション" },
+          { label: "OFFRTG", value: advancedStats.offRtg, desc: "攻撃効率" },
+          { label: "DEFRTG", value: advancedStats.defRtg, desc: "守備効率" },
+          { label: "NETRTG", value: advancedStats.netRtg, desc: "得失点効率" },
+        ]).map(({ label, value, desc }) => (
+          <div key={label} className="bg-white/5 rounded-lg p-2.5 sm:p-3 border border-white/5 text-center">
+            <p className="text-[10px] text-neutral-500 uppercase tracking-wider">{label}</p>
+            <p className={`text-lg sm:text-xl font-bold tabular-nums ${label === "NETRTG" ? (parseFloat(String(value)) > 0 ? "text-green-400" : parseFloat(String(value)) < 0 ? "text-red-400" : "text-white") : "text-white"}`}>
+              {label === "NETRTG" && parseFloat(String(value)) > 0 ? "+" : ""}{value}
+            </p>
+            <p className="text-[10px] text-neutral-600 hidden sm:block">{desc}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Team Comparison */}
       {game.opponentPlayers.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
@@ -415,7 +469,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
           <p className="text-neutral-400 text-center py-8">データがありません</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs sm:text-sm min-w-[900px]" aria-label={`${activeTab === "espoir" ? "Espoir" : game.opponent} スタッツ`}>
+            <table className="w-full text-xs sm:text-sm min-w-[1000px]" aria-label={`${activeTab === "espoir" ? "Espoir" : game.opponent} スタッツ`}>
               <thead>
                 <tr className="border-b border-white/10 text-neutral-400">
                   <th
@@ -445,6 +499,8 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
                   <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="personalFouls">PF</SortTh>
                   <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="foulsDrawn">FD</SortTh>
                   <th className={thBase} scope="col">MIN</th>
+                  <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="eff">EFF</SortTh>
+                  <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="gmSc">GmSc</SortTh>
                 </tr>
               </thead>
               <tbody>
@@ -472,6 +528,8 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
                     <td className={td}>{p.personalFouls}</td>
                     <td className={td}>{p.foulsDrawn}</td>
                     <td className={`${td} text-neutral-400`}>{p.minutes}</td>
+                    <td className={`${td} font-semibold ${calcEff(p) > 0 ? "text-green-400" : calcEff(p) < 0 ? "text-red-400" : ""}`}>{calcEff(p)}</td>
+                    <td className={`${td} font-semibold ${calcGmSc(p) > 0 ? "text-green-400" : calcGmSc(p) < 0 ? "text-red-400" : ""}`}>{calcGmSc(p).toFixed(1)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -495,6 +553,8 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
                   <td className={td}>{teamTotals.personalFouls}</td>
                   <td className={td}>{teamTotals.foulsDrawn}</td>
                   <td className={`${td} text-neutral-400`}>{formatMinutes(teamTotals.totalMinutes)}</td>
+                  <td className={td}>{players.reduce((s, p) => s + calcEff(p), 0)}</td>
+                  <td className={td}>{players.reduce((s, p) => s + calcGmSc(p), 0).toFixed(1)}</td>
                 </tr>
               </tfoot>
             </table>
