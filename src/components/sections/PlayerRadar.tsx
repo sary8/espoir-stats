@@ -21,7 +21,7 @@ interface PlayerRadarProps {
 }
 
 export default function PlayerRadar({ players }: PlayerRadarProps) {
-  const [selected, setSelected] = useState<number[]>([players[0]?.number, players[1]?.number].filter(Boolean));
+  const [selected, setSelected] = useState<number[]>([]);
 
   const selectedPlayers = players.filter((p) => selected.includes(p.number));
 
@@ -41,7 +41,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
 
   const togglePlayer = (num: number) => {
     setSelected((prev) =>
-      prev.includes(num) ? prev.filter((n) => n !== num) : prev.length < 3 ? [...prev, num] : prev
+      prev.includes(num) ? prev.filter((n) => n !== num) : [...prev, num]
     );
   };
 
@@ -57,7 +57,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
               key={p.number}
               onClick={() => togglePlayer(p.number)}
               aria-pressed={selected.includes(p.number)}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-full text-xs sm:text-sm font-medium transition-all border cursor-pointer ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-full text-xs sm:text-sm font-medium transition-all border cursor-pointer outline-none ${
                 selected.includes(p.number)
                   ? "bg-accent-purple/20 border-accent-purple/50 text-purple-300"
                   : "border-white/10 text-neutral-400 hover:border-white/30"
