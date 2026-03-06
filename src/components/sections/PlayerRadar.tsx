@@ -57,7 +57,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
               key={p.number}
               onClick={() => togglePlayer(p.number)}
               aria-pressed={selected.includes(p.number)}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-full text-xs sm:text-sm font-medium transition-all border cursor-pointer outline-none ${
+              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-full text-xs sm:text-sm font-medium transition-all border cursor-pointer focus:outline-none focus-visible:outline-none ${
                 selected.includes(p.number)
                   ? "bg-accent-purple/20 border-accent-purple/50 text-purple-300"
                   : "border-white/10 text-neutral-400 hover:border-white/30"
