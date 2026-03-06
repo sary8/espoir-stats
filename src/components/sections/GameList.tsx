@@ -44,37 +44,45 @@ export default function GameList({ games }: GameListProps) {
               className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple"
             >
               <GlassCard hover className="cursor-pointer !py-4 !px-5 sm:!py-5 sm:!px-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                  {/* 左: バッジ + 日付 */}
+                  <div className="flex items-center gap-2">
                     <ResultBadge team={game.teamPoints} opponent={game.opponentPoints} />
-                    <p className="text-xs text-neutral-500">{game.date.replace(/-/g, "/")}</p>
+                    <p className="text-xs text-neutral-500 hidden sm:block">{game.date.replace(/-/g, "/")}</p>
                   </div>
-                  {game.youtubeUrl && (
-                    <a
-                      href={game.youtubeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${game.opponent}戦の試合動画`}
-                      className="p-1.5 rounded-full text-neutral-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Youtube size={14} />
-                    </a>
-                  )}
-                </div>
-                <div className="flex items-center justify-center gap-4 mt-2">
-                  <span className="text-sm sm:text-base font-semibold text-neutral-300 w-24 text-right">Espoir</span>
-                  <div className="flex items-baseline gap-2 min-w-[100px] justify-center">
-                    <span className="text-2xl sm:text-3xl font-bold tabular-nums text-accent-purple">
-                      {game.teamPoints}
-                    </span>
-                    <span className="text-neutral-600 text-xs">–</span>
-                    <span className="text-2xl sm:text-3xl font-bold tabular-nums text-neutral-300">
-                      {game.opponentPoints}
-                    </span>
+
+                  {/* 中央: スコア */}
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <span className="text-sm sm:text-base font-semibold text-neutral-300">Espoir</span>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-2xl sm:text-3xl font-bold tabular-nums text-accent-purple">
+                        {game.teamPoints}
+                      </span>
+                      <span className="text-neutral-600 text-xs">–</span>
+                      <span className="text-2xl sm:text-3xl font-bold tabular-nums text-neutral-300">
+                        {game.opponentPoints}
+                      </span>
+                    </div>
+                    <span className="text-sm sm:text-base font-semibold text-neutral-300">{game.opponent}</span>
                   </div>
-                  <span className="text-sm sm:text-base font-semibold text-neutral-300 w-24">{game.opponent}</span>
+
+                  {/* 右: YouTube */}
+                  <div className="flex justify-end">
+                    {game.youtubeUrl && (
+                      <a
+                        href={game.youtubeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${game.opponent}戦の試合動画`}
+                        className="p-2 rounded-full text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Youtube size={18} />
+                      </a>
+                    )}
+                  </div>
                 </div>
+                <p className="text-[11px] text-neutral-600 text-center mt-1 sm:hidden">{game.date.replace(/-/g, "/")}</p>
               </GlassCard>
             </div>
           </AnimatedSection>
