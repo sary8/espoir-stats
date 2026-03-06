@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Trophy, Target, Percent, ArrowDownUp, HandHelping, ShieldAlert, Shield, AlertTriangle } from "lucide-react";
+import { Trophy, Target, Percent, ArrowDownUp, HandHelping, ShieldAlert, Shield, AlertTriangle, Gauge, Swords, ShieldCheck, TrendingUp } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import StatCounter from "../ui/StatCounter";
@@ -24,6 +24,10 @@ interface TeamOverviewProps {
   totalSteals: number;
   totalBlocks: number;
   totalTurnovers: number;
+  pace: number;
+  offRtg: number;
+  defRtg: number;
+  netRtg: number;
 }
 
 export default function TeamOverview(props: TeamOverviewProps) {
@@ -38,6 +42,13 @@ export default function TeamOverview(props: TeamOverviewProps) {
     { label: "ターンオーバー", value: props.totalTurnovers, icon: <AlertTriangle size={20} />, color: "text-neutral-400" },
   ], [props.totalPoints, props.avgPoints, props.team3pPct, props.totalRebounds, props.totalAssists, props.totalSteals, props.totalBlocks, props.totalTurnovers]);
 
+  const advancedStats: Stat[] = useMemo(() => [
+    { label: "PACE", value: props.pace, decimals: 1, icon: <Gauge size={20} />, color: "text-accent-purple" },
+    { label: "OFFRTG", value: props.offRtg, decimals: 1, icon: <Swords size={20} />, color: "text-accent-purple-light" },
+    { label: "DEFRTG", value: props.defRtg, decimals: 1, icon: <ShieldCheck size={20} />, color: "text-neutral-400" },
+    { label: "NETRTG", value: props.netRtg, decimals: 1, icon: <TrendingUp size={20} />, color: props.netRtg >= 0 ? "text-green-400" : "text-red-400" },
+  ], [props.pace, props.offRtg, props.defRtg, props.netRtg]);
+
   return (
     <AnimatedSection id="overview" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
@@ -46,6 +57,19 @@ export default function TeamOverview(props: TeamOverviewProps) {
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-4">
         {stats.map((stat, i) => (
           <AnimatedSection key={stat.label} delay={i * 0.1}>
+            <GlassCard className="text-center">
+              <div className={`mb-1 sm:mb-2 flex justify-center ${stat.color}`}>{stat.icon}</div>
+              <div className="text-lg sm:text-2xl md:text-3xl font-bold">
+                <StatCounter end={stat.value} decimals={stat.decimals ?? 0} suffix={stat.suffix ?? ""} />
+              </div>
+              <div className="text-xs text-neutral-400 mt-1">{stat.label}</div>
+            </GlassCard>
+          </AnimatedSection>
+        ))}
+      </div>
+      <div className="grid grid-cols-4 gap-2 sm:gap-4 mt-3 sm:mt-4">
+        {advancedStats.map((stat, i) => (
+          <AnimatedSection key={stat.label} delay={(stats.length + i) * 0.1}>
             <GlassCard className="text-center">
               <div className={`mb-1 sm:mb-2 flex justify-center ${stat.color}`}>{stat.icon}</div>
               <div className="text-lg sm:text-2xl md:text-3xl font-bold">

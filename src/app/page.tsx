@@ -1,4 +1,5 @@
 import { getPlayerSummaries, getGameStats, getTopPlayers } from "@/lib/data";
+import { calcAdvancedStats } from "@/lib/stats";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
@@ -32,6 +33,32 @@ export default function Home() {
 
   const totalGames = games.length;
   const team3pPct = total3PA > 0 ? (total3PM / total3PA) * 100 : 0;
+
+  function parseMin(min: string): number {
+    if (!min) return 0;
+    const parts = min.split(":");
+    return parseInt(parts[0], 10) * 60 + parseInt(parts[1] || "0", 10);
+  }
+
+  const seasonEspoir = { threePointMade: 0, threePointAttempt: 0, twoPointMade: 0, twoPointAttempt: 0, ftAttempt: 0, offReb: 0, defReb: 0, turnovers: 0, points: 0, totalMinutes: 0 };
+  const seasonOpponent = { threePointMade: 0, threePointAttempt: 0, twoPointMade: 0, twoPointAttempt: 0, ftAttempt: 0, offReb: 0, defReb: 0, turnovers: 0, points: 0, totalMinutes: 0 };
+  for (const g of games) {
+    for (const p of g.players) {
+      seasonEspoir.threePointMade += p.threePointMade; seasonEspoir.threePointAttempt += p.threePointAttempt;
+      seasonEspoir.twoPointMade += p.twoPointMade; seasonEspoir.twoPointAttempt += p.twoPointAttempt;
+      seasonEspoir.ftAttempt += p.ftAttempt; seasonEspoir.offReb += p.offReb; seasonEspoir.defReb += p.defReb;
+      seasonEspoir.turnovers += p.turnovers; seasonEspoir.points += p.points;
+      seasonEspoir.totalMinutes += parseMin(p.minutes);
+    }
+    for (const p of g.opponentPlayers) {
+      seasonOpponent.threePointMade += p.threePointMade; seasonOpponent.threePointAttempt += p.threePointAttempt;
+      seasonOpponent.twoPointMade += p.twoPointMade; seasonOpponent.twoPointAttempt += p.twoPointAttempt;
+      seasonOpponent.ftAttempt += p.ftAttempt; seasonOpponent.offReb += p.offReb; seasonOpponent.defReb += p.defReb;
+      seasonOpponent.turnovers += p.turnovers; seasonOpponent.points += p.points;
+      seasonOpponent.totalMinutes += parseMin(p.minutes);
+    }
+  }
+  const seasonAdvanced = calcAdvancedStats(seasonEspoir, seasonOpponent);
 
   const topPlayers = getTopPlayers(players);
 
@@ -75,6 +102,10 @@ export default function Home() {
           totalSteals={totalSteals}
           totalBlocks={totalBlocks}
           totalTurnovers={totalTurnovers}
+          pace={seasonAdvanced.pace}
+          offRtg={seasonAdvanced.offRtg}
+          defRtg={seasonAdvanced.defRtg}
+          netRtg={seasonAdvanced.netRtg}
         />
         <LazyCharts
           scoringData={scoringData}

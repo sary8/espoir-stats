@@ -35,7 +35,7 @@ export default function Header() {
             Games
           </Link>
           <Link href="/glossary" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-            用語解説
+            Stats Guide
           </Link>
         </nav>
         <button
@@ -76,7 +76,7 @@ export default function Header() {
               onClick={() => setMenuOpen(false)}
               className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
             >
-              用語解説
+              Stats Guide
             </Link>
           </div>
         </nav>

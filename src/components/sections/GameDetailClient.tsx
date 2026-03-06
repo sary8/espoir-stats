@@ -7,6 +7,7 @@ import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import { MapPin, Trophy, Calendar, Shield } from "lucide-react";
 import type { GameResult, GamePlayerStat } from "@/lib/types";
+import { calcTeamPossEst } from "@/lib/stats";
 
 function displayName(name: string, number: number): string {
   return name && name.trim() ? name : `#${number}`;
@@ -32,14 +33,6 @@ function formatMinutes(totalSeconds: number): string {
   const m = Math.floor(totalSeconds / 60);
   const s = totalSeconds % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
-}
-
-// --- Advanced Stats ---
-function calcTeamPossEst(team: { threePointMade: number; threePointAttempt: number; twoPointMade: number; twoPointAttempt: number; ftAttempt: number; offReb: number; turnovers: number }, oppDefReb: number): number {
-  const fga = team.twoPointAttempt + team.threePointAttempt;
-  const fgm = team.twoPointMade + team.threePointMade;
-  const orebFactor = team.offReb + oppDefReb > 0 ? team.offReb / (team.offReb + oppDefReb) : 0;
-  return fga + 0.4 * team.ftAttempt - 1.07 * orebFactor * (fga - fgm) + team.turnovers;
 }
 
 function calcEff(p: GamePlayerStat): number {
