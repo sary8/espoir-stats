@@ -37,7 +37,7 @@ type SortKey =
   | "assists" | "steals" | "blocks" | "turnovers"
   | "personalFouls" | "foulsDrawn";
 
-const TH_SORTABLE = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap cursor-pointer select-none text-neutral-200 hover:text-white transition-colors";
+const TH_SORTABLE = "text-center py-2 px-1.5 sm:py-3 sm:px-2 whitespace-nowrap cursor-pointer select-none hover:text-white transition-colors";
 
 function SortTh({ k, sortKey, sortAsc, onSort, children }: {
   k: SortKey;
@@ -46,11 +46,14 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
   onSort: (k: SortKey) => void;
   children: React.ReactNode;
 }) {
+  const isActive = sortKey === k;
   return (
     <th className={TH_SORTABLE} scope="col" onClick={() => onSort(k)}>
       <span className="inline-flex items-center gap-0.5">
         {children}
-        {sortKey === k && (sortAsc ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+        {isActive
+          ? (sortAsc ? <ChevronUp size={12} /> : <ChevronDown size={12} />)
+          : <ChevronDown size={10} className="opacity-30" />}
       </span>
     </th>
   );
