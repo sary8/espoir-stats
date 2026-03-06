@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Crown, CircleDot, MoveUp, MoveDown, Handshake, Scissors, Ban, RotateCcw, AlertTriangle, Zap } from "lucide-react";
+import { Crown, CircleDot, MoveUp, MoveDown, Grab, Handshake, Scissors, Ban, RotateCcw, AlertTriangle, Zap } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { PlayerSummary } from "@/lib/types";
@@ -17,6 +17,7 @@ const categories: Category[] = [
   { label: "3PM", key: "threePointMade", icon: <CircleDot size={18} aria-hidden="true" /> },
   { label: "オフェンスリバウンド", key: "offReb", icon: <MoveUp size={18} aria-hidden="true" /> },
   { label: "ディフェンスリバウンド", key: "defReb", icon: <MoveDown size={18} aria-hidden="true" /> },
+  { label: "合計リバウンド", key: "totalReb", icon: <Grab size={18} aria-hidden="true" /> },
   { label: "アシスト", key: "assists", icon: <Handshake size={18} aria-hidden="true" /> },
   { label: "スティール", key: "steals", icon: <Scissors size={18} aria-hidden="true" /> },
   { label: "ブロック", key: "blocks", icon: <Ban size={18} aria-hidden="true" /> },
