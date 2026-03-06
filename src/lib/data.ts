@@ -56,21 +56,15 @@ export function getPlayerSummaries(): PlayerSummary[] {
   });
 }
 
-const GAME_DATES: Record<string, string> = {
-  "LINKS": "2025-06-01",
-  "Urus": "2025-11-02",
-  "Jokers": "2025-11-09",
-  "POLYGON": "2026-03-01",
-};
-
 export function getGameStats(): GameResult[] {
   const csv = readCsv("全試合スタッツ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
 
-  const gameMap = new Map<string, GamePlayerStat[]>();
+  const gameMap = new Map<string, { date: string; players: GamePlayerStat[] }>();
 
   for (const row of data) {
     const opponent = row["対戦相手"];
+    const date = row["日付"] ?? "9999-12-31";
     const stat: GamePlayerStat = {
       opponent,
       number: parseInt(row["No."], 10),
@@ -102,14 +96,14 @@ export function getGameStats(): GameResult[] {
       minutes: row["MIN"],
     };
 
-    if (!gameMap.has(opponent)) gameMap.set(opponent, []);
-    gameMap.get(opponent)!.push(stat);
+    if (!gameMap.has(opponent)) gameMap.set(opponent, { date, players: [] });
+    gameMap.get(opponent)!.players.push(stat);
   }
 
   return Array.from(gameMap.entries())
-    .map(([opponent, players]) => ({
+    .map(([opponent, { date, players }]) => ({
       opponent,
-      date: GAME_DATES[opponent] ?? "9999-12-31",
+      date,
       players: players.sort((a, b) => a.number - b.number),
       teamPoints: players.reduce((sum, p) => sum + p.points, 0),
     }))
