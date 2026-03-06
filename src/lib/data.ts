@@ -60,11 +60,12 @@ export function getGameStats(): GameResult[] {
   const csv = readCsv("全試合スタッツ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
 
-  const gameMap = new Map<string, { date: string; players: GamePlayerStat[] }>();
+  const gameMap = new Map<string, { date: string; youtubeUrl: string | null; players: GamePlayerStat[] }>();
 
   for (const row of data) {
     const opponent = row["対戦相手"];
     const date = row["日付"] ?? "9999-12-31";
+    const youtubeUrl = row["YouTube"] || null;
     const stat: GamePlayerStat = {
       opponent,
       number: parseInt(row["No."], 10),
@@ -96,16 +97,18 @@ export function getGameStats(): GameResult[] {
       minutes: row["MIN"],
     };
 
-    if (!gameMap.has(opponent)) gameMap.set(opponent, { date, players: [] });
+    if (!gameMap.has(opponent)) gameMap.set(opponent, { date, youtubeUrl, players: [] });
+    else if (youtubeUrl) gameMap.get(opponent)!.youtubeUrl = youtubeUrl;
     gameMap.get(opponent)!.players.push(stat);
   }
 
   return Array.from(gameMap.entries())
-    .map(([opponent, { date, players }]) => ({
+    .map(([opponent, { date, youtubeUrl, players }]) => ({
       opponent,
       date,
       players: players.sort((a, b) => a.number - b.number),
       teamPoints: players.reduce((sum, p) => sum + p.points, 0),
+      youtubeUrl,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 }

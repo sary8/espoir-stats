@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, Youtube } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { GameResult, GamePlayerStat } from "@/lib/types";
@@ -237,19 +237,31 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
             ALL
           </button>
           {games.map((g, i) => (
-            <button
-              key={g.opponent}
-              onClick={() => { setActiveGame(i); setSortKey("number"); setSortAsc(true); }}
-              aria-pressed={i === activeGame}
-              className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
-                i === activeGame && !isAllGames
-                  ? "bg-accent-purple text-white"
-                  : "bg-white/5 text-neutral-400 hover:bg-white/10"
-              }`}
-            >
-              <span className="block">{(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}</span>
-              <span className="text-xs opacity-75">{g.teamPoints}pts</span>
-            </button>
+            <div key={g.opponent} className="flex items-center gap-1">
+              <button
+                onClick={() => { setActiveGame(i); setSortKey("number"); setSortAsc(true); }}
+                aria-pressed={i === activeGame}
+                className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
+                  i === activeGame && !isAllGames
+                    ? "bg-accent-purple text-white"
+                    : "bg-white/5 text-neutral-400 hover:bg-white/10"
+                }`}
+              >
+                <span className="block">{(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}</span>
+                <span className="text-xs opacity-75">{g.teamPoints}pts</span>
+              </button>
+              {g.youtubeUrl && (
+                <a
+                  href={g.youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${g.opponent}戦の試合動画`}
+                  className="p-1.5 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors"
+                >
+                  <Youtube size={18} />
+                </a>
+              )}
+            </div>
           ))}
         </div>
 
