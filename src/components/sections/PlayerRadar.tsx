@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from "recharts";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import { playerColors } from "@/config/theme";
@@ -162,18 +162,18 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
             {selectedPlayers.length > 0 && (
               <Tooltip content={renderTooltip} cursor={false} isAnimationActive={false} />
             )}
-            <Legend content={() => (
-              <div className={`flex flex-wrap justify-center gap-x-3 gap-y-1 mt-2 min-h-[24px] ${selectedPlayers.length > 4 ? "grid grid-cols-3 sm:flex" : ""}`}>
-                {selectedPlayers.map((p) => (
-                  <div key={p.number} className="flex items-center gap-1 text-xs sm:text-sm">
-                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm shrink-0" style={{ background: colorMap.get(p.name) }} />
-                    <span className="text-neutral-300">{p.name.split(" ").pop()}</span>
-                  </div>
-                ))}
-              </div>
-            )} />
           </RadarChart>
         </ResponsiveContainer>
+        {selectedPlayers.length > 0 && (
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mt-2">
+            {selectedPlayers.map((p) => (
+              <div key={p.number} className="flex items-center gap-1 text-xs sm:text-sm">
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm shrink-0" style={{ background: colorMap.get(p.name) }} />
+                <span className="text-neutral-300">{p.name.split(" ").pop()}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </GlassCard>
     </AnimatedSection>
   );

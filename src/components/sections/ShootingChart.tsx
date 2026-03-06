@@ -24,9 +24,9 @@ export default function ShootingChart({ data }: ShootingChartProps) {
       </h2>
       <GlassCard>
         <p className="sr-only">選手別のシュート成功率を示す棒グラフ（3P%、2P%、FT%）。</p>
-        <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={data} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
-            <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={data} margin={{ left: 0, right: 10, top: 10, bottom: 30 }}>
+            <XAxis dataKey="name" tick={{ fontSize: 11 }} angle={-35} textAnchor="end" interval={0} />
             <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} width={30} />
             <Tooltip
               contentStyle={tooltipStyle}

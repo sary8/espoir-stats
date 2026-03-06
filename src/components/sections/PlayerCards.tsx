@@ -44,9 +44,9 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
                       {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
                       {p.number === topAssister && <Badge variant="green">Top Assists</Badge>}
                       {p.number === top3P && <Badge variant="pink">Top 3P</Badge>}
-                      {p.number === topStealer && <Badge variant="cyan">Top Steal</Badge>}
-                      {p.number === topBlocker && <Badge variant="yellow">Top Block</Badge>}
-                      {p.number === topFoul && <Badge variant="red">Top Foul</Badge>}
+                      {p.number === topStealer && <Badge variant="cyan">Top Steals</Badge>}
+                      {p.number === topBlocker && <Badge variant="yellow">Top Blocks</Badge>}
+                      {p.number === topFoul && <Badge variant="red">Top Fouls</Badge>}
                       {p.number === topTurnover && <Badge variant="orange">Top Turnovers</Badge>}
                     </div>
                   )}
