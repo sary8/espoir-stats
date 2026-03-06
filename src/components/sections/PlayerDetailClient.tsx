@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import GlassCard from "../ui/GlassCard";
+
+const PlayerGameChart = dynamic(() => import("./PlayerGameChart"), { ssr: false });
 import AnimatedSection from "../ui/AnimatedSection";
 import ProgressRing from "../ui/ProgressRing";
 import StatCounter from "../ui/StatCounter";
@@ -13,13 +15,6 @@ import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import { shootingColors } from "@/config/theme";
 import type { PlayerSummary, GamePlayerStat } from "@/lib/types";
-
-const tooltipStyle = {
-  background: "#1a1a2e",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: 8,
-} as const;
-const tooltipLabelStyle = { color: "#fff" } as const;
 
 function fmtPct(made: number, attempt: number): string {
   if (attempt === 0) return "-";
@@ -41,12 +36,12 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
   const prefersReducedMotion = useReducedMotion();
   const p = summary;
 
-  const lineData = games.map((g) => ({
+  const lineData = useMemo(() => games.map((g) => ({
     game: `${(g.date ?? "").slice(5).replace("-", "/")} ${g.opponent}`,
     PTS: g.stat.points,
     REB: g.stat.totalReb,
     AST: g.stat.assists,
-  }));
+  })), [games]);
 
   const seasonEff = calcEff({
     points: p.totalPoints, totalReb: p.totalReb, assists: p.assists, steals: p.steals, blocks: p.blocks,
@@ -55,14 +50,14 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
     ftMade: p.ftMade, ftAttempt: p.ftAttempt, turnovers: p.turnovers,
   });
 
-  const mainStats = [
+  const mainStats = useMemo(() => [
     { label: "PPG", value: p.ppg, decimals: 1 },
     { label: "RPG", value: p.totalReb / p.games, decimals: 1 },
     { label: "APG", value: p.assists / p.games, decimals: 1 },
     { label: "SPG", value: p.steals / p.games, decimals: 1 },
     { label: "BPG", value: p.blocks / p.games, decimals: 1 },
     { label: "EFF", value: seasonEff / p.games, decimals: 1 },
-  ];
+  ], [p.ppg, p.totalReb, p.games, p.assists, p.steals, p.blocks, seasonEff]);
 
   const totals = useMemo(() => {
     const t = {
@@ -203,20 +198,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
             <h2 className="text-2xl font-bold mb-6">Game-by-Game</h2>
             <GlassCard>
               <p className="sr-only">試合ごとの得点・リバウンド・アシストの推移を示すラインチャート。</p>
-              <ResponsiveContainer width="100%" height={240}>
-                <LineChart data={lineData} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
-                  <CartesianGrid stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="game" tick={{ fontSize: 10 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={tooltipStyle}
-                    labelStyle={tooltipLabelStyle}
-                  />
-                  <Line type="monotone" dataKey="PTS" stroke="#F472B6" strokeWidth={3} dot={{ r: 5, fill: "#F472B6" }} />
-                  <Line type="monotone" dataKey="REB" stroke="#22D3EE" strokeWidth={2} dot={{ r: 4, fill: "#22D3EE" }} />
-                  <Line type="monotone" dataKey="AST" stroke="#FBBF24" strokeWidth={2} dot={{ r: 4, fill: "#FBBF24" }} />
-                </LineChart>
-              </ResponsiveContainer>
+              <PlayerGameChart data={lineData} />
             </GlassCard>
           </AnimatedSection>
         )}
@@ -258,7 +240,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
                       <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
                         <span className="text-neutral-400 mr-2 text-xs">{(g.date ?? "").replace(/-/g, "/")}</span>vs {g.opponent}
                       </td>
-                      <td className={td}>{g.stat.starter ? <span aria-label="スターター">●</span> : ""}</td>
+                      <td className={td}>{g.stat.starter ? <span aria-label="スターター">●</span> : null}</td>
                       <td className={`${td} font-bold text-accent-purple`}>{g.stat.points}</td>
                       <td className={td}>{g.stat.threePointMade}/{g.stat.threePointAttempt}</td>
                       <td className={`${td} text-neutral-400`}>{fmtPct(g.stat.threePointMade, g.stat.threePointAttempt)}</td>

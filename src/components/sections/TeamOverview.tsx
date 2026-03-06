@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { Trophy, Target, Percent, ArrowDownUp, HandHelping, ShieldAlert, Shield, AlertTriangle } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
@@ -26,7 +27,7 @@ interface TeamOverviewProps {
 }
 
 export default function TeamOverview(props: TeamOverviewProps) {
-  const stats: Stat[] = [
+  const stats: Stat[] = useMemo(() => [
     { label: "合計得点", value: props.totalPoints, icon: <Trophy size={20} />, color: "text-accent-purple" },
     { label: "平均得点", value: props.avgPoints, decimals: 1, icon: <Target size={20} />, color: "text-accent-purple-light" },
     { label: "チーム3P%", value: props.team3pPct, decimals: 1, suffix: "%", icon: <Percent size={20} />, color: "text-neutral-400" },
@@ -35,7 +36,7 @@ export default function TeamOverview(props: TeamOverviewProps) {
     { label: "スティール", value: props.totalSteals, icon: <ShieldAlert size={20} />, color: "text-neutral-400" },
     { label: "ブロック", value: props.totalBlocks, icon: <Shield size={20} />, color: "text-neutral-400" },
     { label: "ターンオーバー", value: props.totalTurnovers, icon: <AlertTriangle size={20} />, color: "text-neutral-400" },
-  ];
+  ], [props.totalPoints, props.avgPoints, props.team3pPct, props.totalRebounds, props.totalAssists, props.totalSteals, props.totalBlocks, props.totalTurnovers]);
 
   return (
     <AnimatedSection id="overview" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">

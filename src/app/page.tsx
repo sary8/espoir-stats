@@ -1,5 +1,4 @@
-import { Suspense, lazy } from "react";
-import { getPlayerSummaries, getGameStats } from "@/lib/data";
+import { getPlayerSummaries, getGameStats, getTopPlayers } from "@/lib/data";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
@@ -34,16 +33,9 @@ export default function Home() {
   const totalGames = games.length;
   const team3pPct = total3PA > 0 ? (total3PM / total3PA) * 100 : 0;
 
-  const sortedByPpg = [...players].sort((a, b) => b.ppg - a.ppg);
-  const topScorer = sortedByPpg[0].number;
-  const topRebounder = [...players].sort((a, b) => b.totalReb - a.totalReb)[0].number;
-  const topAssister = [...players].sort((a, b) => b.assists - a.assists)[0].number;
-  const top3P = [...players].sort((a, b) => b.threePointMade - a.threePointMade)[0].number;
-  const topStealer = [...players].sort((a, b) => b.steals - a.steals)[0].number;
-  const topBlocker = [...players].sort((a, b) => b.blocks - a.blocks)[0].number;
-  const topFoul = [...players].sort((a, b) => b.personalFouls - a.personalFouls)[0].number;
-  const topTurnover = [...players].sort((a, b) => b.turnovers - a.turnovers)[0].number;
+  const topPlayers = getTopPlayers(players);
 
+  const sortedByPpg = [...players].sort((a, b) => b.ppg - a.ppg);
   const sortedByNumber = [...players].sort((a, b) => a.number - b.number);
 
   const scoringData = sortedByPpg.map((p) => ({ name: p.name.split(" ").pop()!, ppg: p.ppg, number: p.number }));
@@ -88,18 +80,11 @@ export default function Home() {
           scoringData={scoringData}
           shootingData={shootingData}
           radarPlayers={radarPlayers}
-          games={games}
+          games={games.map(({ opponentPlayers, opponentPoints, ...rest }) => rest)}
         />
         <PlayerCards
           players={players}
-          topScorer={topScorer}
-          topRebounder={topRebounder}
-          topAssister={topAssister}
-          top3P={top3P}
-          topStealer={topStealer}
-          topBlocker={topBlocker}
-          topFoul={topFoul}
-          topTurnover={topTurnover}
+          {...topPlayers}
         />
         <StatsRanking players={players} />
       </main>

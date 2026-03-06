@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { GameResult } from "@/lib/types";
+import type { GameResult, GamePlayerStat } from "@/lib/types";
 
 const ScoringLeaders = dynamic(() => import("./ScoringLeaders"), { ssr: false });
 const ShootingChart = dynamic(() => import("./ShootingChart"), { ssr: false });
@@ -12,7 +12,7 @@ interface LazyChartsProps {
   scoringData: { name: string; ppg: number; number: number }[];
   shootingData: { name: string; threePointPct: number; twoPointPct: number; ftPct: number }[];
   radarPlayers: { number: number; name: string; ppg: number; rpg: number; apg: number; spg: number; bpg: number }[];
-  games: GameResult[];
+  games: Omit<GameResult, "opponentPlayers" | "opponentPoints">[];
 }
 
 export default function LazyCharts({ scoringData, shootingData, radarPlayers, games }: LazyChartsProps) {

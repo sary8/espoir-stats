@@ -72,21 +72,33 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
     };
   }, []);
 
-  const selectedPlayers = players.filter((p) => selected.includes(p.number));
+  const selectedPlayers = useMemo(
+    () => players.filter((p) => selected.includes(p.number)),
+    [players, selected]
+  );
 
-  const maxPts = Math.max(...players.map((p) => p.ppg), 1);
-  const maxReb = Math.max(...players.map((p) => p.rpg), 1);
-  const maxAst = Math.max(...players.map((p) => p.apg), 1);
-  const maxStl = Math.max(...players.map((p) => p.spg), 1);
-  const maxBlk = Math.max(...players.map((p) => p.bpg), 1);
+  const maxValues = useMemo(() => {
+    let maxPts = 1, maxReb = 1, maxAst = 1, maxStl = 1, maxBlk = 1;
+    for (const p of players) {
+      if (p.ppg > maxPts) maxPts = p.ppg;
+      if (p.rpg > maxReb) maxReb = p.rpg;
+      if (p.apg > maxAst) maxAst = p.apg;
+      if (p.spg > maxStl) maxStl = p.spg;
+      if (p.bpg > maxBlk) maxBlk = p.bpg;
+    }
+    return { maxPts, maxReb, maxAst, maxStl, maxBlk };
+  }, [players]);
 
-  const radarData = [
-    { stat: "PPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.ppg / maxPts) * 100)])) },
-    { stat: "RPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.rpg / maxReb) * 100)])) },
-    { stat: "APG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.apg / maxAst) * 100)])) },
-    { stat: "SPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.spg / maxStl) * 100)])) },
-    { stat: "BPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.bpg / maxBlk) * 100)])) },
-  ];
+  const radarData = useMemo(() => {
+    const { maxPts, maxReb, maxAst, maxStl, maxBlk } = maxValues;
+    return [
+      { stat: "PPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.ppg / maxPts) * 100)])) },
+      { stat: "RPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.rpg / maxReb) * 100)])) },
+      { stat: "APG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.apg / maxAst) * 100)])) },
+      { stat: "SPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.spg / maxStl) * 100)])) },
+      { stat: "BPG", _grid: 0, ...Object.fromEntries(selectedPlayers.map((p) => [p.name, Math.round((p.bpg / maxBlk) * 100)])) },
+    ];
+  }, [selectedPlayers, maxValues]);
 
   const colorMap = useMemo(
     () => new Map(selectedPlayers.map((p) => [p.name, playerColors[players.indexOf(p) % playerColors.length]])),

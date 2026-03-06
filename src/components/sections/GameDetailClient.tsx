@@ -155,7 +155,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
           </div>
           <span className="text-xl sm:text-2xl font-bold">{game.opponent}</span>
         </div>
-        {game.youtubeUrl && (
+        {game.youtubeUrl ? (
           <a
             href={game.youtubeUrl}
             target="_blank"
@@ -165,7 +165,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
             <Youtube size={16} />
             試合動画
           </a>
-        )}
+        ) : null}
       </div>
 
       <GlassCard>

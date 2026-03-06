@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
@@ -21,7 +22,7 @@ interface PlayerCardsProps {
 }
 
 export default function PlayerCards({ players, topScorer, topRebounder, topAssister, top3P, topStealer, topBlocker, topFoul, topTurnover }: PlayerCardsProps) {
-  const sorted = [...players].sort((a, b) => a.number - b.number);
+  const sorted = useMemo(() => [...players].sort((a, b) => a.number - b.number), [players]);
 
   return (
     <AnimatedSection id="players" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">

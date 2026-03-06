@@ -56,7 +56,7 @@ export default function ProgressRing({
       <span className="text-sm font-semibold" style={{ color }}>
         {displayValue}
       </span>
-      {label && <span className="text-xs text-neutral-400">{label}</span>}
+      {label ? <span className="text-xs text-neutral-400">{label}</span> : null}
     </div>
   );
 }

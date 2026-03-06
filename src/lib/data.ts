@@ -42,7 +42,10 @@ function parseGamePlayerStat(row: Record<string, string>): GamePlayerStat {
   };
 }
 
+let _cachedPlayerSummaries: PlayerSummary[] | null = null;
+
 export function getPlayerSummaries(): PlayerSummary[] {
+  if (_cachedPlayerSummaries) return _cachedPlayerSummaries;
   const csv = readCsv("選手別サマリ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
 
@@ -58,7 +61,7 @@ export function getPlayerSummaries(): PlayerSummary[] {
     foulMap.set(num, entry);
   }
 
-  return data.map((row) => {
+  const result = data.map((row) => {
     const num = parseInt(row["No."], 10);
     const fouls = foulMap.get(num) ?? { pf: 0, fo: 0 };
     return {
@@ -87,6 +90,8 @@ export function getPlayerSummaries(): PlayerSummary[] {
       foulsDrawn: fouls.fo,
     };
   });
+  _cachedPlayerSummaries = result;
+  return result;
 }
 
 function getGameInfoMap(): Map<string, { date: string; youtubeUrl: string | null }> {
@@ -146,7 +151,10 @@ function adjustMinutesTo160(players: GamePlayerStat[]): void {
   players[minIdx].minutes = secondsToMinutes(minSec + diff);
 }
 
+let _cachedGameStats: GameResult[] | null = null;
+
 export function getGameStats(): GameResult[] {
+  if (_cachedGameStats) return _cachedGameStats;
   const csv = readCsv("全試合スタッツ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
   const gameInfo = getGameInfoMap();
@@ -160,7 +168,7 @@ export function getGameStats(): GameResult[] {
     gameMap.get(opponent)!.push(parseGamePlayerStat(row));
   }
 
-  return Array.from(gameMap.entries())
+  const result = Array.from(gameMap.entries())
     .map(([opponent, players]) => {
       const info = gameInfo.get(opponent);
       const oppPlayers = opponentStats.get(opponent) ?? [];
@@ -179,6 +187,21 @@ export function getGameStats(): GameResult[] {
       };
     })
     .sort((a, b) => a.date.localeCompare(b.date));
+  _cachedGameStats = result;
+  return result;
+}
+
+export function getTopPlayers(players: PlayerSummary[]) {
+  return {
+    topScorer: [...players].sort((a, b) => b.ppg - a.ppg)[0].number,
+    topRebounder: [...players].sort((a, b) => b.totalReb - a.totalReb)[0].number,
+    topAssister: [...players].sort((a, b) => b.assists - a.assists)[0].number,
+    top3P: [...players].sort((a, b) => b.threePointMade - a.threePointMade)[0].number,
+    topStealer: [...players].sort((a, b) => b.steals - a.steals)[0].number,
+    topBlocker: [...players].sort((a, b) => b.blocks - a.blocks)[0].number,
+    topFoul: [...players].sort((a, b) => b.personalFouls - a.personalFouls)[0].number,
+    topTurnover: [...players].sort((a, b) => b.turnovers - a.turnovers)[0].number,
+  };
 }
 
 export function getGameByOpponent(opponent: string): GameResult | null {

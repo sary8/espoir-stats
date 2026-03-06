@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { Crown, CircleDot, MoveUp, MoveDown, Handshake, Scissors, Ban, RotateCcw, AlertTriangle, Zap } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
@@ -29,17 +30,22 @@ interface StatsRankingProps {
 }
 
 export default function StatsRanking({ players }: StatsRankingProps) {
+  const rankedCategories = useMemo(
+    () => categories.map((cat) => {
+      const sorted = [...players].sort((a, b) => (b[cat.key] as number) - (a[cat.key] as number));
+      return { ...cat, sorted, maxVal: sorted[0]?.[cat.key] as number };
+    }),
+    [players]
+  );
+
   return (
     <AnimatedSection id="ranking" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Stats <span className="text-accent-purple">Ranking</span>
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {categories.map((cat, ci) => {
-          const sorted = [...players].sort(
-            (a, b) => (b[cat.key] as number) - (a[cat.key] as number)
-          );
-          const maxVal = sorted[0]?.[cat.key] as number;
+        {rankedCategories.map((cat, ci) => {
+          const { sorted, maxVal } = cat;
 
           return (
             <AnimatedSection key={cat.label} delay={ci * 0.05}>
