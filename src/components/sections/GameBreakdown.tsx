@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
-import { ChevronUp, ChevronDown, Youtube, ExternalLink } from "lucide-react";
+import { ChevronUp, ChevronDown, Youtube } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { GameResult, GamePlayerStat } from "@/lib/types";
@@ -254,13 +253,6 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                 <span className="block">{(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}</span>
                 <span className="text-xs opacity-75">{g.teamPoints}pts</span>
               </button>
-              <Link
-                href={`/games/${encodeURIComponent(g.opponent)}`}
-                aria-label={`${g.opponent}戦の詳細`}
-                className="p-1.5 rounded-lg text-neutral-400 hover:text-accent-purple hover:bg-accent-purple/10 transition-colors"
-              >
-                <ExternalLink size={18} />
-              </Link>
               {g.youtubeUrl && (
                 <a
                   href={g.youtubeUrl}
