@@ -420,66 +420,64 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
       </GlassCard>
 
       {/* Team Comparison */}
-      {game.opponentPlayers.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
-          <GlassCard>
-            <div className="relative flex justify-between items-center mb-3">
-              <span className="text-sm font-bold text-accent-purple">Espoir</span>
-              <span className="absolute left-1/2 -translate-x-1/2 text-xs text-neutral-400 font-medium">Team Comparison</span>
-              <span className="text-sm font-bold text-neutral-300">{game.opponent}</span>
-            </div>
-            <div className="divide-y divide-white/5">
-              <ComparisonBar label="FG%" espoirVal={pctVal(espoirTotals.twoPointMade + espoirTotals.threePointMade, espoirTotals.twoPointAttempt + espoirTotals.threePointAttempt)} opponentVal={pctVal(opponentTotals.twoPointMade + opponentTotals.threePointMade, opponentTotals.twoPointAttempt + opponentTotals.threePointAttempt)} format="pct" opponentName={game.opponent} />
-              <ComparisonBar label="3P%" espoirVal={pctVal(espoirTotals.threePointMade, espoirTotals.threePointAttempt)} opponentVal={pctVal(opponentTotals.threePointMade, opponentTotals.threePointAttempt)} format="pct" opponentName={game.opponent} />
-              <ComparisonBar label="2P%" espoirVal={pctVal(espoirTotals.twoPointMade, espoirTotals.twoPointAttempt)} opponentVal={pctVal(opponentTotals.twoPointMade, opponentTotals.twoPointAttempt)} format="pct" opponentName={game.opponent} />
-              <ComparisonBar label="FT%" espoirVal={pctVal(espoirTotals.ftMade, espoirTotals.ftAttempt)} opponentVal={pctVal(opponentTotals.ftMade, opponentTotals.ftAttempt)} format="pct" opponentName={game.opponent} />
-              <ComparisonBar label="PTS" espoirVal={espoirTotals.points} opponentVal={opponentTotals.points} opponentName={game.opponent} />
-              <ComparisonBar label="REB" espoirVal={espoirTotals.totalReb} opponentVal={opponentTotals.totalReb} opponentName={game.opponent} />
-              <ComparisonBar label="OR" espoirVal={espoirTotals.offReb} opponentVal={opponentTotals.offReb} opponentName={game.opponent} />
-              <ComparisonBar label="DR" espoirVal={espoirTotals.defReb} opponentVal={opponentTotals.defReb} opponentName={game.opponent} />
-              <ComparisonBar label="AST" espoirVal={espoirTotals.assists} opponentVal={opponentTotals.assists} opponentName={game.opponent} />
-              <ComparisonBar label="STL" espoirVal={espoirTotals.steals} opponentVal={opponentTotals.steals} opponentName={game.opponent} />
-              <ComparisonBar label="BLK" espoirVal={espoirTotals.blocks} opponentVal={opponentTotals.blocks} opponentName={game.opponent} />
-              <ComparisonBar label="TO" espoirVal={espoirTotals.turnovers} opponentVal={opponentTotals.turnovers} opponentName={game.opponent} />
-              <ComparisonBar label="PF" espoirVal={espoirTotals.personalFouls} opponentVal={opponentTotals.personalFouls} opponentName={game.opponent} />
-              <ComparisonBar label="FD" espoirVal={espoirTotals.foulsDrawn} opponentVal={opponentTotals.foulsDrawn} opponentName={game.opponent} />
-            </div>
-          </GlassCard>
+      {game.opponentPlayers.length > 0 && (<>
+        <GlassCard className="mb-4 sm:mb-6">
+          <div className="relative flex justify-between items-center mb-3">
+            <span className="text-sm font-bold text-accent-purple">Espoir</span>
+            <span className="absolute left-1/2 -translate-x-1/2 text-xs text-neutral-400 font-medium">Team Comparison</span>
+            <span className="text-sm font-bold text-neutral-300">{game.opponent}</span>
+          </div>
+          <div className="divide-y divide-white/5">
+            <ComparisonBar label="FG%" espoirVal={pctVal(espoirTotals.twoPointMade + espoirTotals.threePointMade, espoirTotals.twoPointAttempt + espoirTotals.threePointAttempt)} opponentVal={pctVal(opponentTotals.twoPointMade + opponentTotals.threePointMade, opponentTotals.twoPointAttempt + opponentTotals.threePointAttempt)} format="pct" opponentName={game.opponent} />
+            <ComparisonBar label="3P%" espoirVal={pctVal(espoirTotals.threePointMade, espoirTotals.threePointAttempt)} opponentVal={pctVal(opponentTotals.threePointMade, opponentTotals.threePointAttempt)} format="pct" opponentName={game.opponent} />
+            <ComparisonBar label="2P%" espoirVal={pctVal(espoirTotals.twoPointMade, espoirTotals.twoPointAttempt)} opponentVal={pctVal(opponentTotals.twoPointMade, opponentTotals.twoPointAttempt)} format="pct" opponentName={game.opponent} />
+            <ComparisonBar label="FT%" espoirVal={pctVal(espoirTotals.ftMade, espoirTotals.ftAttempt)} opponentVal={pctVal(opponentTotals.ftMade, opponentTotals.ftAttempt)} format="pct" opponentName={game.opponent} />
+            <ComparisonBar label="PTS" espoirVal={espoirTotals.points} opponentVal={opponentTotals.points} opponentName={game.opponent} />
+            <ComparisonBar label="REB" espoirVal={espoirTotals.totalReb} opponentVal={opponentTotals.totalReb} opponentName={game.opponent} />
+            <ComparisonBar label="OR" espoirVal={espoirTotals.offReb} opponentVal={opponentTotals.offReb} opponentName={game.opponent} />
+            <ComparisonBar label="DR" espoirVal={espoirTotals.defReb} opponentVal={opponentTotals.defReb} opponentName={game.opponent} />
+            <ComparisonBar label="AST" espoirVal={espoirTotals.assists} opponentVal={opponentTotals.assists} opponentName={game.opponent} />
+            <ComparisonBar label="STL" espoirVal={espoirTotals.steals} opponentVal={opponentTotals.steals} opponentName={game.opponent} />
+            <ComparisonBar label="BLK" espoirVal={espoirTotals.blocks} opponentVal={opponentTotals.blocks} opponentName={game.opponent} />
+            <ComparisonBar label="TO" espoirVal={espoirTotals.turnovers} opponentVal={opponentTotals.turnovers} opponentName={game.opponent} />
+            <ComparisonBar label="PF" espoirVal={espoirTotals.personalFouls} opponentVal={opponentTotals.personalFouls} opponentName={game.opponent} />
+            <ComparisonBar label="FD" espoirVal={espoirTotals.foulsDrawn} opponentVal={opponentTotals.foulsDrawn} opponentName={game.opponent} />
+          </div>
+        </GlassCard>
 
-          {/* Game Leaders */}
-          <GlassCard>
-            <p className="text-xs text-neutral-400 font-medium mb-3 text-center">Game Leaders</p>
-            <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-              {(["points", "rebounds", "assists", "steals", "blocks", "fouls", "eff"] as const).map((cat) => {
-                const labels = { points: "PTS", rebounds: "REB", assists: "AST", steals: "STL", blocks: "BLK", fouls: "PF", eff: "EFF" } as const;
-                if (cat === "eff") {
-                  const top = gameLeaders.eff;
-                  if (top.length === 0) return null;
-                  return (
-                    <LeaderCard
-                      key={cat}
-                      category={labels[cat]}
-                      players={top.map(p => ({ name: p.name, number: p.number, value: p.eff, team: p.team }))}
-                      espoirTeam={top.map(p => p.team === "Espoir")}
-                    />
-                  );
-                }
-                const keys = { points: "points", rebounds: "totalReb", assists: "assists", steals: "steals", blocks: "blocks", fouls: "personalFouls" } as const;
-                const top = gameLeaders[cat];
-                if (top.length === 0 || (top[0][keys[cat]] as number) === 0) return null;
+        {/* Game Leaders */}
+        <GlassCard className="mb-4 sm:mb-6">
+          <p className="text-xs text-neutral-400 font-medium mb-3 text-center">Game Leaders</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+            {(["points", "rebounds", "assists", "steals", "blocks", "fouls", "eff"] as const).map((cat) => {
+              const labels = { points: "PTS", rebounds: "REB", assists: "AST", steals: "STL", blocks: "BLK", fouls: "PF", eff: "EFF" } as const;
+              if (cat === "eff") {
+                const top = gameLeaders.eff;
+                if (top.length === 0) return null;
                 return (
                   <LeaderCard
                     key={cat}
                     category={labels[cat]}
-                    players={top.map(p => ({ name: p.name, number: p.number, value: p[keys[cat]] as number, team: p.team }))}
+                    players={top.map(p => ({ name: p.name, number: p.number, value: p.eff, team: p.team }))}
                     espoirTeam={top.map(p => p.team === "Espoir")}
                   />
                 );
-              })}
-            </div>
-          </GlassCard>
-        </div>
-      )}
+              }
+              const keys = { points: "points", rebounds: "totalReb", assists: "assists", steals: "steals", blocks: "blocks", fouls: "personalFouls" } as const;
+              const top = gameLeaders[cat];
+              if (top.length === 0 || (top[0][keys[cat]] as number) === 0) return null;
+              return (
+                <LeaderCard
+                  key={cat}
+                  category={labels[cat]}
+                  players={top.map(p => ({ name: p.name, number: p.number, value: p[keys[cat]] as number, team: p.team }))}
+                  espoirTeam={top.map(p => p.team === "Espoir")}
+                />
+              );
+            })}
+          </div>
+        </GlassCard>
+      </>)}
 
       <div className="flex gap-2 mb-4">
         <button
