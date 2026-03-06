@@ -34,6 +34,9 @@ export default function Header() {
           <Link href="/games" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
             Games
           </Link>
+          <Link href="/glossary" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
+            Glossary
+          </Link>
         </nav>
         <button
           className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
@@ -67,6 +70,13 @@ export default function Header() {
               className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
             >
               Games
+            </Link>
+            <Link
+              href="/glossary"
+              onClick={() => setMenuOpen(false)}
+              className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
+            >
+              Glossary
             </Link>
           </div>
         </nav>

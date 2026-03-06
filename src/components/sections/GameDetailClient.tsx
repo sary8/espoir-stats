@@ -8,6 +8,10 @@ import GlassCard from "../ui/GlassCard";
 import { MapPin, Trophy, Calendar, Shield } from "lucide-react";
 import type { GameResult, GamePlayerStat } from "@/lib/types";
 
+function displayName(name: string, number: number): string {
+  return name && name.trim() ? name : `#${number}`;
+}
+
 function fmtPct(made: number, attempt: number): string {
   if (attempt === 0) return "-";
   return `${((made / attempt) * 100).toFixed(1)}%`;
@@ -145,7 +149,7 @@ function LeaderCard({ category, players, espoirTeam, formatValue }: {
         <div key={i} className={`flex items-center justify-between ${i > 0 ? "mt-1" : ""}`}>
           <span className="flex items-center text-xs sm:text-sm min-w-0">
             <span className="text-neutral-500 w-[24px] sm:w-[28px] text-right mr-1 sm:mr-1.5 shrink-0 tabular-nums">#{p.number}</span>
-            <span className={`font-bold truncate ${espoirTeam[i] ? "text-accent-purple" : "text-neutral-300"}`}>{p.name}</span>
+            <span className={`font-bold truncate ${espoirTeam[i] ? "text-accent-purple" : "text-neutral-300"}`}>{p.name && p.name.trim() ? p.name : `#${p.number}`}</span>
             <span className="text-[10px] text-neutral-500 ml-1 hidden sm:inline">{p.team}</span>
           </span>
           <span className={`text-xs sm:text-sm font-bold shrink-0 ml-1 ${espoirTeam[i] ? "text-accent-purple" : "text-white"}`}>{fmt(p.value)}</span>
@@ -549,7 +553,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
                   <tr key={p.number} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                     <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
                       <span className="text-accent-purple mr-1 sm:mr-2">#{p.number}</span>
-                      {p.name}
+                      {displayName(p.name, p.number)}
                       {p.starter && <span className="ml-1 text-xs text-yellow-400">S</span>}
                     </td>
                     <td className={`${td} font-bold text-accent-purple`}>{p.points}</td>
