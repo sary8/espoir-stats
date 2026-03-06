@@ -56,16 +56,28 @@ export function getPlayerSummaries(): PlayerSummary[] {
   });
 }
 
+function getGameInfoMap(): Map<string, { date: string; youtubeUrl: string | null }> {
+  const csv = readCsv("試合情報.csv");
+  const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
+  const map = new Map<string, { date: string; youtubeUrl: string | null }>();
+  for (const row of data) {
+    map.set(row["対戦相手"], {
+      date: row["日付"] ?? "9999-12-31",
+      youtubeUrl: row["YouTube"] || null,
+    });
+  }
+  return map;
+}
+
 export function getGameStats(): GameResult[] {
   const csv = readCsv("全試合スタッツ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
+  const gameInfo = getGameInfoMap();
 
-  const gameMap = new Map<string, { date: string; youtubeUrl: string | null; players: GamePlayerStat[] }>();
+  const gameMap = new Map<string, GamePlayerStat[]>();
 
   for (const row of data) {
     const opponent = row["対戦相手"];
-    const date = row["日付"] ?? "9999-12-31";
-    const youtubeUrl = row["YouTube"] || null;
     const stat: GamePlayerStat = {
       opponent,
       number: parseInt(row["No."], 10),
@@ -97,19 +109,21 @@ export function getGameStats(): GameResult[] {
       minutes: row["MIN"],
     };
 
-    if (!gameMap.has(opponent)) gameMap.set(opponent, { date, youtubeUrl, players: [] });
-    else if (youtubeUrl) gameMap.get(opponent)!.youtubeUrl = youtubeUrl;
-    gameMap.get(opponent)!.players.push(stat);
+    if (!gameMap.has(opponent)) gameMap.set(opponent, []);
+    gameMap.get(opponent)!.push(stat);
   }
 
   return Array.from(gameMap.entries())
-    .map(([opponent, { date, youtubeUrl, players }]) => ({
-      opponent,
-      date,
-      players: players.sort((a, b) => a.number - b.number),
-      teamPoints: players.reduce((sum, p) => sum + p.points, 0),
-      youtubeUrl,
-    }))
+    .map(([opponent, players]) => {
+      const info = gameInfo.get(opponent);
+      return {
+        opponent,
+        date: info?.date ?? "9999-12-31",
+        players: players.sort((a, b) => a.number - b.number),
+        teamPoints: players.reduce((sum, p) => sum + p.points, 0),
+        youtubeUrl: info?.youtubeUrl ?? null,
+      };
+    })
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
