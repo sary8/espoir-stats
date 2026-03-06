@@ -139,7 +139,9 @@ function LeaderCard({ category, players, espoirTeam, formatValue }: {
   return (
     <div className="bg-white/5 rounded-lg p-2 sm:p-3 border border-white/5">
       <p className="text-[10px] text-neutral-500 uppercase tracking-wider mb-1.5 sm:mb-2">{category}</p>
-      {players.map((p, i) => (
+      {players.length === 0 ? (
+        <p className="text-xs text-neutral-600 text-center py-1">-</p>
+      ) : players.map((p, i) => (
         <div key={i} className={`flex items-center justify-between ${i > 0 ? "mt-1" : ""}`}>
           <span className="flex items-center text-xs sm:text-sm min-w-0">
             <span className="text-neutral-500 w-[24px] sm:w-[28px] text-right mr-1 sm:mr-1.5 shrink-0 tabular-nums">#{p.number}</span>
@@ -194,7 +196,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
       ...game.opponentPlayers.map(p => ({ ...p, team: game.opponent, eff: calcEff(p) })),
     ];
     const topN = (key: keyof GamePlayerStat, n = 3) =>
-      [...allWithEff].sort((a, b) => (b[key] as number) - (a[key] as number)).slice(0, n);
+      [...allWithEff].sort((a, b) => (b[key] as number) - (a[key] as number)).filter(p => (p[key] as number) > 0).slice(0, n);
     const topEff = (n = 3) =>
       [...allWithEff].sort((a, b) => b.eff - a.eff).slice(0, n);
 
@@ -465,7 +467,6 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
               }
               const keys = { points: "points", rebounds: "totalReb", assists: "assists", steals: "steals", blocks: "blocks", fouls: "personalFouls" } as const;
               const top = gameLeaders[cat];
-              if (top.length === 0 || (top[0][keys[cat]] as number) === 0) return null;
               return (
                 <LeaderCard
                   key={cat}
