@@ -135,7 +135,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
 
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <div className="mb-6">
+      <div className="flex items-center justify-between mb-6">
         <Link
           href="/games"
           className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white transition-colors"
@@ -143,6 +143,17 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
           <ArrowLeft size={16} />
           Games
         </Link>
+        {game.youtubeUrl ? (
+          <a
+            href={game.youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-400 transition-all"
+          >
+            <Youtube size={16} />
+            試合動画
+          </a>
+        ) : null}
       </div>
 
       <div className="text-center mb-8">
@@ -156,17 +167,6 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
           </div>
           <span className="text-xl sm:text-2xl font-bold min-w-[80px] sm:min-w-[100px] text-left">{game.opponent}</span>
         </div>
-        {game.youtubeUrl ? (
-          <a
-            href={game.youtubeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-400 transition-all"
-          >
-            <Youtube size={16} />
-            試合動画
-          </a>
-        ) : null}
       </div>
 
       {game.quarterScores.length > 0 && (
