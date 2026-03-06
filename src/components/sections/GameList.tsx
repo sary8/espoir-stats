@@ -44,15 +44,15 @@ export default function GameList({ games }: GameListProps) {
               className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple"
             >
               <GlassCard hover className="cursor-pointer !py-4 !px-5 sm:!py-5 sm:!px-6">
-                <div className="flex items-center">
+                <div className="relative flex items-center justify-between">
                   {/* 左: バッジ + 日付 */}
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 z-10">
                     <ResultBadge team={game.teamPoints} opponent={game.opponentPoints} />
                     <p className="text-xs text-neutral-500 hidden sm:block">{game.date.replace(/-/g, "/")}</p>
                   </div>
 
-                  {/* 中央: スコア（flex-1で残りを占め、内部で中央揃え） */}
-                  <div className="flex-1 flex items-center justify-center">
+                  {/* 中央: スコア（absoluteでカード中央に固定） */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <span className="text-sm sm:text-base font-semibold text-neutral-300 w-16 sm:w-20 text-right shrink-0">Espoir</span>
                     <span className="w-10 sm:w-12 text-right text-2xl sm:text-3xl font-bold tabular-nums text-accent-purple shrink-0">
                       {game.teamPoints}
@@ -65,7 +65,7 @@ export default function GameList({ games }: GameListProps) {
                   </div>
 
                   {/* 右: YouTube */}
-                  <div className="shrink-0">
+                  <div className="z-10">
                     {game.youtubeUrl ? (
                       <a
                         href={game.youtubeUrl}
