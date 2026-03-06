@@ -209,7 +209,7 @@ export function getGameStats(): GameResult[] {
         gameInfo: info?.gameInfo ?? { tournament: null, venue: null, gameType: null },
       };
     })
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .sort((a, b) => b.date.localeCompare(a.date));
   _cachedGameStats = result;
   return result;
 }
