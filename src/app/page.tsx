@@ -12,51 +12,34 @@ export default function Home() {
   const players = getPlayerSummaries();
   const games = getGameStats();
 
-  let totalPoints = 0;
-  let total3PM = 0;
-  let total3PA = 0;
-  let totalRebounds = 0;
-  let totalAssists = 0;
-  let totalSteals = 0;
-  let totalBlocks = 0;
-  let totalTurnovers = 0;
+  let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;
   for (const p of players) {
-    totalPoints += p.totalPoints;
-    total3PM += p.threePointMade;
-    total3PA += p.threePointAttempt;
-    totalRebounds += p.totalReb;
-    totalAssists += p.assists;
-    totalSteals += p.steals;
-    totalBlocks += p.blocks;
-    totalTurnovers += p.turnovers;
+    totalPoints += p.totalPoints; total3PM += p.threePointMade; total3PA += p.threePointAttempt;
+    totalRebounds += p.totalReb; totalAssists += p.assists; totalSteals += p.steals;
+    totalBlocks += p.blocks; totalTurnovers += p.turnovers;
   }
 
   const totalGames = games.length;
   const team3pPct = total3PA > 0 ? (total3PM / total3PA) * 100 : 0;
 
-  function parseMin(min: string): number {
+  const parseMin = (min: string): number => {
     if (!min) return 0;
     const parts = min.split(":");
     return parseInt(parts[0], 10) * 60 + parseInt(parts[1] || "0", 10);
-  }
+  };
+
+  const addPlayerToTotals = (t: typeof seasonEspoir, p: { threePointMade: number; threePointAttempt: number; twoPointMade: number; twoPointAttempt: number; ftAttempt: number; offReb: number; defReb: number; turnovers: number; points: number; minutes: string }) => {
+    t.threePointMade += p.threePointMade; t.threePointAttempt += p.threePointAttempt;
+    t.twoPointMade += p.twoPointMade; t.twoPointAttempt += p.twoPointAttempt;
+    t.ftAttempt += p.ftAttempt; t.offReb += p.offReb; t.defReb += p.defReb;
+    t.turnovers += p.turnovers; t.points += p.points; t.totalMinutes += parseMin(p.minutes);
+  };
 
   const seasonEspoir = { threePointMade: 0, threePointAttempt: 0, twoPointMade: 0, twoPointAttempt: 0, ftAttempt: 0, offReb: 0, defReb: 0, turnovers: 0, points: 0, totalMinutes: 0 };
   const seasonOpponent = { threePointMade: 0, threePointAttempt: 0, twoPointMade: 0, twoPointAttempt: 0, ftAttempt: 0, offReb: 0, defReb: 0, turnovers: 0, points: 0, totalMinutes: 0 };
   for (const g of games) {
-    for (const p of g.players) {
-      seasonEspoir.threePointMade += p.threePointMade; seasonEspoir.threePointAttempt += p.threePointAttempt;
-      seasonEspoir.twoPointMade += p.twoPointMade; seasonEspoir.twoPointAttempt += p.twoPointAttempt;
-      seasonEspoir.ftAttempt += p.ftAttempt; seasonEspoir.offReb += p.offReb; seasonEspoir.defReb += p.defReb;
-      seasonEspoir.turnovers += p.turnovers; seasonEspoir.points += p.points;
-      seasonEspoir.totalMinutes += parseMin(p.minutes);
-    }
-    for (const p of g.opponentPlayers) {
-      seasonOpponent.threePointMade += p.threePointMade; seasonOpponent.threePointAttempt += p.threePointAttempt;
-      seasonOpponent.twoPointMade += p.twoPointMade; seasonOpponent.twoPointAttempt += p.twoPointAttempt;
-      seasonOpponent.ftAttempt += p.ftAttempt; seasonOpponent.offReb += p.offReb; seasonOpponent.defReb += p.defReb;
-      seasonOpponent.turnovers += p.turnovers; seasonOpponent.points += p.points;
-      seasonOpponent.totalMinutes += parseMin(p.minutes);
-    }
+    for (const p of g.players) addPlayerToTotals(seasonEspoir, p);
+    for (const p of g.opponentPlayers) addPlayerToTotals(seasonOpponent, p);
   }
   const seasonAdvanced = calcAdvancedStats(seasonEspoir, seasonOpponent);
 
@@ -111,7 +94,13 @@ export default function Home() {
           scoringData={scoringData}
           shootingData={shootingData}
           radarPlayers={radarPlayers}
-          games={games.map(({ opponentPlayers, opponentPoints, ...rest }) => rest)}
+          games={games.map((g) => ({
+            opponent: g.opponent,
+            date: g.date,
+            players: g.players,
+            teamPoints: g.teamPoints,
+            youtubeUrl: g.youtubeUrl,
+          }))}
         />
         <PlayerCards
           players={players}

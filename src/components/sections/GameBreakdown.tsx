@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { ChevronUp, ChevronDown, Youtube } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
-import type { GameResult } from "@/lib/types";
+import type { GameSummary } from "./LazyCharts";
 
 function fmtPct(made: number, attempt: number): string {
   if (attempt === 0) return "-";
@@ -71,7 +71,7 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
 }
 
 interface GameBreakdownProps {
-  games: Omit<GameResult, "opponentPlayers" | "opponentPoints">[];
+  games: GameSummary[];
 }
 
 export default function GameBreakdown({ games }: GameBreakdownProps) {
