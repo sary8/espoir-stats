@@ -43,7 +43,7 @@ export default function StatsRanking({ players }: StatsRankingProps) {
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
         Stats <span className="text-accent-purple">Ranking</span>
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4">
         {rankedCategories.map((cat, ci) => {
           const { sorted, maxVal } = cat;
 

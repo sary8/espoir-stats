@@ -105,8 +105,8 @@ function ComparisonBar({ label, espoirVal, opponentVal, format = "number", oppon
   const opponentWins = opponentVal > espoirVal;
 
   return (
-    <div className="py-2.5">
-      <div className="flex justify-between text-xs text-neutral-400 mb-1.5">
+    <div className="py-1.5 sm:py-2.5">
+      <div className="flex justify-between text-[10px] sm:text-xs text-neutral-400 mb-1">
         <span className={espoirWins ? "text-accent-purple font-bold" : ""}>{fmt(espoirVal)}</span>
         <span className="font-medium text-neutral-300">{label}</span>
         <span className={opponentWins ? "text-white font-bold" : ""}>{fmt(opponentVal)}</span>
@@ -137,16 +137,16 @@ function LeaderCard({ category, players, espoirTeam, formatValue }: {
 }) {
   const fmt = formatValue || ((v: number) => String(v));
   return (
-    <div className="bg-white/5 rounded-lg p-3 border border-white/5">
-      <p className="text-[10px] text-neutral-500 uppercase tracking-wider mb-2">{category}</p>
+    <div className="bg-white/5 rounded-lg p-2 sm:p-3 border border-white/5">
+      <p className="text-[10px] text-neutral-500 uppercase tracking-wider mb-1.5 sm:mb-2">{category}</p>
       {players.map((p, i) => (
-        <div key={i} className={`flex items-center justify-between ${i > 0 ? "mt-1.5" : ""}`}>
-          <span className="flex items-center text-sm">
-            <span className="text-neutral-500 w-[28px] text-right mr-1.5 shrink-0 tabular-nums">#{p.number}</span>
-            <span className={`font-bold ${espoirTeam[i] ? "text-accent-purple" : "text-neutral-300"}`}>{p.name}</span>
-            <span className="text-[10px] text-neutral-500 ml-1.5">{p.team}</span>
+        <div key={i} className={`flex items-center justify-between ${i > 0 ? "mt-1" : ""}`}>
+          <span className="flex items-center text-xs sm:text-sm min-w-0">
+            <span className="text-neutral-500 w-[24px] sm:w-[28px] text-right mr-1 sm:mr-1.5 shrink-0 tabular-nums">#{p.number}</span>
+            <span className={`font-bold truncate ${espoirTeam[i] ? "text-accent-purple" : "text-neutral-300"}`}>{p.name}</span>
+            <span className="text-[10px] text-neutral-500 ml-1 hidden sm:inline">{p.team}</span>
           </span>
-          <span className={`text-sm font-bold ${espoirTeam[i] ? "text-accent-purple" : "text-white"}`}>{fmt(p.value)}</span>
+          <span className={`text-xs sm:text-sm font-bold shrink-0 ml-1 ${espoirTeam[i] ? "text-accent-purple" : "text-white"}`}>{fmt(p.value)}</span>
         </div>
       ))}
     </div>
@@ -421,7 +421,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
 
       {/* Team Comparison */}
       {game.opponentPlayers.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
           <GlassCard>
             <div className="flex justify-between items-center mb-3">
               <span className="text-sm font-bold text-accent-purple">Espoir</span>
@@ -449,7 +449,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
           {/* Game Leaders */}
           <GlassCard>
             <p className="text-xs text-neutral-400 font-medium mb-3 text-center">Game Leaders</p>
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
               {(["points", "rebounds", "assists", "steals", "blocks", "fouls", "eff"] as const).map((cat) => {
                 const labels = { points: "PTS", rebounds: "REB", assists: "AST", steals: "STL", blocks: "BLK", fouls: "PF", eff: "EFF" } as const;
                 if (cat === "eff") {
