@@ -6,7 +6,8 @@ import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import ProgressRing from "../ui/ProgressRing";
 import Badge from "../ui/Badge";
-import type { PlayerSummary } from "@/lib/types";
+import SeasonSwitcher from "../ui/SeasonSwitcher";
+import type { PlayerSummary, SeasonInfo } from "@/lib/types";
 import { shootingColors } from "@/config/theme";
 
 interface PlayerCardsProps {
@@ -20,9 +21,11 @@ interface PlayerCardsProps {
   topFoul: number;
   topTurnover: number;
   basePath?: string;
+  seasons?: SeasonInfo[];
+  currentSeason?: string;
 }
 
-export default function PlayerCards({ players, topScorer, topRebounder, topAssister, top3P, topStealer, topBlocker, topFoul, topTurnover, basePath = "" }: PlayerCardsProps) {
+export default function PlayerCards({ players, topScorer, topRebounder, topAssister, top3P, topStealer, topBlocker, topFoul, topTurnover, basePath = "", seasons, currentSeason }: PlayerCardsProps) {
   const sorted = useMemo(() => [...players].sort((a, b) => a.number - b.number), [players]);
 
   return (
@@ -30,6 +33,9 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
         Player <span className="text-accent-purple">Roster</span>
       </h2>
+      {seasons && currentSeason && (
+        <SeasonSwitcher seasons={seasons} currentSeason={currentSeason} pageType="players" />
+      )}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         {sorted.map((p, i) => (
           <AnimatedSection key={p.number} delay={i * 0.05}>

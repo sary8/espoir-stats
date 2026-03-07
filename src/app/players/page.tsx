@@ -17,6 +17,8 @@ export default function PlayersPage() {
         <PlayerCards
           players={players}
           {...topPlayers}
+          seasons={seasons}
+          currentSeason={season}
         />
       </main>
       <Footer seasonLabel={seasonLabel} />

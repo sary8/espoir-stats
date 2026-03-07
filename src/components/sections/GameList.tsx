@@ -4,11 +4,14 @@ import Link from "next/link";
 import { Youtube } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
-import type { GameResult } from "@/lib/types";
+import SeasonSwitcher from "../ui/SeasonSwitcher";
+import type { GameResult, SeasonInfo } from "@/lib/types";
 
 interface GameListProps {
   games: GameResult[];
   basePath?: string;
+  seasons?: SeasonInfo[];
+  currentSeason?: string;
 }
 
 const dateFormatter = new Intl.DateTimeFormat("ja-JP", {
@@ -51,12 +54,15 @@ const resultConfig = {
   },
 } as const;
 
-export default function GameList({ games, basePath = "" }: GameListProps) {
+export default function GameList({ games, basePath = "", seasons, currentSeason }: GameListProps) {
   return (
     <AnimatedSection className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h1 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-10 text-center [text-wrap:balance]">
         Game <span className="text-accent-purple">Results</span>
       </h1>
+      {seasons && currentSeason && (
+        <SeasonSwitcher seasons={seasons} currentSeason={currentSeason} pageType="games" />
+      )}
       <div className="grid gap-3">
         {games.map((game, i) => {
           const result = getResult(game.teamPoints, game.opponentPoints);

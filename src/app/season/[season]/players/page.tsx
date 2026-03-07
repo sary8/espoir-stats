@@ -30,6 +30,8 @@ export default async function SeasonPlayersPage({ params }: PageProps) {
           players={players}
           {...topPlayers}
           basePath={basePath}
+          seasons={seasons}
+          currentSeason={season}
         />
       </main>
       <Footer seasonLabel={seasonInfo.label} />

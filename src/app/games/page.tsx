@@ -13,7 +13,7 @@ export default function GamesPage() {
     <>
       <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
-        <GameList games={games} />
+        <GameList games={games} seasons={seasons} currentSeason={season} />
       </main>
       <Footer seasonLabel={seasonLabel} />
     </>

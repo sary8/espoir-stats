@@ -25,7 +25,7 @@ export default async function SeasonGamesPage({ params }: PageProps) {
     <>
       <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
-        <GameList games={games} basePath={basePath} />
+        <GameList games={games} basePath={basePath} seasons={seasons} currentSeason={season} />
       </main>
       <Footer seasonLabel={seasonInfo.label} />
     </>
