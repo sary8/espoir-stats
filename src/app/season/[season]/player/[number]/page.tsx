@@ -29,5 +29,5 @@ export default async function SeasonPlayerPage({ params }: PageProps) {
 
   if (!data) notFound();
 
-  return <PlayerDetailClient summary={data.summary} games={data.games} basePath={basePath} seasons={seasons} seasonLabel={seasonInfo.label} />;
+  return <PlayerDetailClient summary={data.summary} games={data.games} basePath={basePath} seasons={seasons} seasonLabel={seasonInfo.label} seasonId={season} />;
 }

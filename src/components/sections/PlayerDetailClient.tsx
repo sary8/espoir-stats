@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import dynamic from "next/dynamic";
@@ -33,9 +34,10 @@ interface PlayerDetailClientProps {
   basePath?: string;
   seasons?: SeasonInfo[];
   seasonLabel?: string;
+  seasonId?: string;
 }
 
-export default function PlayerDetailClient({ summary, games, basePath = "", seasons, seasonLabel }: PlayerDetailClientProps) {
+export default function PlayerDetailClient({ summary, games, basePath = "", seasons, seasonLabel, seasonId }: PlayerDetailClientProps) {
   const prefersReducedMotion = useReducedMotion();
   const p = summary;
 
@@ -108,10 +110,23 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
             <Link href={`${basePath}/players`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-6 sm:mb-8 rounded">
               <ArrowLeft size={18} aria-hidden="true" /> Back to Roster
             </Link>
-            <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }}>
-              <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-purple/20">#{p.number}</div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6">{p.name}</h1>
-              <p className="text-sm sm:text-base text-neutral-400 mt-2">{p.games} Games Played | Total {p.totalPoints} Points</p>
+            <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }} className="flex items-end justify-between gap-4">
+              <div>
+                <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-purple/20">#{p.number}</div>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6">{p.name}</h1>
+                <p className="text-sm sm:text-base text-neutral-400 mt-2">{p.games} Games Played | Total {p.totalPoints} Points</p>
+              </div>
+              {seasonId && (
+                <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 shrink-0 rounded-full overflow-hidden ring-2 ring-accent-purple/30">
+                  <Image
+                    src={`/players/${seasonId}/${p.number}.png`}
+                    alt={`${p.name}のプロフィール写真`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 112px, (max-width: 768px) 144px, 176px"
+                  />
+                </div>
+              )}
             </motion.div>
           </div>
         </section>
