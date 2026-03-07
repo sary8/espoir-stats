@@ -20,7 +20,7 @@ export default function PlayerGameChart({ data }: PlayerGameChartProps) {
     <ResponsiveContainer width="100%" height={240}>
       <LineChart data={data} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
         <CartesianGrid stroke="rgba(255,255,255,0.06)" />
-        <XAxis dataKey="game" tick={{ fontSize: 10 }} />
+        <XAxis dataKey="game" tick={{ fontSize: 10 }} interval={0} />
         <YAxis tick={{ fontSize: 12 }} />
         <Tooltip
           contentStyle={tooltipStyle}

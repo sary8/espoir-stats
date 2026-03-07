@@ -42,7 +42,7 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
   const p = summary;
 
   const lineData = useMemo(() => games.map((g) => ({
-    game: `${(g.date ?? "").slice(5).replace("-", "/")} ${g.opponent}`,
+    game: g.opponent,
     PTS: g.stat.points,
     REB: g.stat.totalReb,
     AST: g.stat.assists,
