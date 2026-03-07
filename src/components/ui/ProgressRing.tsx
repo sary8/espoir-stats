@@ -1,7 +1,7 @@
 "use client";
 
+import { memo, useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
 
 interface ProgressRingProps {
   percentage: number | null;
@@ -11,7 +11,7 @@ interface ProgressRingProps {
   label?: string;
 }
 
-export default function ProgressRing({
+export default memo(function ProgressRing({
   percentage,
   size = 80,
   strokeWidth = 6,
@@ -59,4 +59,4 @@ export default function ProgressRing({
       {label ? <span className="text-xs text-neutral-400">{label}</span> : null}
     </div>
   );
-}
+});

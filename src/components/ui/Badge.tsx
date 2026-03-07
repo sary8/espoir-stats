@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 interface BadgeProps {
   children: React.ReactNode;
   variant?: "purple" | "blue" | "green" | "pink" | "cyan" | "yellow" | "red" | "orange";
@@ -14,10 +16,10 @@ const variants = {
   orange: "bg-orange-500/20 text-orange-400 border-orange-500/30",
 };
 
-export default function Badge({ children, variant = "purple" }: BadgeProps) {
+export default memo(function Badge({ children, variant = "purple" }: BadgeProps) {
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${variants[variant]}`}>
       {children}
     </span>
   );
-}
+});

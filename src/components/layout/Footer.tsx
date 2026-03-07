@@ -8,8 +8,10 @@ interface FooterProps {
   seasonLabel?: string;
 }
 
+const SEASON_PATH_RE = /^\/season\/([^/]+)/;
+
 function getBasePath(pathname: string): string {
-  const match = pathname.match(/^\/season\/([^/]+)/);
+  const match = pathname.match(SEASON_PATH_RE);
   return match ? `/season/${match[1]}` : "";
 }
 
@@ -35,7 +37,7 @@ export default function Footer({ seasonLabel }: FooterProps) {
           </div>
         )}
         <p className="text-xs sm:text-sm"><span className="text-accent-purple font-semibold">ESPOIR</span> Stats Dashboard</p>
-        {seasonLabel && <p className="mt-1 text-xs sm:text-sm">Season {seasonLabel}</p>}
+        {seasonLabel ? <p className="mt-1 text-xs sm:text-sm">Season {seasonLabel}</p> : null}
       </div>
     </footer>
   );
