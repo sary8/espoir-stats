@@ -79,6 +79,7 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
 
 interface GameDetailClientProps {
   game: GameResult;
+  basePath?: string;
 }
 
 function ComparisonBar({ label, espoirVal, opponentVal, format = "number", opponentName }: {
@@ -152,7 +153,7 @@ function LeaderCard({ category, players, espoirTeam, formatValue }: {
   );
 }
 
-export default function GameDetailClient({ game }: GameDetailClientProps) {
+export default function GameDetailClient({ game, basePath = "" }: GameDetailClientProps) {
   const [activeTab, setActiveTab] = useState<"espoir" | "opponent">("espoir");
   const [sortKey, setSortKey] = useState<SortKey>("number");
   const [sortAsc, setSortAsc] = useState(true);
@@ -278,7 +279,7 @@ export default function GameDetailClient({ game }: GameDetailClientProps) {
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <div className="flex items-center justify-between mb-6">
         <Link
-          href="/games"
+          href={`${basePath}/games`}
           className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white transition-colors rounded"
         >
           <ArrowLeft size={16} aria-hidden="true" />

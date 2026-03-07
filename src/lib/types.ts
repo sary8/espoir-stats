@@ -1,3 +1,9 @@
+export interface SeasonInfo {
+  id: string;
+  label: string;
+  default?: boolean;
+}
+
 export interface PlayerSummary {
   number: number;
   name: string;

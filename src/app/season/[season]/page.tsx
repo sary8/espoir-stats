@@ -1,4 +1,5 @@
-import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getDefaultSeason } from "@/lib/data";
+import { notFound } from "next/navigation";
+import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getSeasonsWithData } from "@/lib/data";
 import { calcAdvancedStats } from "@/lib/stats";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -8,10 +9,21 @@ import PlayerCards from "@/components/sections/PlayerCards";
 import StatsRanking from "@/components/sections/StatsRanking";
 import LazyCharts from "@/components/sections/LazyCharts";
 
-export default function Home() {
+export function generateStaticParams() {
+  return getSeasonsWithData().map((s) => ({ season: s.id }));
+}
+
+interface PageProps {
+  params: Promise<{ season: string }>;
+}
+
+export default async function SeasonHome({ params }: PageProps) {
+  const { season } = await params;
   const seasons = getSeasons();
-  const season = getDefaultSeason();
-  const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
+  const seasonInfo = seasons.find((s) => s.id === season);
+  if (!seasonInfo) notFound();
+
+  const basePath = `/season/${season}`;
   const players = getPlayerSummaries(season);
   const games = getGameStats(season);
 
@@ -111,10 +123,11 @@ export default function Home() {
         <PlayerCards
           players={players}
           {...topPlayers}
+          basePath={basePath}
         />
         <StatsRanking players={players} />
       </main>
-      <Footer seasonLabel={seasonLabel} />
+      <Footer seasonLabel={seasonInfo.label} />
     </>
   );
 }

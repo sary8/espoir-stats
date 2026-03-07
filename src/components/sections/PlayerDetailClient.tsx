@@ -14,7 +14,7 @@ import StatCounter from "../ui/StatCounter";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import { shootingColors } from "@/config/theme";
-import type { PlayerSummary, GamePlayerStat } from "@/lib/types";
+import type { PlayerSummary, GamePlayerStat, SeasonInfo } from "@/lib/types";
 
 function fmtPct(made: number, attempt: number): string {
   if (attempt === 0) return "-";
@@ -30,9 +30,12 @@ function calcEff(s: { points: number; totalReb: number; assists: number; steals:
 interface PlayerDetailClientProps {
   summary: PlayerSummary;
   games: { opponent: string; date: string; stat: GamePlayerStat }[];
+  basePath?: string;
+  seasons?: SeasonInfo[];
+  seasonLabel?: string;
 }
 
-export default function PlayerDetailClient({ summary, games }: PlayerDetailClientProps) {
+export default function PlayerDetailClient({ summary, games, basePath = "", seasons, seasonLabel }: PlayerDetailClientProps) {
   const prefersReducedMotion = useReducedMotion();
   const p = summary;
 
@@ -96,13 +99,13 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
 
   return (
     <>
-      <Header />
+      <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
         {/* Hero */}
         <section className="relative gradient-mesh py-12 sm:py-20">
           <div className="absolute inset-0 bg-[#0a0a0f]/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
-            <Link href="/" className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-6 sm:mb-8 rounded">
+            <Link href={`${basePath}/players`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-6 sm:mb-8 rounded">
               <ArrowLeft size={18} aria-hidden="true" /> Back to Roster
             </Link>
             <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }}>
@@ -291,7 +294,7 @@ export default function PlayerDetailClient({ summary, games }: PlayerDetailClien
           </GlassCard>
         </AnimatedSection>
       </main>
-      <Footer />
+      <Footer seasonLabel={seasonLabel} />
     </>
   );
 }

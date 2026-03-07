@@ -1,12 +1,42 @@
 import fs from "fs";
 import path from "path";
 import Papa from "papaparse";
-import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo } from "./types";
+import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo, SeasonInfo } from "./types";
 import { parsePctString } from "./utils";
 
-function readCsv(filename: string): string {
-  const filePath = path.join(process.cwd(), "stats-csv", filename);
+// --- Season management ---
+
+let _cachedSeasons: SeasonInfo[] | null = null;
+
+export function getSeasons(): SeasonInfo[] {
+  if (_cachedSeasons) return _cachedSeasons;
+  const filePath = path.join(process.cwd(), "stats-csv", "seasons.json");
+  const json = fs.readFileSync(filePath, "utf-8");
+  const parsed = JSON.parse(json) as { seasons: SeasonInfo[] };
+  _cachedSeasons = parsed.seasons;
+  return parsed.seasons;
+}
+
+export function getDefaultSeason(): string {
+  const seasons = getSeasons();
+  const def = seasons.find((s) => s.default);
+  return def ? def.id : seasons[0].id;
+}
+
+// --- CSV reading ---
+
+function readCsv(season: string, filename: string): string {
+  const filePath = path.join(process.cwd(), "stats-csv", season, filename);
   return fs.readFileSync(filePath, "utf-8");
+}
+
+function seasonHasData(season: string): boolean {
+  const filePath = path.join(process.cwd(), "stats-csv", season, "選手別サマリ.csv");
+  return fs.existsSync(filePath);
+}
+
+export function getSeasonsWithData(): SeasonInfo[] {
+  return getSeasons().filter((s) => seasonHasData(s.id));
 }
 
 function isTeamCoaches(row: Record<string, string>): boolean {
@@ -46,15 +76,18 @@ function parseGamePlayerStat(row: Record<string, string>): GamePlayerStat {
   };
 }
 
-let _cachedPlayerSummaries: PlayerSummary[] | null = null;
+// --- Cached data with season key ---
 
-export function getPlayerSummaries(): PlayerSummary[] {
-  if (_cachedPlayerSummaries) return _cachedPlayerSummaries;
-  const csv = readCsv("選手別サマリ.csv");
+const _playerSummariesCache = new Map<string, PlayerSummary[]>();
+
+export function getPlayerSummaries(season?: string): PlayerSummary[] {
+  const s = season ?? getDefaultSeason();
+  if (_playerSummariesCache.has(s)) return _playerSummariesCache.get(s)!;
+
+  const csv = readCsv(s, "選手別サマリ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
 
-  // サマリCSVにPF/FOがないため全試合スタッツから集計
-  const gameCsv = readCsv("全試合スタッツ.csv");
+  const gameCsv = readCsv(s, "全試合スタッツ.csv");
   const { data: gameData } = Papa.parse<Record<string, string>>(gameCsv, { header: true, skipEmptyLines: true });
   const foulMap = new Map<number, { pf: number; fo: number }>();
   for (const row of gameData) {
@@ -95,7 +128,7 @@ export function getPlayerSummaries(): PlayerSummary[] {
       foulsDrawn: fouls.fo,
     };
   });
-  _cachedPlayerSummaries = result;
+  _playerSummariesCache.set(s, result);
   return result;
 }
 
@@ -106,8 +139,8 @@ interface GameInfoRow {
   gameInfo: GameInfo;
 }
 
-function getGameInfoMap(): Map<string, GameInfoRow> {
-  const csv = readCsv("試合情報.csv");
+function getGameInfoMap(season: string): Map<string, GameInfoRow> {
+  const csv = readCsv(season, "試合情報.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
   const map = new Map<string, GameInfoRow>();
   for (const row of data) {
@@ -133,8 +166,8 @@ function getGameInfoMap(): Map<string, GameInfoRow> {
   return map;
 }
 
-function getOpponentStatsMap(): Map<string, GamePlayerStat[]> {
-  const csv = readCsv("相手チームスタッツ.csv");
+function getOpponentStatsMap(season: string): Map<string, GamePlayerStat[]> {
+  const csv = readCsv(season, "相手チームスタッツ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
   const map = new Map<string, GamePlayerStat[]>();
   for (const row of data) {
@@ -179,14 +212,16 @@ function adjustMinutesTo160(players: GamePlayerStat[]): void {
   players[minIdx].minutes = secondsToMinutes(minSec + diff);
 }
 
-let _cachedGameStats: GameResult[] | null = null;
+const _gameStatsCache = new Map<string, GameResult[]>();
 
-export function getGameStats(): GameResult[] {
-  if (_cachedGameStats) return _cachedGameStats;
-  const csv = readCsv("全試合スタッツ.csv");
+export function getGameStats(season?: string): GameResult[] {
+  const s = season ?? getDefaultSeason();
+  if (_gameStatsCache.has(s)) return _gameStatsCache.get(s)!;
+
+  const csv = readCsv(s, "全試合スタッツ.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
-  const gameInfo = getGameInfoMap();
-  const opponentStats = getOpponentStatsMap();
+  const gameInfo = getGameInfoMap(s);
+  const opponentStats = getOpponentStatsMap(s);
 
   const gameMap = new Map<string, GamePlayerStat[]>();
 
@@ -217,7 +252,7 @@ export function getGameStats(): GameResult[] {
       };
     })
     .sort((a, b) => b.date.localeCompare(a.date));
-  _cachedGameStats = result;
+  _gameStatsCache.set(s, result);
   return result;
 }
 
@@ -234,18 +269,18 @@ export function getTopPlayers(players: PlayerSummary[]) {
   };
 }
 
-export function getGameByOpponent(opponent: string): GameResult | null {
-  const games = getGameStats();
+export function getGameByOpponent(opponent: string, season?: string): GameResult | null {
+  const games = getGameStats(season);
   return games.find((g) => g.opponent === opponent) ?? null;
 }
 
-export function getAllOpponents(): string[] {
-  return getGameStats().map((g) => g.opponent);
+export function getAllOpponents(season?: string): string[] {
+  return getGameStats(season).map((g) => g.opponent);
 }
 
-export function getPlayerByNumber(number: number) {
-  const summaries = getPlayerSummaries();
-  const games = getGameStats();
+export function getPlayerByNumber(number: number, season?: string) {
+  const summaries = getPlayerSummaries(season);
+  const games = getGameStats(season);
   const summary = summaries.find((p) => p.number === number);
   if (!summary) return null;
 
@@ -259,6 +294,6 @@ export function getPlayerByNumber(number: number) {
   return { summary, games: playerGames };
 }
 
-export function getAllPlayerNumbers(): number[] {
-  return getPlayerSummaries().map((p) => p.number);
+export function getAllPlayerNumbers(season?: string): number[] {
+  return getPlayerSummaries(season).map((p) => p.number);
 }

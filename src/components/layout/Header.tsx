@@ -2,12 +2,38 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, X, ChevronDown } from "lucide-react";
+import type { SeasonInfo } from "@/lib/types";
 
-export default function Header() {
+interface HeaderProps {
+  seasons?: SeasonInfo[];
+}
+
+function getSeasonFromPath(pathname: string): string | null {
+  const match = pathname.match(/^\/season\/([^/]+)/);
+  return match ? match[1] : null;
+}
+
+function getBasePath(pathname: string): string {
+  const seasonId = getSeasonFromPath(pathname);
+  return seasonId ? `/season/${seasonId}` : "";
+}
+
+export default function Header({ seasons }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [seasonOpen, setSeasonOpen] = useState(false);
   const scrolledRef = useRef(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const basePath = getBasePath(pathname);
+  const currentSeasonId = getSeasonFromPath(pathname);
+  const defaultSeason = seasons?.find((s) => s.default);
+  const currentSeason = currentSeasonId
+    ? seasons?.find((s) => s.id === currentSeasonId)
+    : defaultSeason;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,6 +47,22 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleSeasonChange = (season: SeasonInfo) => {
+    const subPath = currentSeasonId
+      ? pathname.replace(`/season/${currentSeasonId}`, "")
+      : pathname;
+    const newPath = season.default ? subPath || "/" : `/season/${season.id}${subPath}`;
+    router.push(newPath);
+    setSeasonOpen(false);
+  };
+
+  const navLinks = [
+    { href: `${basePath}/`, label: "Top" },
+    { href: `${basePath}/players`, label: "Players" },
+    { href: `${basePath}/games`, label: "Games" },
+    { href: "/glossary", label: "Stats Guide" },
+  ];
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
@@ -28,22 +70,51 @@ export default function Header() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold tracking-wider focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
+        <Link href={`${basePath}/`} className="text-xl font-bold tracking-wider focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
           <span className="text-accent-purple">E</span>SPOIR
         </Link>
         <nav className="hidden sm:flex items-center gap-6 text-sm text-neutral-400" aria-label="メインナビゲーション">
-          <Link href="/" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-            Top
-          </Link>
-          <Link href="/players" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-            Players
-          </Link>
-          <Link href="/games" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-            Games
-          </Link>
-          <Link href="/glossary" className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-            Stats Guide
-          </Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
+            >
+              {link.label}
+            </Link>
+          ))}
+          {seasons && seasons.length > 1 && (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setSeasonOpen((v) => !v)}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-sm text-neutral-300 cursor-pointer"
+                aria-expanded={seasonOpen}
+                aria-label="シーズン切替"
+              >
+                {currentSeason?.label ?? "Season"}
+                <ChevronDown size={14} className={`transition-transform ${seasonOpen ? "rotate-180" : ""}`} aria-hidden="true" />
+              </button>
+              {seasonOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-[#1a1a2e] border border-white/10 rounded-lg shadow-xl overflow-hidden z-50">
+                  {seasons.map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => handleSeasonChange(s)}
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors cursor-pointer ${
+                        currentSeason?.id === s.id
+                          ? "bg-accent-purple/20 text-accent-purple font-medium"
+                          : "text-neutral-300 hover:bg-white/10"
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </nav>
         <button
           className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
@@ -57,34 +128,40 @@ export default function Header() {
       {menuOpen && (
         <nav className="sm:hidden bg-[#0a0a0f]/95 backdrop-blur-md border-t border-white/5" aria-label="モバイルナビゲーション">
           <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4">
-            <Link
-              href="/"
-              onClick={() => setMenuOpen(false)}
-              className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
-            >
-              Top
-            </Link>
-            <Link
-              href="/players"
-              onClick={() => setMenuOpen(false)}
-              className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
-            >
-              Players
-            </Link>
-            <Link
-              href="/games"
-              onClick={() => setMenuOpen(false)}
-              className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
-            >
-              Games
-            </Link>
-            <Link
-              href="/glossary"
-              onClick={() => setMenuOpen(false)}
-              className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
-            >
-              Stats Guide
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
+              >
+                {link.label}
+              </Link>
+            ))}
+            {seasons && seasons.length > 1 && (
+              <div className="border-t border-white/10 pt-4">
+                <p className="text-xs text-neutral-500 mb-2">Season</p>
+                <div className="flex flex-col gap-1">
+                  {seasons.map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => {
+                        handleSeasonChange(s);
+                        setMenuOpen(false);
+                      }}
+                      className={`text-left py-2 px-3 rounded-lg text-sm cursor-pointer ${
+                        currentSeason?.id === s.id
+                          ? "bg-accent-purple/20 text-accent-purple font-medium"
+                          : "text-neutral-400 hover:bg-white/5"
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </nav>
       )}

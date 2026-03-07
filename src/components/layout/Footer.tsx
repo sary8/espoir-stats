@@ -4,9 +4,19 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default function Footer() {
+interface FooterProps {
+  seasonLabel?: string;
+}
+
+function getBasePath(pathname: string): string {
+  const match = pathname.match(/^\/season\/([^/]+)/);
+  return match ? `/season/${match[1]}` : "";
+}
+
+export default function Footer({ seasonLabel }: FooterProps) {
   const pathname = usePathname();
-  const isHome = pathname === "/";
+  const basePath = getBasePath(pathname);
+  const isHome = pathname === "/" || pathname === basePath || pathname === `${basePath}/`;
 
   return (
     <footer className="border-t border-white/5 py-8 text-center text-sm text-neutral-400">
@@ -19,13 +29,13 @@ export default function Footer() {
           </nav>
         ) : (
           <div className="mb-4">
-            <Link href="/" className="inline-flex items-center gap-2 hover:text-white transition-colors rounded">
+            <Link href={`${basePath}/`} className="inline-flex items-center gap-2 hover:text-white transition-colors rounded">
               <ArrowLeft size={16} aria-hidden="true" /> Back to Top
             </Link>
           </div>
         )}
         <p className="text-xs sm:text-sm"><span className="text-accent-purple font-semibold">ESPOIR</span> Stats Dashboard</p>
-        <p className="mt-1 text-xs sm:text-sm">Season 2025-2026</p>
+        {seasonLabel && <p className="mt-1 text-xs sm:text-sm">Season {seasonLabel}</p>}
       </div>
     </footer>
   );

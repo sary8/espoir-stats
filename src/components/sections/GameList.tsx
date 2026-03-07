@@ -8,6 +8,7 @@ import type { GameResult } from "@/lib/types";
 
 interface GameListProps {
   games: GameResult[];
+  basePath?: string;
 }
 
 const dateFormatter = new Intl.DateTimeFormat("ja-JP", {
@@ -50,7 +51,7 @@ const resultConfig = {
   },
 } as const;
 
-export default function GameList({ games }: GameListProps) {
+export default function GameList({ games, basePath = "" }: GameListProps) {
   return (
     <AnimatedSection className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h1 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-10 text-center [text-wrap:balance]">
@@ -64,7 +65,7 @@ export default function GameList({ games }: GameListProps) {
           return (
             <AnimatedSection key={game.opponent} delay={Math.min(i * 0.08, 0.4)}>
               <Link
-                href={`/games/${encodeURIComponent(game.opponent)}`}
+                href={`${basePath}/games/${encodeURIComponent(game.opponent)}`}
                 className="block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple touch-manipulation"
               >
                 <GlassCard hover className={`cursor-pointer !py-4 !px-5 sm:!py-5 sm:!px-6 border-l-[3px] ${config.borderClass}`}>

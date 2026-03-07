@@ -19,9 +19,10 @@ interface PlayerCardsProps {
   topBlocker: number;
   topFoul: number;
   topTurnover: number;
+  basePath?: string;
 }
 
-export default function PlayerCards({ players, topScorer, topRebounder, topAssister, top3P, topStealer, topBlocker, topFoul, topTurnover }: PlayerCardsProps) {
+export default function PlayerCards({ players, topScorer, topRebounder, topAssister, top3P, topStealer, topBlocker, topFoul, topTurnover, basePath = "" }: PlayerCardsProps) {
   const sorted = useMemo(() => [...players].sort((a, b) => a.number - b.number), [players]);
 
   return (
@@ -32,7 +33,7 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         {sorted.map((p, i) => (
           <AnimatedSection key={p.number} delay={i * 0.05}>
-            <Link href={`/player/${p.number}`} className="block h-full rounded-2xl">
+            <Link href={`${basePath}/player/${p.number}`} className="block h-full rounded-2xl">
               <GlassCard hover className="cursor-pointer h-full flex flex-col">
                 <div>
                   <div className="text-2xl sm:text-4xl font-bold text-accent-purple/80">#{p.number}</div>
