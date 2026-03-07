@@ -1,18 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyToken } from "@/lib/auth";
 import { readFile } from "fs/promises";
 import path from "path";
 
+// 認証は proxy.ts（middleware）で保護済み
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const token = request.cookies.get("espoir-auth")?.value;
-  if (!token || !(await verifyToken(token))) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const segments = (await params).path;
 
   // パストラバーサル防止: ".." や絶対パスを含むセグメントを拒否
