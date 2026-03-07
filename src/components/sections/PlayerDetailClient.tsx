@@ -117,13 +117,14 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
                 <p className="text-sm sm:text-base text-neutral-400 mt-2">{p.games} Games Played | Total {p.totalPoints} Points</p>
               </div>
               {seasonId && (
-                <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 shrink-0 rounded-full overflow-hidden ring-2 ring-accent-purple/30">
+                <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 shrink-0">
                   <Image
                     src={`/players/${seasonId}/${p.number}.png`}
                     alt={`${p.name}のプロフィール写真`}
                     fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 112px, (max-width: 768px) 144px, 176px"
+                    unoptimized
+                    className="object-contain drop-shadow-[0_0_20px_rgba(139,92,246,0.15)]"
+                    sizes="(max-width: 640px) 160px, (max-width: 768px) 208px, 256px"
                   />
                 </div>
               )}
