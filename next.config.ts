@@ -7,10 +7,6 @@ const nextConfig: NextConfig = {
         pathname: "/players/**",
         search: "",
       },
-      {
-        pathname: "/api/players/**",
-        search: "",
-      },
     ],
   },
 };
