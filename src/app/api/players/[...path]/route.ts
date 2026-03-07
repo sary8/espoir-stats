@@ -1,0 +1,42 @@
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { verifyToken } from "@/lib/auth";
+import { readFile } from "fs/promises";
+import path from "path";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> }
+) {
+  const token = request.cookies.get("espoir-auth")?.value;
+  if (!token || !(await verifyToken(token))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const segments = (await params).path;
+
+  // パストラバーサル防止: ".." や絶対パスを含むセグメントを拒否
+  if (segments.some((s) => s === ".." || s.includes("/") || s.includes("\\"))) {
+    return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+  }
+
+  const filePath = path.join(process.cwd(), "private", "players", ...segments);
+
+  // private/players 配下であることを再確認
+  const allowedDir = path.join(process.cwd(), "private", "players");
+  if (!filePath.startsWith(allowedDir)) {
+    return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+  }
+
+  try {
+    const buffer = await readFile(filePath);
+    return new NextResponse(buffer, {
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": "private, max-age=3600",
+      },
+    });
+  } catch {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+}
