@@ -2,10 +2,11 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { ChevronUp, ChevronDown, Youtube, ArrowLeft } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Youtube, ArrowLeft } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import { MapPin, Trophy, Calendar, Shield } from "lucide-react";
+import PrevNextNav from "../ui/PrevNextNav";
 import type { GameResult, GamePlayerStat } from "@/lib/types";
 import { calcTeamPossEst } from "@/lib/stats";
 
@@ -77,9 +78,15 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
   );
 }
 
+interface AdjacentGame {
+  prev: { opponent: string; date: string } | null;
+  next: { opponent: string; date: string } | null;
+}
+
 interface GameDetailClientProps {
   game: GameResult;
   basePath?: string;
+  adjacentGames?: AdjacentGame;
 }
 
 function ComparisonBar({ label, espoirVal, opponentVal, format = "number", opponentName }: {
@@ -153,7 +160,7 @@ function LeaderCard({ category, players, espoirTeam, formatValue }: {
   );
 }
 
-export default function GameDetailClient({ game, basePath = "" }: GameDetailClientProps) {
+export default function GameDetailClient({ game, basePath = "", adjacentGames }: GameDetailClientProps) {
   const [activeTab, setActiveTab] = useState<"espoir" | "opponent">("espoir");
   const [sortKey, setSortKey] = useState<SortKey>("number");
   const [sortAsc, setSortAsc] = useState(true);
@@ -277,7 +284,7 @@ export default function GameDetailClient({ game, basePath = "" }: GameDetailClie
 
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <Link
           href={`${basePath}/games`}
           className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white transition-colors rounded"
@@ -285,6 +292,24 @@ export default function GameDetailClient({ game, basePath = "" }: GameDetailClie
           <ArrowLeft size={16} aria-hidden="true" />
           Games
         </Link>
+        <div className="flex items-center gap-2">
+          {adjacentGames?.prev ? (
+            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.prev.opponent)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+              <ChevronLeft size={14} aria-hidden="true" />
+              <span className="hidden sm:inline">{adjacentGames.prev.opponent}</span>
+              <span className="sm:hidden">Prev</span>
+            </Link>
+          ) : null}
+          {adjacentGames?.next ? (
+            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.next.opponent)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+              <span className="hidden sm:inline">{adjacentGames.next.opponent}</span>
+              <span className="sm:hidden">Next</span>
+              <ChevronRight size={14} aria-hidden="true" />
+            </Link>
+          ) : null}
+        </div>
+      </div>
+      <div className="flex justify-end mb-6">
         {game.youtubeUrl ? (
           <a
             href={game.youtubeUrl}
@@ -613,6 +638,13 @@ export default function GameDetailClient({ game, basePath = "" }: GameDetailClie
           </div>
         )}
       </GlassCard>
+
+      {adjacentGames && (
+        <PrevNextNav
+          prev={adjacentGames.prev ? { href: `${basePath}/games/${encodeURIComponent(adjacentGames.prev.opponent)}`, label: `vs ${adjacentGames.prev.opponent}`, sublabel: adjacentGames.prev.date.replace(/-/g, "/") } : null}
+          next={adjacentGames.next ? { href: `${basePath}/games/${encodeURIComponent(adjacentGames.next.opponent)}`, label: `vs ${adjacentGames.next.opponent}`, sublabel: adjacentGames.next.date.replace(/-/g, "/") } : null}
+        />
+      )}
     </AnimatedSection>
   );
 }

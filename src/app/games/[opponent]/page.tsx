@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getGameByOpponent, getAllOpponents, getSeasons, getDefaultSeason } from "@/lib/data";
+import { getGameByOpponent, getAllOpponents, getSeasons, getDefaultSeason, getAdjacentGames } from "@/lib/data";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import GameDetailClient from "@/components/sections/GameDetailClient";
@@ -24,11 +24,13 @@ export default async function GameDetailPage({ params }: PageProps) {
 
   if (!game) notFound();
 
+  const adjacent = getAdjacentGames(decoded, season);
+
   return (
     <>
       <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
-        <GameDetailClient game={game} />
+        <GameDetailClient game={game} adjacentGames={adjacent} />
       </main>
       <Footer seasonLabel={seasonLabel} />
     </>

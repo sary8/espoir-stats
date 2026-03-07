@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import GlassCard from "../ui/GlassCard";
 
 const PlayerGameChart = dynamic(() => import("./PlayerGameChart"), { ssr: false });
@@ -14,6 +14,7 @@ import ProgressRing from "../ui/ProgressRing";
 import StatCounter from "../ui/StatCounter";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
+import PrevNextNav from "../ui/PrevNextNav";
 import { shootingColors } from "@/config/theme";
 import type { PlayerSummary, GamePlayerStat, SeasonInfo } from "@/lib/types";
 
@@ -28,6 +29,11 @@ function calcEff(s: { points: number; totalReb: number; assists: number; steals:
   return (s.points + s.totalReb + s.assists + s.steals + s.blocks) - ((fga - fgm) + (s.ftAttempt - s.ftMade) + s.turnovers);
 }
 
+interface AdjacentPlayer {
+  prev: { number: number; name: string } | null;
+  next: { number: number; name: string } | null;
+}
+
 interface PlayerDetailClientProps {
   summary: PlayerSummary;
   games: { opponent: string; date: string; stat: GamePlayerStat }[];
@@ -35,9 +41,10 @@ interface PlayerDetailClientProps {
   seasons?: SeasonInfo[];
   seasonLabel?: string;
   seasonId?: string;
+  adjacentPlayers?: AdjacentPlayer;
 }
 
-export default function PlayerDetailClient({ summary, games, basePath = "", seasons, seasonLabel, seasonId }: PlayerDetailClientProps) {
+export default function PlayerDetailClient({ summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers }: PlayerDetailClientProps) {
   const prefersReducedMotion = useReducedMotion();
   const p = summary;
 
@@ -107,9 +114,29 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
         <section className="relative gradient-mesh py-12 sm:py-20">
           <div className="absolute inset-0 bg-[#0a0a0f]/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
-            <Link href={`${basePath}/players`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-6 sm:mb-8 rounded">
-              <ArrowLeft size={18} aria-hidden="true" /> Back to Roster
-            </Link>
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
+              <Link href={`${basePath}/players`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors rounded">
+                <ArrowLeft size={18} aria-hidden="true" /> Back to Roster
+              </Link>
+              {adjacentPlayers && (
+                <div className="flex items-center gap-2">
+                  {adjacentPlayers.prev ? (
+                    <Link href={`${basePath}/player/${adjacentPlayers.prev.number}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+                      <ChevronLeft size={14} aria-hidden="true" />
+                      <span className="hidden sm:inline">#{adjacentPlayers.prev.number} {adjacentPlayers.prev.name}</span>
+                      <span className="sm:hidden">#{adjacentPlayers.prev.number}</span>
+                    </Link>
+                  ) : null}
+                  {adjacentPlayers.next ? (
+                    <Link href={`${basePath}/player/${adjacentPlayers.next.number}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+                      <span className="hidden sm:inline">#{adjacentPlayers.next.number} {adjacentPlayers.next.name}</span>
+                      <span className="sm:hidden">#{adjacentPlayers.next.number}</span>
+                      <ChevronRight size={14} aria-hidden="true" />
+                    </Link>
+                  ) : null}
+                </div>
+              )}
+            </div>
             <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }} className="flex items-end justify-between gap-4">
               <div>
                 <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-purple/20">#{p.number}</div>
@@ -309,6 +336,15 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
             </div>
           </GlassCard>
         </AnimatedSection>
+
+        {adjacentPlayers && (
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-12">
+            <PrevNextNav
+              prev={adjacentPlayers.prev ? { href: `${basePath}/player/${adjacentPlayers.prev.number}`, label: `#${adjacentPlayers.prev.number}`, sublabel: adjacentPlayers.prev.name } : null}
+              next={adjacentPlayers.next ? { href: `${basePath}/player/${adjacentPlayers.next.number}`, label: `#${adjacentPlayers.next.number}`, sublabel: adjacentPlayers.next.name } : null}
+            />
+          </div>
+        )}
       </main>
       <Footer seasonLabel={seasonLabel} />
     </>

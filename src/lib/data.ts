@@ -297,3 +297,21 @@ export function getPlayerByNumber(number: number, season?: string) {
 export function getAllPlayerNumbers(season?: string): number[] {
   return getPlayerSummaries(season).map((p) => p.number);
 }
+
+export function getAdjacentPlayers(number: number, season?: string): { prev: { number: number; name: string } | null; next: { number: number; name: string } | null } {
+  const players = getPlayerSummaries(season).sort((a, b) => a.number - b.number);
+  const idx = players.findIndex((p) => p.number === number);
+  return {
+    prev: idx > 0 ? { number: players[idx - 1].number, name: players[idx - 1].name } : null,
+    next: idx < players.length - 1 ? { number: players[idx + 1].number, name: players[idx + 1].name } : null,
+  };
+}
+
+export function getAdjacentGames(opponent: string, season?: string): { prev: { opponent: string; date: string } | null; next: { opponent: string; date: string } | null } {
+  const games = getGameStats(season);
+  const idx = games.findIndex((g) => g.opponent === opponent);
+  return {
+    prev: idx > 0 ? { opponent: games[idx - 1].opponent, date: games[idx - 1].date } : null,
+    next: idx < games.length - 1 ? { opponent: games[idx + 1].opponent, date: games[idx + 1].date } : null,
+  };
+}

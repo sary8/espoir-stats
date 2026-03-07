@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPlayerByNumber, getAllPlayerNumbers, getSeasons, getDefaultSeason } from "@/lib/data";
+import { getPlayerByNumber, getAllPlayerNumbers, getSeasons, getDefaultSeason, getAdjacentPlayers } from "@/lib/data";
 import PlayerDetailClient from "@/components/sections/PlayerDetailClient";
 
 export function generateStaticParams() {
@@ -22,5 +22,7 @@ export default async function PlayerPage({ params }: PageProps) {
 
   if (!data) notFound();
 
-  return <PlayerDetailClient summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} />;
+  const adjacent = getAdjacentPlayers(playerNum, season);
+
+  return <PlayerDetailClient summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} adjacentPlayers={adjacent} />;
 }
