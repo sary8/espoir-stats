@@ -149,9 +149,9 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
                     src={`/players/${seasonId}/${p.number}.png`}
                     alt={`${p.name}のプロフィール写真`}
                     fill
-                    unoptimized
+                    priority
                     className="object-contain drop-shadow-[0_0_20px_rgba(139,92,246,0.15)]"
-                    sizes="(max-width: 640px) 160px, (max-width: 768px) 208px, 256px"
+                    sizes="(max-width: 640px) 192px, (max-width: 768px) 240px, 288px"
                   />
                 </div>
               ) : null}
