@@ -1,13 +1,7 @@
 "use client";
 
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-
-const tooltipStyle = {
-  background: "#1a1a2e",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: 8,
-} as const;
-const tooltipLabelStyle = { color: "#fff" } as const;
+import { tooltipStyle, tooltipLabelStyle } from "@/config/theme";
 
 interface PlayerGameChartProps {
   data: { game: string; PTS: number; REB: number; AST: number }[];

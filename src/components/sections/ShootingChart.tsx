@@ -3,14 +3,7 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
-import { shootingColors } from "@/config/theme";
-
-const tooltipStyle = {
-  background: "#1a1a2e",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: 8,
-} as const;
-const tooltipLabelStyle = { color: "#fff" } as const;
+import { shootingColors, tooltipStyle, tooltipLabelStyle } from "@/config/theme";
 
 interface ShootingChartProps {
   data: { name: string; threePointPct: number; twoPointPct: number; ftPct: number }[];

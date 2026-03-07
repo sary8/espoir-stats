@@ -336,7 +336,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
         </div>
       </div>
 
-      {game.quarterScores.length > 0 && (
+      {game.quarterScores.length > 0 ? (
         <GlassCard className="mb-6">
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <table className="w-full text-sm sm:text-base" aria-label="クォータースコア">
@@ -376,11 +376,11 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
             </table>
           </div>
         </GlassCard>
-      )}
+      ) : null}
 
-      {(game.gameInfo.tournament || game.gameInfo.venue || game.gameInfo.gameType) && (
+      {(game.gameInfo.tournament || game.gameInfo.venue || game.gameInfo.gameType) ? (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          {game.gameInfo.tournament && (
+          {game.gameInfo.tournament ? (
             <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
               <Trophy size={14} className="text-accent-purple shrink-0" aria-hidden="true" />
               <div>
@@ -388,8 +388,8 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
                 <p className="text-sm">{game.gameInfo.tournament}</p>
               </div>
             </div>
-          )}
-          {game.gameInfo.venue && (
+          ) : null}
+          {game.gameInfo.venue ? (
             <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
               <MapPin size={14} className="text-accent-purple shrink-0" aria-hidden="true" />
               <div>
@@ -397,8 +397,8 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
                 <p className="text-sm">{game.gameInfo.venue}</p>
               </div>
             </div>
-          )}
-          {game.gameInfo.gameType && (
+          ) : null}
+          {game.gameInfo.gameType ? (
             <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
               <Shield size={14} className="text-accent-purple shrink-0" aria-hidden="true" />
               <div>
@@ -406,7 +406,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
                 <p className="text-sm">{game.gameInfo.gameType}</p>
               </div>
             </div>
-          )}
+          ) : null}
           <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2.5 border border-white/5">
             <Calendar size={14} className="text-accent-purple shrink-0" aria-hidden="true" />
             <div>
@@ -415,7 +415,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
             </div>
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Advanced Stats */}
       <GlassCard className="mb-6">
@@ -448,7 +448,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
       </GlassCard>
 
       {/* Team Comparison */}
-      {game.opponentPlayers.length > 0 && (<>
+      {game.opponentPlayers.length > 0 ? (<>
         <GlassCard className="mb-4 sm:mb-6">
           <div className="relative flex justify-between items-center mb-3">
             <span className="text-sm font-bold text-accent-purple">Espoir</span>
@@ -504,7 +504,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
             })}
           </div>
         </GlassCard>
-      </>)}
+      </>) : null}
 
       <div className="flex gap-2 mb-4">
         <button
@@ -639,12 +639,12 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
         )}
       </GlassCard>
 
-      {adjacentGames && (
+      {adjacentGames ? (
         <PrevNextNav
           prev={adjacentGames.prev ? { href: `${basePath}/games/${encodeURIComponent(adjacentGames.prev.opponent)}`, label: `vs ${adjacentGames.prev.opponent}`, sublabel: adjacentGames.prev.date.replace(/-/g, "/") } : null}
           next={adjacentGames.next ? { href: `${basePath}/games/${encodeURIComponent(adjacentGames.next.opponent)}`, label: `vs ${adjacentGames.next.opponent}`, sublabel: adjacentGames.next.date.replace(/-/g, "/") } : null}
         />
-      )}
+      ) : null}
     </AnimatedSection>
   );
 }

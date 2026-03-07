@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getSeasonsWithData } from "@/lib/data";
 import { calcAdvancedStats } from "@/lib/stats";
@@ -108,18 +109,20 @@ export default async function SeasonHome({ params }: PageProps) {
           defRtg={seasonAdvanced.defRtg}
           netRtg={seasonAdvanced.netRtg}
         />
-        <LazyCharts
-          scoringData={scoringData}
-          shootingData={shootingData}
-          radarPlayers={radarPlayers}
-          games={games.map((g) => ({
-            opponent: g.opponent,
-            date: g.date,
-            players: g.players,
-            teamPoints: g.teamPoints,
-            youtubeUrl: g.youtubeUrl,
-          }))}
-        />
+        <Suspense>
+          <LazyCharts
+            scoringData={scoringData}
+            shootingData={shootingData}
+            radarPlayers={radarPlayers}
+            games={games.map((g) => ({
+              opponent: g.opponent,
+              date: g.date,
+              players: g.players,
+              teamPoints: g.teamPoints,
+              youtubeUrl: g.youtubeUrl,
+            }))}
+          />
+        </Suspense>
         <PlayerCards
           players={players}
           {...topPlayers}

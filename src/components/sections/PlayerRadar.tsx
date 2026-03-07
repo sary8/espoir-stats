@@ -159,12 +159,12 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
                 isAnimationActive={!isResizing}
               />
             ))}
-            {selectedPlayers.length > 0 && (
+            {selectedPlayers.length > 0 ? (
               <Tooltip content={renderTooltip} cursor={false} isAnimationActive={false} />
-            )}
+            ) : null}
           </RadarChart>
         </ResponsiveContainer>
-        {selectedPlayers.length > 0 && (
+        {selectedPlayers.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 mt-2">
             {selectedPlayers.map((p) => (
               <div key={p.number} className="flex items-center gap-1 text-xs sm:text-sm">
@@ -173,7 +173,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
               </div>
             ))}
           </div>
-        )}
+        ) : null}
       </GlassCard>
     </AnimatedSection>
   );

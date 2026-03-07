@@ -60,9 +60,9 @@ export default function GameList({ games, basePath = "", seasons, currentSeason 
       <h1 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-10 text-center [text-wrap:balance]">
         Game <span className="text-accent-purple">Results</span>
       </h1>
-      {seasons && currentSeason && (
+      {seasons && currentSeason ? (
         <SeasonSwitcher seasons={seasons} currentSeason={currentSeason} pageType="games" />
-      )}
+      ) : null}
       <div className="grid gap-3">
         {games.map((game, i) => {
           const result = getResult(game.teamPoints, game.opponentPoints);

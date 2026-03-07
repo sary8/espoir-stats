@@ -254,7 +254,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               <span className="block">{(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}</span>
               <span className="text-xs opacity-75">{g.teamPoints}pts</span>
             </button>
-            {g.youtubeUrl && (
+            {g.youtubeUrl ? (
               <a
                 href={g.youtubeUrl}
                 target="_blank"
@@ -264,7 +264,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               >
                 <Youtube size={18} aria-hidden="true" />
               </a>
-            )}
+            ) : null}
           </div>
         ))}
       </div>

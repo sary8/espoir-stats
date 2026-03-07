@@ -118,7 +118,7 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
               <Link href={`${basePath}/players`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors rounded">
                 <ArrowLeft size={18} aria-hidden="true" /> Back to Roster
               </Link>
-              {adjacentPlayers && (
+              {adjacentPlayers ? (
                 <div className="flex items-center gap-2">
                   {adjacentPlayers.prev ? (
                     <Link href={`${basePath}/player/${adjacentPlayers.prev.number}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
@@ -135,7 +135,7 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
                     </Link>
                   ) : null}
                 </div>
-              )}
+              ) : null}
             </div>
             <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }} className="flex items-end justify-between gap-4">
               <div>
@@ -143,7 +143,7 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6">{p.name}</h1>
                 <p className="text-sm sm:text-base text-neutral-400 mt-2">{p.games} Games Played | Total {p.totalPoints} Points</p>
               </div>
-              {seasonId && (
+              {seasonId ? (
                 <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 shrink-0">
                   <Image
                     src={`/players/${seasonId}/${p.number}.png`}
@@ -154,7 +154,7 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
                     sizes="(max-width: 640px) 160px, (max-width: 768px) 208px, 256px"
                   />
                 </div>
-              )}
+              ) : null}
             </motion.div>
           </div>
         </section>
@@ -239,7 +239,7 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
         </AnimatedSection>
 
         {/* Scoring Trend */}
-        {games.length > 1 && (
+        {games.length > 1 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
             <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Game-by-Game</h2>
             <GlassCard>
@@ -247,7 +247,7 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
               <PlayerGameChart data={lineData} />
             </GlassCard>
           </AnimatedSection>
-        )}
+        ) : null}
 
         {/* Game Log */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
@@ -337,14 +337,14 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
           </GlassCard>
         </AnimatedSection>
 
-        {adjacentPlayers && (
+        {adjacentPlayers ? (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-12">
             <PrevNextNav
               prev={adjacentPlayers.prev ? { href: `${basePath}/player/${adjacentPlayers.prev.number}`, label: `#${adjacentPlayers.prev.number}`, sublabel: adjacentPlayers.prev.name } : null}
               next={adjacentPlayers.next ? { href: `${basePath}/player/${adjacentPlayers.next.number}`, label: `#${adjacentPlayers.next.number}`, sublabel: adjacentPlayers.next.name } : null}
             />
           </div>
-        )}
+        ) : null}
       </main>
       <Footer seasonLabel={seasonLabel} />
     </>

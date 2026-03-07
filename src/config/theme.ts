@@ -17,3 +17,11 @@ export const shootingColors = {
   twoPoint: "#60A5FA",
   freeThrow: "#34D399",
 };
+
+export const tooltipStyle = {
+  background: "#1a1a2e",
+  border: "1px solid rgba(255,255,255,0.1)",
+  borderRadius: 8,
+} as const;
+
+export const tooltipLabelStyle = { color: "#fff" } as const;

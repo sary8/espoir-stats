@@ -3,14 +3,8 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
-import { chartColors } from "@/config/theme";
+import { chartColors, tooltipStyle, tooltipLabelStyle } from "@/config/theme";
 
-const tooltipStyle = {
-  background: "#1a1a2e",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: 8,
-} as const;
-const tooltipLabelStyle = { color: "#fff" } as const;
 const tooltipItemStyle = { color: "#A855F7" } as const;
 
 interface ScoringLeadersProps {
