@@ -1,4 +1,26 @@
+import fs from "fs";
+import path from "path";
 import { defineConfig } from "@playwright/test";
+
+function loadLocalEnv(): Record<string, string> {
+  const filePath = path.join(process.cwd(), ".env.local");
+  if (!fs.existsSync(filePath)) return {};
+
+  return Object.fromEntries(
+    fs.readFileSync(filePath, "utf8")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("#"))
+      .map((line) => {
+        const idx = line.indexOf("=");
+        if (idx === -1) return [line, ""];
+        return [line.slice(0, idx), line.slice(idx + 1)];
+      })
+  );
+}
+
+const localEnv = loadLocalEnv();
+process.env = { ...localEnv, ...process.env };
 
 export default defineConfig({
   testDir: "./e2e",

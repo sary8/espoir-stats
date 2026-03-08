@@ -36,7 +36,7 @@ interface AdjacentPlayer {
 
 interface PlayerDetailClientProps {
   summary: PlayerSummary;
-  games: { opponent: string; date: string; stat: GamePlayerStat }[];
+  games: { gameId: string; opponent: string; date: string; stat: GamePlayerStat }[];
   basePath?: string;
   seasons?: SeasonInfo[];
   seasonLabel?: string;
@@ -283,7 +283,7 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
                 </thead>
                 <tbody>
                   {games.map((g) => (
-                    <tr key={g.opponent} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <tr key={g.gameId} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                       <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
                         <span className="text-neutral-400 mr-2 text-xs">{(g.date ?? "").replace(/-/g, "/")}</span>vs {g.opponent}
                       </td>

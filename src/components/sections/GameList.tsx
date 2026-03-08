@@ -69,57 +69,51 @@ export default function GameList({ games, basePath = "", seasons, currentSeason 
           const config = resultConfig[result];
 
           return (
-            <AnimatedSection key={game.opponent} delay={Math.min(i * 0.08, 0.4)}>
-              <Link
-                href={`${basePath}/games/${encodeURIComponent(game.opponent)}`}
-                className="block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple touch-manipulation"
-              >
-                <GlassCard hover className={`cursor-pointer !py-4 !px-5 sm:!py-5 sm:!px-6 border-l-[3px] ${config.borderClass}`}>
-                  <div className="relative flex items-center justify-between">
-                    {/* 左: バッジ + 日付 */}
-                    <div className="flex items-center gap-2.5 z-10 min-w-0">
-                      <span className={`text-[11px] font-bold tracking-wider px-2.5 py-0.5 rounded-full shrink-0 ${config.badgeClass}`}>
-                        {config.badge}
-                      </span>
-                      <p className="text-xs text-neutral-500 tabular-nums hidden sm:block shrink-0">{formatDate(game.date)}</p>
-                    </div>
+            <AnimatedSection key={game.gameId} delay={Math.min(i * 0.08, 0.4)}>
+              <GlassCard hover className={`!py-4 !px-5 sm:!py-5 sm:!px-6 border-l-[3px] ${config.borderClass}`}>
+                <div className="flex items-center gap-3">
+                  <Link
+                    href={`${basePath}/games/${encodeURIComponent(game.gameId)}`}
+                    className="block flex-1 min-w-0 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple touch-manipulation"
+                  >
+                    <div className="relative flex items-center justify-between">
+                      <div className="flex items-center gap-2.5 z-10 min-w-0">
+                        <span className={`text-[11px] font-bold tracking-wider px-2.5 py-0.5 rounded-full shrink-0 ${config.badgeClass}`}>
+                          {config.badge}
+                        </span>
+                        <p className="text-xs text-neutral-500 tabular-nums hidden sm:block shrink-0">{formatDate(game.date)}</p>
+                      </div>
 
-                    {/* 中央: スコア（absoluteでカード中央に固定） */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <span className="text-sm sm:text-base font-semibold text-neutral-300 w-16 sm:w-20 text-right shrink-0">Espoir</span>
-                      <span className={`w-10 sm:w-12 text-right text-2xl sm:text-3xl font-bold tabular-nums shrink-0 ${config.scoreClass}`}>
-                        {game.teamPoints}
-                      </span>
-                      <span className="w-5 text-center text-neutral-600 text-xs shrink-0">–</span>
-                      <span className="w-10 sm:w-12 text-left text-2xl sm:text-3xl font-bold tabular-nums text-neutral-300 shrink-0">
-                        {game.opponentPoints}
-                      </span>
-                      <span className="text-sm sm:text-base font-semibold text-neutral-300 w-16 sm:w-20 shrink-0">{game.opponent}</span>
-                    </div>
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span className="text-sm sm:text-base font-semibold text-neutral-300 w-16 sm:w-20 text-right shrink-0">Espoir</span>
+                        <span className={`w-10 sm:w-12 text-right text-2xl sm:text-3xl font-bold tabular-nums shrink-0 ${config.scoreClass}`}>
+                          {game.teamPoints}
+                        </span>
+                        <span className="w-5 text-center text-neutral-600 text-xs shrink-0">–</span>
+                        <span className="w-10 sm:w-12 text-left text-2xl sm:text-3xl font-bold tabular-nums text-neutral-300 shrink-0">
+                          {game.opponentPoints}
+                        </span>
+                        <span className="text-sm sm:text-base font-semibold text-neutral-300 w-16 sm:w-20 shrink-0">{game.opponent}</span>
+                      </div>
 
-                    {/* 右: YouTube */}
-                    <div className="z-10">
-                      {game.youtubeUrl ? (
-                        <button
-                          type="button"
-                          aria-label={`${game.opponent}戦の試合動画`}
-                          className="p-2 rounded-full text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.open(game.youtubeUrl!, "_blank", "noopener,noreferrer");
-                          }}
-                        >
-                          <Youtube size={18} aria-hidden="true" />
-                        </button>
-                      ) : (
-                        <div className="w-[34px]" />
-                      )}
+                      <div className="w-[34px] shrink-0" aria-hidden="true" />
                     </div>
-                  </div>
-                  <p className="text-[11px] text-neutral-600 text-center mt-1 tabular-nums sm:hidden">{formatDate(game.date)}</p>
-                </GlassCard>
-              </Link>
+                    <p className="text-[11px] text-neutral-600 text-center mt-1 tabular-nums sm:hidden">{formatDate(game.date)}</p>
+                  </Link>
+
+                  {game.youtubeUrl ? (
+                    <a
+                      href={game.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${game.opponent}戦の試合動画`}
+                      className="shrink-0 p-2 rounded-full text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    >
+                      <Youtube size={18} aria-hidden="true" />
+                    </a>
+                  ) : null}
+                </div>
+              </GlassCard>
             </AnimatedSection>
           );
         })}

@@ -115,6 +115,7 @@ export default async function SeasonHome({ params }: PageProps) {
             shootingData={shootingData}
             radarPlayers={radarPlayers}
             games={games.map((g) => ({
+              gameId: g.gameId,
               opponent: g.opponent,
               date: g.date,
               players: g.players,

@@ -31,6 +31,7 @@ export interface PlayerSummary {
 }
 
 export interface GamePlayerStat {
+  gameId: string;
   opponent: string;
   number: number;
   name: string;
@@ -74,6 +75,7 @@ export interface GameInfo {
 }
 
 export interface GameResult {
+  gameId: string;
   opponent: string;
   date: string;
   players: GamePlayerStat[];

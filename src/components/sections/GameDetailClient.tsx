@@ -79,8 +79,8 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
 }
 
 interface AdjacentGame {
-  prev: { opponent: string; date: string } | null;
-  next: { opponent: string; date: string } | null;
+  prev: { gameId: string; opponent: string; date: string } | null;
+  next: { gameId: string; opponent: string; date: string } | null;
 }
 
 interface GameDetailClientProps {
@@ -294,14 +294,14 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
         </Link>
         <div className="flex items-center gap-2">
           {adjacentGames?.prev ? (
-            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.prev.opponent)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.prev.gameId)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
               <ChevronLeft size={14} aria-hidden="true" />
               <span className="hidden sm:inline">{adjacentGames.prev.opponent}</span>
               <span className="sm:hidden">Prev</span>
             </Link>
           ) : null}
           {adjacentGames?.next ? (
-            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.next.opponent)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.next.gameId)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
               <span className="hidden sm:inline">{adjacentGames.next.opponent}</span>
               <span className="sm:hidden">Next</span>
               <ChevronRight size={14} aria-hidden="true" />
@@ -641,8 +641,8 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
 
       {adjacentGames ? (
         <PrevNextNav
-          prev={adjacentGames.prev ? { href: `${basePath}/games/${encodeURIComponent(adjacentGames.prev.opponent)}`, label: `vs ${adjacentGames.prev.opponent}`, sublabel: adjacentGames.prev.date.replace(/-/g, "/") } : null}
-          next={adjacentGames.next ? { href: `${basePath}/games/${encodeURIComponent(adjacentGames.next.opponent)}`, label: `vs ${adjacentGames.next.opponent}`, sublabel: adjacentGames.next.date.replace(/-/g, "/") } : null}
+          prev={adjacentGames.prev ? { href: `${basePath}/games/${encodeURIComponent(adjacentGames.prev.gameId)}`, label: `vs ${adjacentGames.prev.opponent}`, sublabel: adjacentGames.prev.date.replace(/-/g, "/") } : null}
+          next={adjacentGames.next ? { href: `${basePath}/games/${encodeURIComponent(adjacentGames.next.gameId)}`, label: `vs ${adjacentGames.next.opponent}`, sublabel: adjacentGames.next.date.replace(/-/g, "/") } : null}
         />
       ) : null}
     </AnimatedSection>

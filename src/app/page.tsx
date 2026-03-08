@@ -103,6 +103,7 @@ export default function Home() {
             shootingData={shootingData}
             radarPlayers={radarPlayers}
             games={games.map((g) => ({
+              gameId: g.gameId,
               opponent: g.opponent,
               date: g.date,
               players: g.players,

@@ -241,7 +241,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
           ALL
         </button>
         {games.map((g, i) => (
-          <div key={g.opponent} className="flex items-center gap-1">
+          <div key={g.gameId} className="flex items-center gap-1">
             <button
               onClick={() => { setActiveGame(i); setSortKey("number"); setSortAsc(true); }}
               aria-pressed={i === activeGame}

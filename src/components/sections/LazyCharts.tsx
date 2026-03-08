@@ -13,6 +13,7 @@ const PlayerRadar = dynamic(() => import("./PlayerRadar"), { ssr: false, loading
 const GameBreakdown = dynamic(() => import("./GameBreakdown"), { ssr: false, loading: () => <ChartSkeleton /> });
 
 export interface GameSummary {
+  gameId: string;
   opponent: string;
   date: string;
   players: GamePlayerStat[];

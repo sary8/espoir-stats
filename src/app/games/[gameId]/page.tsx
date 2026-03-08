@@ -1,30 +1,30 @@
 import { notFound } from "next/navigation";
-import { getGameByOpponent, getAllOpponents, getSeasons, getDefaultSeason, getAdjacentGames } from "@/lib/data";
+import { getGameById, getAllGameIds, getSeasons, getDefaultSeason, getAdjacentGames } from "@/lib/data";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import GameDetailClient from "@/components/sections/GameDetailClient";
 
 export function generateStaticParams() {
-  return getAllOpponents().map((opponent) => ({
-    opponent,
+  return getAllGameIds().map((gameId) => ({
+    gameId,
   }));
 }
 
 interface PageProps {
-  params: Promise<{ opponent: string }>;
+  params: Promise<{ gameId: string }>;
 }
 
 export default async function GameDetailPage({ params }: PageProps) {
-  const { opponent } = await params;
+  const { gameId } = await params;
   const seasons = getSeasons();
   const season = getDefaultSeason();
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
-  const decoded = decodeURIComponent(opponent);
-  const game = getGameByOpponent(decoded, season);
+  const decodedGameId = decodeURIComponent(gameId);
+  const game = getGameById(decodedGameId, season);
 
   if (!game) notFound();
 
-  const adjacent = getAdjacentGames(decoded, season);
+  const adjacent = getAdjacentGames(decodedGameId, season);
 
   return (
     <>

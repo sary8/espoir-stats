@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { getPlayerSummaries, getGameStats, getPlayerByNumber, getAllPlayerNumbers, getGameByOpponent, getAllOpponents } from "./data";
+import { getPlayerSummaries, getGameStats, getPlayerByNumber, getAllPlayerNumbers, getGameById, getAllGameIds } from "./data";
+
+function parseMinutes(value: string): number {
+  const [m, s = "0"] = value.split(":");
+  return (parseInt(m || "0", 10) * 60) + parseInt(s || "0", 10);
+}
 
 describe("getPlayerSummaries", () => {
   const summaries = getPlayerSummaries();
@@ -33,6 +38,7 @@ describe("getGameStats", () => {
 
   it("各試合に必要なフィールドがある", () => {
     for (const g of games) {
+      expect(g.gameId).toBeTypeOf("string");
       expect(g.opponent).toBeTypeOf("string");
       expect(g.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(g.players.length).toBeGreaterThan(0);
@@ -42,7 +48,7 @@ describe("getGameStats", () => {
 
   it("日付順にソートされている", () => {
     for (let i = 1; i < games.length; i++) {
-      expect(games[i].date >= games[i - 1].date).toBe(true);
+      expect(games[i].date <= games[i - 1].date).toBe(true);
     }
   });
 
@@ -68,28 +74,52 @@ describe("getGameStats", () => {
       }
     }
   });
-});
 
-describe("getGameByOpponent", () => {
-  it("存在する対戦相手で試合データを返す", () => {
-    const opponents = getAllOpponents();
-    const game = getGameByOpponent(opponents[0]);
-    expect(game).not.toBeNull();
-    expect(game!.opponent).toBe(opponents[0]);
+  it("gameId が一意である", () => {
+    const unique = new Set(games.map((g) => g.gameId));
+    expect(unique.size).toBe(games.length);
   });
 
-  it("存在しない対戦相手でnullを返す", () => {
-    const game = getGameByOpponent("存在しないチーム");
+  it("自チームの合計出場時間が160分である", () => {
+    for (const g of games) {
+      const total = g.players
+        .filter((p) => p.name !== "Team/Coaches")
+        .reduce((sum, p) => sum + parseMinutes(p.minutes), 0);
+      expect(total).toBe(160 * 60);
+    }
+  });
+
+  it("相手チームの合計出場時間が160分である", () => {
+    for (const g of games) {
+      if (g.opponentPlayers.length === 0) continue;
+      const total = g.opponentPlayers
+        .filter((p) => p.name !== "Team/Coaches")
+        .reduce((sum, p) => sum + parseMinutes(p.minutes), 0);
+      expect(total).toBe(160 * 60);
+    }
+  });
+});
+
+describe("getGameById", () => {
+  it("存在する試合IDで試合データを返す", () => {
+    const gameIds = getAllGameIds();
+    const game = getGameById(gameIds[0]);
+    expect(game).not.toBeNull();
+    expect(game!.gameId).toBe(gameIds[0]);
+  });
+
+  it("存在しない試合IDでnullを返す", () => {
+    const game = getGameById("存在しない試合ID");
     expect(game).toBeNull();
   });
 });
 
-describe("getAllOpponents", () => {
-  it("対戦相手の配列を返す", () => {
-    const opponents = getAllOpponents();
-    expect(opponents.length).toBeGreaterThan(0);
-    for (const o of opponents) {
-      expect(o).toBeTypeOf("string");
+describe("getAllGameIds", () => {
+  it("試合IDの配列を返す", () => {
+    const gameIds = getAllGameIds();
+    expect(gameIds.length).toBeGreaterThan(0);
+    for (const id of gameIds) {
+      expect(id).toBeTypeOf("string");
     }
   });
 });

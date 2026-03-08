@@ -22,9 +22,11 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
-        router.push("/");
+        router.replace("/");
+        router.refresh();
       } else {
-        setError("パスワードが正しくありません");
+        const json = await res.json().catch(() => null);
+        setError(typeof json?.error === "string" ? json.error : "パスワードが正しくありません");
       }
     } catch {
       setError("エラーが発生しました");

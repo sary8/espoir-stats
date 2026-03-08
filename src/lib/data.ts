@@ -43,35 +43,62 @@ function isTeamCoaches(row: Record<string, string>): boolean {
   return row["選手名"] === "Team/Coaches";
 }
 
+function parseStatInt(value: string | undefined): number {
+  const parsed = parseInt(value ?? "", 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function getGameIdFromInfoRow(row: Record<string, string>): string {
+  const gameId = row["試合ID"];
+  if (gameId) return gameId;
+
+  const date = row["日付"];
+  const opponent = row["対戦相手"];
+  if (!date || !opponent) {
+    throw new Error("試合情報.csv に必要な試合識別情報がありません");
+  }
+
+  return `${date}__${opponent}`;
+}
+
+function getGameIdFromStatsRow(row: Record<string, string>): string {
+  const gameId = row["試合ID"];
+  if (!gameId) {
+    throw new Error("スタッツCSV に 試合ID 列がありません");
+  }
+  return gameId;
+}
+
 function parseGamePlayerStat(row: Record<string, string>): GamePlayerStat {
   return {
+    gameId: getGameIdFromStatsRow(row),
     opponent: row["対戦相手"],
-    number: parseInt(row["No."], 10) || -1,
+    number: parseStatInt(row["No."]) || -1,
     name: row["選手名"],
     starter: row["GS"] === "●",
-    points: parseInt(row["PTS"], 10),
-    threePointMade: parseInt(row["3PM"], 10),
-    threePointAttempt: parseInt(row["3PA"], 10),
-    threePointPct: parseInt(row["3P%"], 10),
-    twoPointMade: parseInt(row["2PM"], 10),
-    twoPointAttempt: parseInt(row["2PA"], 10),
-    twoPointPct: parseInt(row["2P%"], 10),
-    dunk: parseInt(row["DK"], 10),
-    ftMade: parseInt(row["FTM"], 10),
-    ftAttempt: parseInt(row["FTA"], 10),
-    ftPct: parseInt(row["FT%"], 10),
-    offReb: parseInt(row["OR"], 10),
-    defReb: parseInt(row["DR"], 10),
-    totalReb: parseInt(row["TOT"], 10),
-    assists: parseInt(row["AST"], 10),
-    steals: parseInt(row["STL"], 10),
-    blocks: parseInt(row["BLK"], 10),
-    turnovers: parseInt(row["TO"], 10),
-    personalFouls: parseInt(row["PF"], 10),
-    technicalFouls: parseInt(row["TF"], 10),
-    offensiveFouls: parseInt(row["OF"], 10),
-    foulsDrawn: parseInt(row["FO"], 10) || 0,
-    disqualifications: parseInt(row["DQ"], 10),
+    points: parseStatInt(row["PTS"]),
+    threePointMade: parseStatInt(row["3PM"]),
+    threePointAttempt: parseStatInt(row["3PA"]),
+    threePointPct: parsePctString(row["3P%"]),
+    twoPointMade: parseStatInt(row["2PM"]),
+    twoPointAttempt: parseStatInt(row["2PA"]),
+    twoPointPct: parsePctString(row["2P%"]),
+    dunk: parseStatInt(row["DK"]),
+    ftMade: parseStatInt(row["FTM"]),
+    ftAttempt: parseStatInt(row["FTA"]),
+    ftPct: parsePctString(row["FT%"]),
+    offReb: parseStatInt(row["OR"]),
+    defReb: parseStatInt(row["DR"]),
+    totalReb: parseStatInt(row["TOT"]),
+    assists: parseStatInt(row["AST"]),
+    steals: parseStatInt(row["STL"]),
+    blocks: parseStatInt(row["BLK"]),
+    turnovers: parseStatInt(row["TO"]),
+    personalFouls: parseStatInt(row["PF"]),
+    technicalFouls: parseStatInt(row["TF"]),
+    offensiveFouls: parseStatInt(row["OF"]),
+    foulsDrawn: parseStatInt(row["FO"]),
+    disqualifications: parseStatInt(row["DQ"]),
     minutes: row["MIN"],
   };
 }
@@ -92,38 +119,38 @@ export function getPlayerSummaries(season?: string): PlayerSummary[] {
   const foulMap = new Map<number, { pf: number; fo: number }>();
   for (const row of gameData) {
     if (isTeamCoaches(row)) continue;
-    const num = parseInt(row["No."], 10);
+    const num = parseStatInt(row["No."]);
     const entry = foulMap.get(num) ?? { pf: 0, fo: 0 };
-    entry.pf += parseInt(row["PF"], 10) || 0;
-    entry.fo += parseInt(row["FO"], 10) || 0;
+    entry.pf += parseStatInt(row["PF"]);
+    entry.fo += parseStatInt(row["FO"]);
     foulMap.set(num, entry);
   }
 
   const result = data.map((row) => {
-    const num = parseInt(row["No."], 10);
+    const num = parseStatInt(row["No."]);
     const fouls = foulMap.get(num) ?? { pf: 0, fo: 0 };
     return {
       number: num,
       name: row["選手名"],
-      games: parseInt(row["試合数"], 10),
-      totalPoints: parseInt(row["合計得点"], 10),
+      games: parseStatInt(row["試合数"]),
+      totalPoints: parseStatInt(row["合計得点"]),
       ppg: parseFloat(row["平均得点"]),
-      threePointMade: parseInt(row["3PM"], 10),
-      threePointAttempt: parseInt(row["3PA"], 10),
+      threePointMade: parseStatInt(row["3PM"]),
+      threePointAttempt: parseStatInt(row["3PA"]),
       threePointPct: parsePctString(row["3P%"]),
-      twoPointMade: parseInt(row["2PM"], 10),
-      twoPointAttempt: parseInt(row["2PA"], 10),
+      twoPointMade: parseStatInt(row["2PM"]),
+      twoPointAttempt: parseStatInt(row["2PA"]),
       twoPointPct: parsePctString(row["2P%"]),
-      ftMade: parseInt(row["FTM"], 10),
-      ftAttempt: parseInt(row["FTA"], 10),
+      ftMade: parseStatInt(row["FTM"]),
+      ftAttempt: parseStatInt(row["FTA"]),
       ftPct: parsePctString(row["FT%"]),
-      offReb: parseInt(row["OR"], 10),
-      defReb: parseInt(row["DR"], 10),
-      totalReb: parseInt(row["TOT REB"], 10),
-      assists: parseInt(row["AST"], 10),
-      steals: parseInt(row["STL"], 10),
-      blocks: parseInt(row["BLK"], 10),
-      turnovers: parseInt(row["TO"], 10),
+      offReb: parseStatInt(row["OR"]),
+      defReb: parseStatInt(row["DR"]),
+      totalReb: parseStatInt(row["TOT REB"]),
+      assists: parseStatInt(row["AST"]),
+      steals: parseStatInt(row["STL"]),
+      blocks: parseStatInt(row["BLK"]),
+      turnovers: parseStatInt(row["TO"]),
       personalFouls: fouls.pf,
       foulsDrawn: fouls.fo,
     };
@@ -133,6 +160,7 @@ export function getPlayerSummaries(season?: string): PlayerSummary[] {
 }
 
 interface GameInfoRow {
+  gameId: string;
   date: string;
   youtubeUrl: string | null;
   quarterScores: QuarterScore[];
@@ -144,15 +172,17 @@ function getGameInfoMap(season: string): Map<string, GameInfoRow> {
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
   const map = new Map<string, GameInfoRow>();
   for (const row of data) {
+    const gameId = getGameIdFromInfoRow(row);
     const quarters: QuarterScore[] = [];
     for (const q of ["1Q", "2Q", "3Q", "4Q"]) {
-      const espoir = parseInt(row[`${q}_自`], 10);
-      const opp = parseInt(row[`${q}_相手`], 10);
+      const espoir = parseInt(row[`${q}_自`] ?? "", 10);
+      const opp = parseInt(row[`${q}_相手`] ?? "", 10);
       if (!isNaN(espoir) && !isNaN(opp)) {
         quarters.push({ quarter: q, espoir, opponent: opp });
       }
     }
-    map.set(row["対戦相手"], {
+    map.set(gameId, {
+      gameId,
       date: row["日付"] ?? "9999-12-31",
       youtubeUrl: row["YouTube"] || null,
       quarterScores: quarters,
@@ -171,45 +201,11 @@ function getOpponentStatsMap(season: string): Map<string, GamePlayerStat[]> {
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
   const map = new Map<string, GamePlayerStat[]>();
   for (const row of data) {
-    const opponent = row["対戦相手"];
-    if (!map.has(opponent)) map.set(opponent, []);
-    map.get(opponent)!.push(parseGamePlayerStat(row));
+    const gameId = getGameIdFromStatsRow(row);
+    if (!map.has(gameId)) map.set(gameId, []);
+    map.get(gameId)!.push(parseGamePlayerStat(row));
   }
   return map;
-}
-
-function parseMinutesToSeconds(min: string): number {
-  if (!min) return 0;
-  const parts = min.split(":");
-  return parseInt(parts[0], 10) * 60 + parseInt(parts[1] || "0", 10);
-}
-
-function secondsToMinutes(totalSeconds: number): string {
-  const m = Math.floor(totalSeconds / 60);
-  const s = totalSeconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
-
-const GAME_TOTAL_SECONDS = 160 * 60; // 1試合 = 160分(8クォーター × 5人)
-
-function adjustMinutesTo160(players: GamePlayerStat[]): void {
-  if (players.length === 0) return;
-  const realPlayers = players.filter(p => p.name !== "Team/Coaches");
-  if (realPlayers.length === 0) return;
-  const totalSeconds = realPlayers.reduce((sum, p) => sum + parseMinutesToSeconds(p.minutes), 0);
-  const diff = GAME_TOTAL_SECONDS - totalSeconds;
-  if (diff <= 0) return;
-
-  let minIdx = players.indexOf(realPlayers[0]);
-  let minSec = parseMinutesToSeconds(realPlayers[0].minutes);
-  for (let i = 1; i < realPlayers.length; i++) {
-    const sec = parseMinutesToSeconds(realPlayers[i].minutes);
-    if (sec < minSec) {
-      minSec = sec;
-      minIdx = players.indexOf(realPlayers[i]);
-    }
-  }
-  players[minIdx].minutes = secondsToMinutes(minSec + diff);
 }
 
 const _gameStatsCache = new Map<string, GameResult[]>();
@@ -226,20 +222,20 @@ export function getGameStats(season?: string): GameResult[] {
   const gameMap = new Map<string, GamePlayerStat[]>();
 
   for (const row of data) {
-    const opponent = row["対戦相手"];
-    if (!gameMap.has(opponent)) gameMap.set(opponent, []);
-    gameMap.get(opponent)!.push(parseGamePlayerStat(row));
+    const gameId = getGameIdFromStatsRow(row);
+    if (!gameMap.has(gameId)) gameMap.set(gameId, []);
+    gameMap.get(gameId)!.push(parseGamePlayerStat(row));
   }
 
   const result = Array.from(gameMap.entries())
-    .map(([opponent, players]) => {
-      const info = gameInfo.get(opponent);
-      const oppPlayers = opponentStats.get(opponent) ?? [];
+    .map(([gameId, players]) => {
+      const info = gameInfo.get(gameId);
+      const opponent = players[0]?.opponent ?? "";
+      const oppPlayers = opponentStats.get(gameId) ?? [];
       const sortedPlayers = players.sort((a, b) => a.number - b.number);
       const sortedOpp = oppPlayers.sort((a, b) => a.number - b.number);
-      adjustMinutesTo160(sortedPlayers);
-      adjustMinutesTo160(sortedOpp);
       return {
+        gameId,
         opponent,
         date: info?.date ?? "9999-12-31",
         players: sortedPlayers,
@@ -269,13 +265,13 @@ export function getTopPlayers(players: PlayerSummary[]) {
   };
 }
 
-export function getGameByOpponent(opponent: string, season?: string): GameResult | null {
+export function getGameById(gameId: string, season?: string): GameResult | null {
   const games = getGameStats(season);
-  return games.find((g) => g.opponent === opponent) ?? null;
+  return games.find((g) => g.gameId === gameId) ?? null;
 }
 
-export function getAllOpponents(season?: string): string[] {
-  return getGameStats(season).map((g) => g.opponent);
+export function getAllGameIds(season?: string): string[] {
+  return getGameStats(season).map((g) => g.gameId);
 }
 
 export function getPlayerByNumber(number: number, season?: string) {
@@ -287,9 +283,9 @@ export function getPlayerByNumber(number: number, season?: string) {
   const playerGames = games
     .map((g) => {
       const stat = g.players.find((p) => p.number === number);
-      return stat ? { opponent: g.opponent, date: g.date, stat } : null;
+      return stat ? { gameId: g.gameId, opponent: g.opponent, date: g.date, stat } : null;
     })
-    .filter((g): g is { opponent: string; date: string; stat: GamePlayerStat } => g !== null);
+    .filter((g): g is { gameId: string; opponent: string; date: string; stat: GamePlayerStat } => g !== null);
 
   return { summary, games: playerGames };
 }
@@ -307,11 +303,11 @@ export function getAdjacentPlayers(number: number, season?: string): { prev: { n
   };
 }
 
-export function getAdjacentGames(opponent: string, season?: string): { prev: { opponent: string; date: string } | null; next: { opponent: string; date: string } | null } {
+export function getAdjacentGames(gameId: string, season?: string): { prev: { gameId: string; opponent: string; date: string } | null; next: { gameId: string; opponent: string; date: string } | null } {
   const games = getGameStats(season);
-  const idx = games.findIndex((g) => g.opponent === opponent);
+  const idx = games.findIndex((g) => g.gameId === gameId);
   return {
-    prev: idx > 0 ? { opponent: games[idx - 1].opponent, date: games[idx - 1].date } : null,
-    next: idx < games.length - 1 ? { opponent: games[idx + 1].opponent, date: games[idx + 1].date } : null,
+    prev: idx > 0 ? { gameId: games[idx - 1].gameId, opponent: games[idx - 1].opponent, date: games[idx - 1].date } : null,
+    next: idx < games.length - 1 ? { gameId: games[idx + 1].gameId, opponent: games[idx + 1].opponent, date: games[idx + 1].date } : null,
   };
 }
