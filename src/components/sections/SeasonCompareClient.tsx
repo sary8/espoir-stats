@@ -7,6 +7,8 @@ import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import type { SeasonInfo, TeamSeasonStats, CrossSeasonMember } from "@/lib/types";
 
+type ViewMode = "average" | "total";
+
 interface SeasonCompareClientProps {
   seasons: SeasonInfo[];
   teamStats: TeamSeasonStats[];
@@ -22,26 +24,56 @@ function fmtPct(v: number | null): string {
   return `${v.toFixed(1)}%`;
 }
 
-interface TeamRow {
+function fmtInt(v: number): string {
+  return String(Math.round(v));
+}
+
+interface Row {
   label: string;
   values: (string | number)[];
   higherIsBetter: boolean;
 }
 
-function getTeamRows(stats: TeamSeasonStats[]): TeamRow[] {
+function getTeamRows(stats: TeamSeasonStats[], mode: ViewMode): Row[] {
+  const isAvg = mode === "average";
   return [
     { label: "戦績", values: stats.map((s) => `${s.wins}W - ${s.losses}L`), higherIsBetter: true },
-    { label: "平均得点", values: stats.map((s) => fmt(s.avgPoints)), higherIsBetter: true },
+    { label: isAvg ? "平均得点" : "合計得点", values: stats.map((s) => isAvg ? fmt(s.avgPoints) : fmtInt(s.totalPoints)), higherIsBetter: true },
     { label: "3P%", values: stats.map((s) => fmtPct(s.threePointPct)), higherIsBetter: true },
-    { label: "リバウンド", values: stats.map((s) => fmt(s.rebounds)), higherIsBetter: true },
-    { label: "アシスト", values: stats.map((s) => fmt(s.assists)), higherIsBetter: true },
-    { label: "スティール", values: stats.map((s) => fmt(s.steals)), higherIsBetter: true },
-    { label: "ブロック", values: stats.map((s) => fmt(s.blocks)), higherIsBetter: true },
-    { label: "ターンオーバー", values: stats.map((s) => fmt(s.turnovers)), higherIsBetter: false },
+    { label: isAvg ? "リバウンド" : "合計リバウンド", values: stats.map((s) => isAvg ? fmt(s.rebounds) : fmtInt(s.totalRebounds)), higherIsBetter: true },
+    { label: isAvg ? "アシスト" : "合計アシスト", values: stats.map((s) => isAvg ? fmt(s.assists) : fmtInt(s.totalAssists)), higherIsBetter: true },
+    { label: isAvg ? "スティール" : "合計スティール", values: stats.map((s) => isAvg ? fmt(s.steals) : fmtInt(s.totalSteals)), higherIsBetter: true },
+    { label: isAvg ? "ブロック" : "合計ブロック", values: stats.map((s) => isAvg ? fmt(s.blocks) : fmtInt(s.totalBlocks)), higherIsBetter: true },
+    { label: isAvg ? "ターンオーバー" : "合計ターンオーバー", values: stats.map((s) => isAvg ? fmt(s.turnovers) : fmtInt(s.totalTurnovers)), higherIsBetter: false },
     { label: "PACE", values: stats.map((s) => fmt(s.pace)), higherIsBetter: true },
     { label: "OFFRTG", values: stats.map((s) => fmt(s.offRtg)), higherIsBetter: true },
     { label: "DEFRTG", values: stats.map((s) => fmt(s.defRtg)), higherIsBetter: false },
     { label: "NETRTG", values: stats.map((s) => fmt(s.netRtg)), higherIsBetter: true },
+  ];
+}
+
+function getPlayerRows(member: CrossSeasonMember, seasonIds: string[], mode: ViewMode): Row[] {
+  const isAvg = mode === "average";
+  const seasonMap = new Map(member.seasons.map((s) => [s.seasonId, s]));
+
+  function cell(seasonId: string, getValue: (s: typeof member.seasons[0]) => string): string {
+    const s = seasonMap.get(seasonId);
+    if (!s) return "-";
+    if (s.games === 0) return "DNP";
+    return getValue(s);
+  }
+
+  return [
+    { label: "GP", values: seasonIds.map((sid) => { const s = seasonMap.get(sid); if (!s) return "-"; return String(s.games); }), higherIsBetter: true },
+    { label: isAvg ? "PPG" : "Total PTS", values: seasonIds.map((sid) => cell(sid, (s) => isAvg ? fmt(s.ppg) : String(s.totalPoints))), higherIsBetter: true },
+    { label: isAvg ? "RPG" : "Total REB", values: seasonIds.map((sid) => cell(sid, (s) => isAvg ? fmt(s.rpg) : String(s.totalRebounds))), higherIsBetter: true },
+    { label: isAvg ? "APG" : "Total AST", values: seasonIds.map((sid) => cell(sid, (s) => isAvg ? fmt(s.apg) : String(s.totalAssists))), higherIsBetter: true },
+    { label: isAvg ? "SPG" : "Total STL", values: seasonIds.map((sid) => cell(sid, (s) => isAvg ? fmt(s.spg) : String(s.totalSteals))), higherIsBetter: true },
+    { label: isAvg ? "BPG" : "Total BLK", values: seasonIds.map((sid) => cell(sid, (s) => isAvg ? fmt(s.bpg) : String(s.totalBlocks))), higherIsBetter: true },
+    { label: "3P%", values: seasonIds.map((sid) => cell(sid, (s) => fmtPct(s.threePointPct))), higherIsBetter: true },
+    { label: "2P%", values: seasonIds.map((sid) => cell(sid, (s) => fmtPct(s.twoPointPct))), higherIsBetter: true },
+    { label: "FT%", values: seasonIds.map((sid) => cell(sid, (s) => fmtPct(s.ftPct))), higherIsBetter: true },
+    { label: isAvg ? "AVG EFF" : "Total EFF", values: seasonIds.map((sid) => cell(sid, (s) => isAvg ? fmt(s.avgEff) : String(s.eff))), higherIsBetter: true },
   ];
 }
 
@@ -57,6 +89,62 @@ function getBestIndex(values: (string | number)[], higherIsBetter: boolean): num
   return nums.indexOf(best);
 }
 
+function ModeToggle({ mode, onChange }: { mode: ViewMode; onChange: (m: ViewMode) => void }) {
+  return (
+    <div className="inline-flex rounded-lg border border-white/10 bg-white/5 p-0.5 text-sm">
+      <button
+        type="button"
+        onClick={() => onChange("average")}
+        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "average" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-white"}`}
+      >
+        Average
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("total")}
+        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "total" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-white"}`}
+      >
+        Total
+      </button>
+    </div>
+  );
+}
+
+function CompareTable({ rows, columnHeaders, columnKeys }: { rows: Row[]; columnHeaders: { key: string; label: string }[]; columnKeys: string[] }) {
+  const th = "text-center py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap";
+  const td = "text-center py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap tabular-nums";
+
+  return (
+    <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+      <table className="w-full text-xs sm:text-sm">
+        <thead>
+          <tr className="border-b border-white/10 text-neutral-400">
+            <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap" scope="col">指標</th>
+            {columnHeaders.map((h) => (
+              <th key={h.key} className={th} scope="col">{h.label}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => {
+            const bestIdx = getBestIndex(row.values, row.higherIsBetter);
+            return (
+              <tr key={row.label} className="border-b border-white/5">
+                <td className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap font-medium">{row.label}</td>
+                {row.values.map((v, i) => (
+                  <td key={columnKeys[i]} className={`${td} ${bestIdx === i ? "text-accent-purple font-bold" : ""}`}>
+                    {v}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function SeasonCompareClient({ seasons, teamStats, playerStats }: SeasonCompareClientProps) {
   const sortedMembers = useMemo(() => {
     return playerStats.filter((m) => m.role === "player").sort((a, b) => {
@@ -67,15 +155,16 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
   }, [playerStats]);
 
   const [selectedMemberId, setSelectedMemberId] = useState<string>(() => sortedMembers[0]?.memberId ?? "");
+  const [teamMode, setTeamMode] = useState<ViewMode>("average");
+  const [playerMode, setPlayerMode] = useState<ViewMode>("average");
 
   const selectedMember = useMemo(() => sortedMembers.find((m) => m.memberId === selectedMemberId) ?? null, [sortedMembers, selectedMemberId]);
 
   const seasonIds = teamStats.map((s) => s.seasonId);
+  const seasonHeaders = teamStats.map((s) => ({ key: s.seasonId, label: s.label }));
 
-  const teamRows = useMemo(() => getTeamRows(teamStats), [teamStats]);
-
-  const th = "text-center py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap";
-  const td = "text-center py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap tabular-nums";
+  const teamRows = useMemo(() => getTeamRows(teamStats, teamMode), [teamStats, teamMode]);
+  const playerRows = useMemo(() => selectedMember ? getPlayerRows(selectedMember, seasonIds, playerMode) : [], [selectedMember, seasonIds, playerMode]);
 
   return (
     <>
@@ -96,35 +185,11 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
           <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
             Team <span className="text-accent-purple">Comparison</span>
           </h2>
+          <div className="flex justify-center mb-4">
+            <ModeToggle mode={teamMode} onChange={setTeamMode} />
+          </div>
           <GlassCard>
-            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-              <table className="w-full text-xs sm:text-sm" aria-label="チームシーズン比較">
-                <caption className="sr-only">シーズン別チームスタッツ比較</caption>
-                <thead>
-                  <tr className="border-b border-white/10 text-neutral-400">
-                    <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap" scope="col">指標</th>
-                    {teamStats.map((s) => (
-                      <th key={s.seasonId} className={th} scope="col">{s.label}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {teamRows.map((row) => {
-                    const bestIdx = getBestIndex(row.values, row.higherIsBetter);
-                    return (
-                      <tr key={row.label} className="border-b border-white/5">
-                        <td className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap font-medium">{row.label}</td>
-                        {row.values.map((v, i) => (
-                          <td key={teamStats[i].seasonId} className={`${td} ${bestIdx === i ? "text-accent-purple font-bold" : ""}`}>
-                            {v}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <CompareTable rows={teamRows} columnHeaders={seasonHeaders} columnKeys={seasonIds} />
           </GlassCard>
         </AnimatedSection>
 
@@ -133,7 +198,7 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
           <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
             Individual <span className="text-accent-purple">Comparison</span>
           </h2>
-          <div className="mb-6 flex justify-center">
+          <div className="mb-4 flex flex-col sm:flex-row items-center justify-center gap-3">
             <select
               value={selectedMemberId}
               onChange={(e) => setSelectedMemberId(e.target.value)}
@@ -146,26 +211,11 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
                 </option>
               ))}
             </select>
+            <ModeToggle mode={playerMode} onChange={setPlayerMode} />
           </div>
           {selectedMember ? (
             <GlassCard>
-              <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                <table className="w-full text-xs sm:text-sm" aria-label={`${selectedMember.name} シーズン比較`}>
-                  <caption className="sr-only">{selectedMember.name}のシーズン別スタッツ比較</caption>
-                  <thead>
-                    <tr className="border-b border-white/10 text-neutral-400">
-                      <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap" scope="col">指標</th>
-                      {seasonIds.map((sid) => {
-                        const s = teamStats.find((t) => t.seasonId === sid);
-                        return <th key={sid} className={th} scope="col">{s?.label ?? sid}</th>;
-                      })}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {renderPlayerRows(selectedMember, seasonIds)}
-                  </tbody>
-                </table>
-              </div>
+              <CompareTable rows={playerRows} columnHeaders={seasonHeaders} columnKeys={seasonIds} />
             </GlassCard>
           ) : null}
         </AnimatedSection>
@@ -174,45 +224,3 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
     </>
   );
 }
-
-function renderPlayerRows(member: CrossSeasonMember, seasonIds: string[]) {
-  const td = "text-center py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap tabular-nums";
-
-  const seasonMap = new Map(member.seasons.map((s) => [s.seasonId, s]));
-
-  function getCellValue(seasonId: string, getValue: (s: typeof member.seasons[0]) => string): string {
-    const s = seasonMap.get(seasonId);
-    if (!s) return "-";
-    if (s.games === 0) return "DNP";
-    return getValue(s);
-  }
-
-  const rows: { label: string; values: string[]; higherIsBetter: boolean }[] = [
-    { label: "GP", values: seasonIds.map((sid) => { const s = seasonMap.get(sid); if (!s) return "-"; return String(s.games); }), higherIsBetter: true },
-    { label: "Total PTS", values: seasonIds.map((sid) => getCellValue(sid, (s) => String(s.totalPoints))), higherIsBetter: true },
-    { label: "PPG", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmt(s.ppg))), higherIsBetter: true },
-    { label: "RPG", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmt(s.rpg))), higherIsBetter: true },
-    { label: "APG", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmt(s.apg))), higherIsBetter: true },
-    { label: "SPG", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmt(s.spg))), higherIsBetter: true },
-    { label: "BPG", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmt(s.bpg))), higherIsBetter: true },
-    { label: "3P%", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmtPct(s.threePointPct))), higherIsBetter: true },
-    { label: "2P%", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmtPct(s.twoPointPct))), higherIsBetter: true },
-    { label: "FT%", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmtPct(s.ftPct))), higherIsBetter: true },
-    { label: "EFF", values: seasonIds.map((sid) => getCellValue(sid, (s) => String(s.eff))), higherIsBetter: true },
-  ];
-
-  return rows.map((row) => {
-    const bestIdx = getBestIndex(row.values, row.higherIsBetter);
-    return (
-      <tr key={row.label} className="border-b border-white/5">
-        <td className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap font-medium">{row.label}</td>
-        {row.values.map((v, i) => (
-          <td key={seasonIds[i]} className={`${td} ${bestIdx === i ? "text-accent-purple font-bold" : ""}`}>
-            {v}
-          </td>
-        ))}
-      </tr>
-    );
-  });
-}
-

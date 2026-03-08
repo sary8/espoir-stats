@@ -460,12 +460,18 @@ export function getAllTeamSeasonStats(): TeamSeasonStats[] {
       games: totalGames,
       wins,
       losses,
+      totalPoints,
       avgPoints: totalGames > 0 ? totalPoints / totalGames : 0,
       threePointPct: total3PA > 0 ? (total3PM / total3PA) * 100 : null,
+      totalRebounds: totalReb,
       rebounds: totalGames > 0 ? totalReb / totalGames : 0,
+      totalAssists: totalAst,
       assists: totalGames > 0 ? totalAst / totalGames : 0,
+      totalSteals: totalStl,
       steals: totalGames > 0 ? totalStl / totalGames : 0,
+      totalBlocks: totalBlk,
       blocks: totalGames > 0 ? totalBlk / totalGames : 0,
+      totalTurnovers: totalTo,
       turnovers: totalGames > 0 ? totalTo / totalGames : 0,
       pace: advanced.pace,
       offRtg: advanced.offRtg,
@@ -487,6 +493,13 @@ export function getAllPlayerSeasonStats(): CrossSeasonMember[] {
     for (const member of roster) {
       const summary = member.number !== null && member.role === "player" ? (summaryMap.get(member.number) ?? null) : null;
 
+      const totalEff = summary ? calcEff({
+        points: summary.totalPoints, totalReb: summary.totalReb, assists: summary.assists, steals: summary.steals, blocks: summary.blocks,
+        threePointMade: summary.threePointMade, threePointAttempt: summary.threePointAttempt,
+        twoPointMade: summary.twoPointMade, twoPointAttempt: summary.twoPointAttempt,
+        ftMade: summary.ftMade, ftAttempt: summary.ftAttempt, turnovers: summary.turnovers,
+      }) : 0;
+
       const playerSeason: PlayerSeasonStats = {
         seasonId: season.id,
         label: season.label,
@@ -497,19 +510,19 @@ export function getAllPlayerSeasonStats(): CrossSeasonMember[] {
         games: summary?.games ?? 0,
         totalPoints: summary?.totalPoints ?? 0,
         ppg: summary?.ppg ?? 0,
+        totalRebounds: summary?.totalReb ?? 0,
         rpg: summary && summary.games > 0 ? summary.totalReb / summary.games : 0,
+        totalAssists: summary?.assists ?? 0,
         apg: summary && summary.games > 0 ? summary.assists / summary.games : 0,
+        totalSteals: summary?.steals ?? 0,
         spg: summary && summary.games > 0 ? summary.steals / summary.games : 0,
+        totalBlocks: summary?.blocks ?? 0,
         bpg: summary && summary.games > 0 ? summary.blocks / summary.games : 0,
         threePointPct: summary?.threePointPct ?? null,
         twoPointPct: summary?.twoPointPct ?? null,
         ftPct: summary?.ftPct ?? null,
-        eff: summary ? calcEff({
-          points: summary.totalPoints, totalReb: summary.totalReb, assists: summary.assists, steals: summary.steals, blocks: summary.blocks,
-          threePointMade: summary.threePointMade, threePointAttempt: summary.threePointAttempt,
-          twoPointMade: summary.twoPointMade, twoPointAttempt: summary.twoPointAttempt,
-          ftMade: summary.ftMade, ftAttempt: summary.ftAttempt, turnovers: summary.turnovers,
-        }) : 0,
+        eff: totalEff,
+        avgEff: summary && summary.games > 0 ? totalEff / summary.games : 0,
       };
 
       if (!memberMap.has(member.memberId)) {

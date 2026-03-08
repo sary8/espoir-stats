@@ -100,12 +100,18 @@ export interface TeamSeasonStats {
   games: number;
   wins: number;
   losses: number;
+  totalPoints: number;
   avgPoints: number;
   threePointPct: number | null;
+  totalRebounds: number;
   rebounds: number;
+  totalAssists: number;
   assists: number;
+  totalSteals: number;
   steals: number;
+  totalBlocks: number;
   blocks: number;
+  totalTurnovers: number;
   turnovers: number;
   pace: number;
   offRtg: number;
@@ -123,14 +129,19 @@ export interface PlayerSeasonStats {
   games: number;
   totalPoints: number;
   ppg: number;
+  totalRebounds: number;
   rpg: number;
+  totalAssists: number;
   apg: number;
+  totalSteals: number;
   spg: number;
+  totalBlocks: number;
   bpg: number;
   threePointPct: number | null;
   twoPointPct: number | null;
   ftPct: number | null;
   eff: number;
+  avgEff: number;
 }
 
 export interface CrossSeasonMember {
