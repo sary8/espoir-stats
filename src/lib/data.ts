@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import Papa from "papaparse";
-import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo, SeasonInfo } from "./types";
+import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo, SeasonInfo, RosterPlayer, PlayerListEntry, PlayerProfile } from "./types";
 import { parsePctString } from "./utils";
 
 // --- Season management ---
@@ -37,6 +37,32 @@ function seasonHasData(season: string): boolean {
 
 export function getSeasonsWithData(): SeasonInfo[] {
   return getSeasons().filter((s) => seasonHasData(s.id));
+}
+
+function hasPlayerImage(season: string, number: number): boolean {
+  const filePath = path.join(process.cwd(), "private", "players", season, `${number}.png`);
+  return fs.existsSync(filePath);
+}
+
+const _rosterCache = new Map<string, RosterPlayer[]>();
+
+export function getRosterPlayers(season?: string): RosterPlayer[] {
+  const s = season ?? getDefaultSeason();
+  if (_rosterCache.has(s)) return _rosterCache.get(s)!;
+
+  const csv = readCsv(s, "roster.csv");
+  const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
+  const roster = data
+    .map((row) => ({
+      number: parseStatInt(row["No."]),
+      name: row["選手名"],
+      hasImage: hasPlayerImage(s, parseStatInt(row["No."])),
+    }))
+    .filter((player) => player.number > 0)
+    .sort((a, b) => a.number - b.number);
+
+  _rosterCache.set(s, roster);
+  return roster;
 }
 
 function isTeamCoaches(row: Record<string, string>): boolean {
@@ -159,6 +185,16 @@ export function getPlayerSummaries(season?: string): PlayerSummary[] {
   return result;
 }
 
+export function getPlayerList(season?: string): PlayerListEntry[] {
+  const roster = getRosterPlayers(season);
+  const summaries = getPlayerSummaries(season);
+  const summaryMap = new Map(summaries.map((summary) => [summary.number, summary]));
+  return roster.map((player) => ({
+    ...player,
+    summary: summaryMap.get(player.number) ?? null,
+  }));
+}
+
 interface GameInfoRow {
   gameId: string;
   date: string;
@@ -274,11 +310,14 @@ export function getAllGameIds(season?: string): string[] {
   return getGameStats(season).map((g) => g.gameId);
 }
 
-export function getPlayerByNumber(number: number, season?: string) {
+export function getPlayerByNumber(number: number, season?: string): PlayerProfile | null {
+  const roster = getRosterPlayers(season);
+  const player = roster.find((entry) => entry.number === number);
+  if (!player) return null;
+
   const summaries = getPlayerSummaries(season);
   const games = getGameStats(season);
   const summary = summaries.find((p) => p.number === number);
-  if (!summary) return null;
 
   const playerGames = games
     .map((g) => {
@@ -287,15 +326,15 @@ export function getPlayerByNumber(number: number, season?: string) {
     })
     .filter((g): g is { gameId: string; opponent: string; date: string; stat: GamePlayerStat } => g !== null);
 
-  return { summary, games: playerGames };
+  return { player, summary: summary ?? null, games: playerGames };
 }
 
 export function getAllPlayerNumbers(season?: string): number[] {
-  return getPlayerSummaries(season).map((p) => p.number);
+  return getRosterPlayers(season).map((p) => p.number);
 }
 
 export function getAdjacentPlayers(number: number, season?: string): { prev: { number: number; name: string } | null; next: { number: number; name: string } | null } {
-  const players = getPlayerSummaries(season).sort((a, b) => a.number - b.number);
+  const players = getRosterPlayers(season);
   const idx = players.findIndex((p) => p.number === number);
   return {
     prev: idx > 0 ? { number: players[idx - 1].number, name: players[idx - 1].name } : null,

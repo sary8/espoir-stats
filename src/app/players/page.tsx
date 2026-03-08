@@ -1,4 +1,4 @@
-import { getPlayerSummaries, getTopPlayers, getSeasons, getDefaultSeason } from "@/lib/data";
+import { getPlayerSummaries, getTopPlayers, getSeasons, getDefaultSeason, getPlayerList } from "@/lib/data";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PlayerCards from "@/components/sections/PlayerCards";
@@ -7,8 +7,8 @@ export default function PlayersPage() {
   const seasons = getSeasons();
   const season = getDefaultSeason();
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
-  const players = getPlayerSummaries(season);
-  const topPlayers = getTopPlayers(players);
+  const players = getPlayerList(season);
+  const topPlayers = getTopPlayers(getPlayerSummaries(season));
 
   return (
     <>

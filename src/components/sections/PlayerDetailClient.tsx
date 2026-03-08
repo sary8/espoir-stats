@@ -16,7 +16,7 @@ import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import PrevNextNav from "../ui/PrevNextNav";
 import { shootingColors } from "@/config/theme";
-import type { PlayerSummary, GamePlayerStat, SeasonInfo } from "@/lib/types";
+import type { PlayerSummary, GamePlayerStat, SeasonInfo, RosterPlayer } from "@/lib/types";
 
 function fmtPct(made: number, attempt: number): string {
   if (attempt === 0) return "-";
@@ -35,7 +35,8 @@ interface AdjacentPlayer {
 }
 
 interface PlayerDetailClientProps {
-  summary: PlayerSummary;
+  player: RosterPlayer;
+  summary: PlayerSummary | null;
   games: { gameId: string; opponent: string; date: string; stat: GamePlayerStat }[];
   basePath?: string;
   seasons?: SeasonInfo[];
@@ -44,9 +45,9 @@ interface PlayerDetailClientProps {
   adjacentPlayers?: AdjacentPlayer;
 }
 
-export default function PlayerDetailClient({ summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers }: PlayerDetailClientProps) {
+export default function PlayerDetailClient({ player, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers }: PlayerDetailClientProps) {
   const prefersReducedMotion = useReducedMotion();
-  const p = summary;
+  const p = player;
 
   const lineData = useMemo(() => games.map((g) => ({
     game: g.opponent,
@@ -55,21 +56,24 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
     AST: g.stat.assists,
   })), [games]);
 
-  const seasonEff = calcEff({
-    points: p.totalPoints, totalReb: p.totalReb, assists: p.assists, steals: p.steals, blocks: p.blocks,
-    threePointMade: p.threePointMade, threePointAttempt: p.threePointAttempt,
-    twoPointMade: p.twoPointMade, twoPointAttempt: p.twoPointAttempt,
-    ftMade: p.ftMade, ftAttempt: p.ftAttempt, turnovers: p.turnovers,
-  });
+  const seasonEff = summary ? calcEff({
+    points: summary.totalPoints, totalReb: summary.totalReb, assists: summary.assists, steals: summary.steals, blocks: summary.blocks,
+    threePointMade: summary.threePointMade, threePointAttempt: summary.threePointAttempt,
+    twoPointMade: summary.twoPointMade, twoPointAttempt: summary.twoPointAttempt,
+    ftMade: summary.ftMade, ftAttempt: summary.ftAttempt, turnovers: summary.turnovers,
+  }) : 0;
 
-  const mainStats = useMemo(() => [
-    { label: "PPG", value: p.ppg, decimals: 1 },
-    { label: "RPG", value: p.totalReb / p.games, decimals: 1 },
-    { label: "APG", value: p.assists / p.games, decimals: 1 },
-    { label: "SPG", value: p.steals / p.games, decimals: 1 },
-    { label: "BPG", value: p.blocks / p.games, decimals: 1 },
-    { label: "EFF", value: seasonEff / p.games, decimals: 1 },
-  ], [p.ppg, p.totalReb, p.games, p.assists, p.steals, p.blocks, seasonEff]);
+  const mainStats = useMemo(() => {
+    if (!summary) return [];
+    return [
+      { label: "PPG", value: summary.ppg, decimals: 1 },
+      { label: "RPG", value: summary.totalReb / summary.games, decimals: 1 },
+      { label: "APG", value: summary.assists / summary.games, decimals: 1 },
+      { label: "SPG", value: summary.steals / summary.games, decimals: 1 },
+      { label: "BPG", value: summary.blocks / summary.games, decimals: 1 },
+      { label: "EFF", value: seasonEff / summary.games, decimals: 1 },
+    ];
+  }, [summary, seasonEff]);
 
   const totals = useMemo(() => {
     const t = {
@@ -141,9 +145,11 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
               <div>
                 <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-purple/20">#{p.number}</div>
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6">{p.name}</h1>
-                <p className="text-sm sm:text-base text-neutral-400 mt-2">{p.games} Games Played | Total {p.totalPoints} Points</p>
+                <p className="text-sm sm:text-base text-neutral-400 mt-2">
+                  {summary ? `${summary.games} Games Played | Total ${summary.totalPoints} Points` : "今季公式戦出場記録はありません"}
+                </p>
               </div>
-              {seasonId ? (
+              {seasonId && p.hasImage ? (
                 <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 shrink-0">
                   <Image
                     src={`/api/players/${seasonId}/${p.number}.png`}
@@ -155,11 +161,30 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
                     sizes="(max-width: 640px) 192px, (max-width: 768px) 240px, 288px"
                   />
                 </div>
+              ) : seasonId ? (
+                <div className="flex h-48 w-48 sm:h-60 sm:w-60 md:h-72 md:w-72 shrink-0 items-center justify-center rounded-[2rem] border border-white/10 bg-white/5 text-center">
+                  <div>
+                    <div className="text-4xl sm:text-5xl font-bold text-accent-purple/70">#{p.number}</div>
+                    <p className="mt-2 text-xs sm:text-sm text-neutral-400">No Photo</p>
+                  </div>
+                </div>
               ) : null}
             </motion.div>
           </div>
         </section>
 
+        {!summary ? (
+          <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+            <GlassCard className="text-center">
+              <p className="text-sm uppercase tracking-[0.28em] text-accent-purple/70">No Official Stats Yet</p>
+              <h2 className="mt-4 text-2xl sm:text-3xl font-bold">この選手の今季公式戦スタッツはまだ登録されていません</h2>
+              <p className="mt-4 text-sm sm:text-base text-neutral-400">
+                ロスターには含まれています。出場後にスタッツ CSV が更新されると、このページにも成績が表示されます。
+              </p>
+            </GlassCard>
+          </AnimatedSection>
+        ) : (
+          <>
         {/* Season Summary */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
           <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Season Summary</h2>
@@ -175,9 +200,9 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
           </div>
 
           <div className="flex justify-center gap-4 sm:gap-8 md:gap-16">
-            <ProgressRing percentage={p.threePointPct} size={70} strokeWidth={6} color={shootingColors.threePoint} label="3P%" />
-            <ProgressRing percentage={p.twoPointPct} size={70} strokeWidth={6} color={shootingColors.twoPoint} label="2P%" />
-            <ProgressRing percentage={p.ftPct} size={70} strokeWidth={6} color={shootingColors.freeThrow} label="FT%" />
+            <ProgressRing percentage={summary.threePointPct} size={70} strokeWidth={6} color={shootingColors.threePoint} label="3P%" />
+            <ProgressRing percentage={summary.twoPointPct} size={70} strokeWidth={6} color={shootingColors.twoPoint} label="2P%" />
+            <ProgressRing percentage={summary.ftPct} size={70} strokeWidth={6} color={shootingColors.freeThrow} label="FT%" />
           </div>
         </AnimatedSection>
 
@@ -213,7 +238,7 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
                 </thead>
                 <tbody>
                   <tr>
-                    <td className={`${td} font-semibold`}>{p.games}</td>
+                    <td className={`${td} font-semibold`}>{summary.games}</td>
                     <td className={`${td} font-bold text-accent-purple`}>{totals.points}</td>
                     <td className={td}>{totals.threePointMade}/{totals.threePointAttempt}</td>
                     <td className={`${td} text-neutral-400`}>{fmtPct(totals.threePointMade, totals.threePointAttempt)}</td>
@@ -337,6 +362,8 @@ export default function PlayerDetailClient({ summary, games, basePath = "", seas
             </div>
           </GlassCard>
         </AnimatedSection>
+          </>
+        )}
 
         {adjacentPlayers ? (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-12">

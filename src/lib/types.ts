@@ -4,6 +4,12 @@ export interface SeasonInfo {
   default?: boolean;
 }
 
+export interface RosterPlayer {
+  number: number;
+  name: string;
+  hasImage: boolean;
+}
+
 export interface PlayerSummary {
   number: number;
   name: string;
@@ -28,6 +34,16 @@ export interface PlayerSummary {
   turnovers: number;
   personalFouls: number;
   foulsDrawn: number;
+}
+
+export interface PlayerListEntry extends RosterPlayer {
+  summary: PlayerSummary | null;
+}
+
+export interface PlayerProfile {
+  player: RosterPlayer;
+  summary: PlayerSummary | null;
+  games: { gameId: string; opponent: string; date: string; stat: GamePlayerStat }[];
 }
 
 export interface GamePlayerStat {

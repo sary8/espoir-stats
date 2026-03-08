@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getSeasonsWithData } from "@/lib/data";
+import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getSeasonsWithData, getPlayerList } from "@/lib/data";
 import { calcAdvancedStats } from "@/lib/stats";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -26,6 +26,7 @@ export default async function SeasonHome({ params }: PageProps) {
 
   const basePath = `/season/${season}`;
   const players = getPlayerSummaries(season);
+  const rosterPlayers = getPlayerList(season);
   const games = getGameStats(season);
 
   let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;
@@ -94,7 +95,7 @@ export default async function SeasonHome({ params }: PageProps) {
           seasonLabel={seasonInfo.label}
           totalPoints={totalPoints}
           totalGames={totalGames}
-          totalPlayers={players.length}
+          totalPlayers={rosterPlayers.length}
         />
         <TeamOverview
           totalPoints={totalPoints}
@@ -126,7 +127,7 @@ export default async function SeasonHome({ params }: PageProps) {
           />
         </Suspense>
         <PlayerCards
-          players={players}
+          players={rosterPlayers}
           {...topPlayers}
           basePath={basePath}
         />

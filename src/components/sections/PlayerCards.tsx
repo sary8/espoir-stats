@@ -7,11 +7,11 @@ import GlassCard from "../ui/GlassCard";
 import ProgressRing from "../ui/ProgressRing";
 import Badge from "../ui/Badge";
 import SeasonSwitcher from "../ui/SeasonSwitcher";
-import type { PlayerSummary, SeasonInfo } from "@/lib/types";
+import type { PlayerListEntry, SeasonInfo } from "@/lib/types";
 import { shootingColors } from "@/config/theme";
 
 interface PlayerCardsProps {
-  players: PlayerSummary[];
+  players: PlayerListEntry[];
   topScorer: number;
   topRebounder: number;
   topAssister: number;
@@ -41,11 +41,19 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
           <AnimatedSection key={p.number} delay={i * 0.05}>
             <Link href={`${basePath}/player/${p.number}`} className="block h-full rounded-2xl">
               <GlassCard hover className="cursor-pointer h-full flex flex-col">
+                {p.summary === null ? (
+                  <div className="mb-3 inline-flex items-center gap-2 self-start rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium tracking-wide text-neutral-300">
+                    <span className="inline-block h-2 w-2 rounded-full bg-neutral-500" aria-hidden="true" />
+                    出場記録なし
+                  </div>
+                ) : null}
                 <div>
                   <div className="text-2xl sm:text-4xl font-bold text-accent-purple/80">#{p.number}</div>
                   <div className="text-sm sm:text-lg font-semibold mt-0.5 sm:mt-1">{p.name}</div>
-                  <div className="text-[10px] sm:text-xs text-neutral-400">{p.games} games played</div>
-                  {(p.number === topScorer || p.number === topRebounder || p.number === topAssister || p.number === top3P || p.number === topStealer || p.number === topBlocker || p.number === topFoul || p.number === topTurnover) && (
+                  <div className="text-[10px] sm:text-xs text-neutral-400">
+                    {p.summary ? `${p.summary.games} games played` : "公式戦データ未登録"}
+                  </div>
+                  {p.summary && (p.number === topScorer || p.number === topRebounder || p.number === topAssister || p.number === top3P || p.number === topStealer || p.number === topBlocker || p.number === topFoul || p.number === topTurnover) && (
                     <div className="flex flex-wrap gap-1 mt-2">
                       {p.number === topScorer && <Badge variant="purple">Top Scorer</Badge>}
                       {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
@@ -59,26 +67,34 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
                   )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-1 sm:gap-2 mb-2 sm:mb-4 text-center mt-auto pt-2 sm:pt-4">
-                  <div>
-                    <div className="text-base sm:text-xl font-bold">{p.ppg}</div>
-                    <div className="text-[10px] sm:text-xs text-neutral-400">PPG</div>
-                  </div>
-                  <div>
-                    <div className="text-base sm:text-xl font-bold">{(p.totalReb / p.games).toFixed(1)}</div>
-                    <div className="text-[10px] sm:text-xs text-neutral-400">RPG</div>
-                  </div>
-                  <div>
-                    <div className="text-base sm:text-xl font-bold">{(p.assists / p.games).toFixed(1)}</div>
-                    <div className="text-[10px] sm:text-xs text-neutral-400">APG</div>
-                  </div>
-                </div>
+                {p.summary ? (
+                  <>
+                    <div className="grid grid-cols-3 gap-1 sm:gap-2 mb-2 sm:mb-4 text-center mt-auto pt-2 sm:pt-4">
+                      <div>
+                        <div className="text-base sm:text-xl font-bold">{p.summary.ppg}</div>
+                        <div className="text-[10px] sm:text-xs text-neutral-400">PPG</div>
+                      </div>
+                      <div>
+                        <div className="text-base sm:text-xl font-bold">{(p.summary.totalReb / p.summary.games).toFixed(1)}</div>
+                        <div className="text-[10px] sm:text-xs text-neutral-400">RPG</div>
+                      </div>
+                      <div>
+                        <div className="text-base sm:text-xl font-bold">{(p.summary.assists / p.summary.games).toFixed(1)}</div>
+                        <div className="text-[10px] sm:text-xs text-neutral-400">APG</div>
+                      </div>
+                    </div>
 
-                <div className="flex justify-center gap-2 sm:gap-6">
-                  <ProgressRing percentage={p.threePointPct} size={40} strokeWidth={3} color={shootingColors.threePoint} label="3P%" />
-                  <ProgressRing percentage={p.twoPointPct} size={40} strokeWidth={3} color={shootingColors.twoPoint} label="2P%" />
-                  <ProgressRing percentage={p.ftPct} size={40} strokeWidth={3} color={shootingColors.freeThrow} label="FT%" />
-                </div>
+                    <div className="flex justify-center gap-2 sm:gap-6">
+                      <ProgressRing percentage={p.summary.threePointPct} size={40} strokeWidth={3} color={shootingColors.threePoint} label="3P%" />
+                      <ProgressRing percentage={p.summary.twoPointPct} size={40} strokeWidth={3} color={shootingColors.twoPoint} label="2P%" />
+                      <ProgressRing percentage={p.summary.ftPct} size={40} strokeWidth={3} color={shootingColors.freeThrow} label="FT%" />
+                    </div>
+                  </>
+                ) : (
+                  <div className="mt-auto pt-6 text-center text-xs sm:text-sm text-neutral-500">
+                    今季の公式戦スタッツはまだありません
+                  </div>
+                )}
               </GlassCard>
             </Link>
           </AnimatedSection>

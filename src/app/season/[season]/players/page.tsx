@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPlayerSummaries, getTopPlayers, getSeasons, getSeasonsWithData } from "@/lib/data";
+import { getPlayerSummaries, getTopPlayers, getSeasons, getSeasonsWithData, getPlayerList } from "@/lib/data";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PlayerCards from "@/components/sections/PlayerCards";
@@ -19,8 +19,8 @@ export default async function SeasonPlayersPage({ params }: PageProps) {
   if (!seasonInfo) notFound();
 
   const basePath = `/season/${season}`;
-  const players = getPlayerSummaries(season);
-  const topPlayers = getTopPlayers(players);
+  const players = getPlayerList(season);
+  const topPlayers = getTopPlayers(getPlayerSummaries(season));
 
   return (
     <>

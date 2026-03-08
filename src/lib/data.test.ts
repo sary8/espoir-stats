@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getPlayerSummaries, getGameStats, getPlayerByNumber, getAllPlayerNumbers, getGameById, getAllGameIds } from "./data";
+import { getPlayerSummaries, getGameStats, getPlayerByNumber, getAllPlayerNumbers, getGameById, getAllGameIds, getRosterPlayers, getPlayerList } from "./data";
 
 function parseMinutes(value: string): number {
   const [m, s = "0"] = value.split(":");
@@ -126,15 +126,23 @@ describe("getAllGameIds", () => {
 
 describe("getPlayerByNumber", () => {
   it("存在する選手番号でデータを返す", () => {
-    const numbers = getAllPlayerNumbers();
-    const result = getPlayerByNumber(numbers[0]);
+    const result = getPlayerByNumber(8, "2025-2026");
     expect(result).not.toBeNull();
-    expect(result!.summary.number).toBe(numbers[0]);
+    expect(result!.player.number).toBe(8);
+    expect(result!.summary).not.toBeNull();
   });
 
   it("存在しない選手番号でnullを返す", () => {
     const result = getPlayerByNumber(99999);
     expect(result).toBeNull();
+  });
+
+  it("ロスターにだけ存在する選手も返す", () => {
+    const result = getPlayerByNumber(7, "2025-2026");
+    expect(result).not.toBeNull();
+    expect(result!.player.name).toBe("北川 友加里");
+    expect(result!.summary).toBeNull();
+    expect(result!.games).toEqual([]);
   });
 });
 
@@ -145,5 +153,32 @@ describe("getAllPlayerNumbers", () => {
     for (const n of numbers) {
       expect(n).toBeTypeOf("number");
     }
+  });
+
+  it("ロスターだけにいる選手の背番号も含む", () => {
+    const numbers = getAllPlayerNumbers("2025-2026");
+    expect(numbers).toContain(7);
+  });
+});
+
+describe("getRosterPlayers", () => {
+  it("ロスターCSVから選手一覧を返す", () => {
+    const players = getRosterPlayers("2025-2026");
+    expect(players.length).toBeGreaterThan(0);
+    expect(players.find((player) => player.number === 3)?.name).toBe("反中 真唯");
+    expect(players.find((player) => player.number === 7)?.name).toBe("北川 友加里");
+  });
+});
+
+describe("getPlayerList", () => {
+  it("ロスター基準でサマリを left join する", () => {
+    const players = getPlayerList("2025-2026");
+    const rosterOnly = players.find((player) => player.number === 7);
+    const statPlayer = players.find((player) => player.number === 8);
+
+    expect(rosterOnly).toBeDefined();
+    expect(rosterOnly!.summary).toBeNull();
+    expect(statPlayer).toBeDefined();
+    expect(statPlayer!.summary).not.toBeNull();
   });
 });

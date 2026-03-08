@@ -24,5 +24,5 @@ export default async function PlayerPage({ params }: PageProps) {
 
   const adjacent = getAdjacentPlayers(playerNum, season);
 
-  return <PlayerDetailClient summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} adjacentPlayers={adjacent} />;
+  return <PlayerDetailClient player={data.player} summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} adjacentPlayers={adjacent} />;
 }
