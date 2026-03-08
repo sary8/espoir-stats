@@ -146,7 +146,7 @@ export default function PlayerDetailClient({ player, summary, games, basePath = 
                 <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-purple/20">#{p.number}</div>
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6">{p.name}</h1>
                 <p className="text-sm sm:text-base text-neutral-400 mt-2">
-                  {summary ? `${summary.games} Games Played | Total ${summary.totalPoints} Points` : "今季公式戦出場記録はありません"}
+                  {summary ? `${summary.games} Games Played | Total ${summary.totalPoints} Points` : "Season DNP"}
                 </p>
               </div>
               {seasonId && p.hasImage ? (
@@ -173,17 +173,7 @@ export default function PlayerDetailClient({ player, summary, games, basePath = 
           </div>
         </section>
 
-        {!summary ? (
-          <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-            <GlassCard className="text-center">
-              <p className="text-sm uppercase tracking-[0.28em] text-accent-purple/70">No Official Stats Yet</p>
-              <h2 className="mt-4 text-2xl sm:text-3xl font-bold">この選手の今季公式戦スタッツはまだ登録されていません</h2>
-              <p className="mt-4 text-sm sm:text-base text-neutral-400">
-                ロスターには含まれています。出場後にスタッツ CSV が更新されると、このページにも成績が表示されます。
-              </p>
-            </GlassCard>
-          </AnimatedSection>
-        ) : (
+        {!summary ? null : (
           <>
         {/* Season Summary */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">

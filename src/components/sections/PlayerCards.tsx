@@ -41,17 +41,11 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
           <AnimatedSection key={p.number} delay={i * 0.05}>
             <Link href={`${basePath}/player/${p.number}`} className="block h-full rounded-2xl">
               <GlassCard hover className="cursor-pointer h-full flex flex-col">
-                {p.summary === null ? (
-                  <div className="mb-3 inline-flex items-center gap-2 self-start rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium tracking-wide text-neutral-300">
-                    <span className="inline-block h-2 w-2 rounded-full bg-neutral-500" aria-hidden="true" />
-                    出場記録なし
-                  </div>
-                ) : null}
                 <div>
                   <div className="text-2xl sm:text-4xl font-bold text-accent-purple/80">#{p.number}</div>
                   <div className="text-sm sm:text-lg font-semibold mt-0.5 sm:mt-1">{p.name}</div>
                   <div className="text-[10px] sm:text-xs text-neutral-400">
-                    {p.summary ? `${p.summary.games} games played` : "公式戦データ未登録"}
+                    {p.summary ? `${p.summary.games} games played` : "Season DNP"}
                   </div>
                   {p.summary && (p.number === topScorer || p.number === topRebounder || p.number === topAssister || p.number === top3P || p.number === topStealer || p.number === topBlocker || p.number === topFoul || p.number === topTurnover) && (
                     <div className="flex flex-wrap gap-1 mt-2">
@@ -90,11 +84,7 @@ export default function PlayerCards({ players, topScorer, topRebounder, topAssis
                       <ProgressRing percentage={p.summary.ftPct} size={40} strokeWidth={3} color={shootingColors.freeThrow} label="FT%" />
                     </div>
                   </>
-                ) : (
-                  <div className="mt-auto pt-6 text-center text-xs sm:text-sm text-neutral-500">
-                    今季の公式戦スタッツはまだありません
-                  </div>
-                )}
+                ) : null}
               </GlassCard>
             </Link>
           </AnimatedSection>

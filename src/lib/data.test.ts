@@ -165,8 +165,8 @@ describe("getRosterPlayers", () => {
   it("ロスターCSVから選手一覧を返す", () => {
     const players = getRosterPlayers("2025-2026");
     expect(players.length).toBeGreaterThan(0);
-    expect(players.find((player) => player.number === 3)?.name).toBe("反中 真唯");
     expect(players.find((player) => player.number === 7)?.name).toBe("北川 友加里");
+    expect(players.find((player) => player.number === 3)).toBeUndefined();
   });
 });
 
