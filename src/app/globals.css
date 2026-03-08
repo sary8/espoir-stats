@@ -93,23 +93,6 @@ body {
   border-width: 0;
 }
 
-/* Scroll hint for horizontal tables */
-.scroll-hint {
-  position: relative;
-}
-.scroll-hint::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 32px;
-  background: linear-gradient(to right, transparent, var(--background));
-  pointer-events: none;
-  border-radius: 0 16px 16px 0;
-  opacity: 1;
-  transition: opacity 0.2s;
-}
 
 /* Recharts overrides */
 .recharts-text {

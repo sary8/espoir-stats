@@ -534,7 +534,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
         {players.length === 0 ? (
           <p className="text-neutral-400 text-center py-8">データがありません</p>
         ) : (
-          <div className="overflow-x-auto scroll-hint">
+          <div className="overflow-x-auto">
             <table className="w-full text-xs sm:text-sm min-w-[1000px]" aria-label={`${activeTab === "espoir" ? "Espoir" : game.opponent} スタッツ`}>
               <thead>
                 <tr className="border-b border-white/10 text-neutral-400">
