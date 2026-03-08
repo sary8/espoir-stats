@@ -49,7 +49,7 @@ interface PlayerDetailClientProps {
 }
 
 function getMemberLabel(member: RosterPlayer): string {
-  return member.number !== null ? `#${member.number}` : getRoleLabel(member.role).toUpperCase();
+  return member.number !== null ? `#${member.number}` : getRoleLabel(member.role);
 }
 
 function getMemberStatus(member: RosterPlayer, summary: PlayerSummary | null): string {

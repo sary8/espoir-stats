@@ -27,7 +27,7 @@ interface PlayerCardsProps {
 }
 
 function getMemberKey(member: PlayerListEntry): string {
-  return member.number !== null ? `#${member.number}` : member.role.toUpperCase();
+  return member.number !== null ? `#${member.number}` : getRoleLabel(member.role);
 }
 
 export default function PlayerCards({ members, topScorer, topRebounder, topAssister, top3P, topStealer, topBlocker, topFoul, topTurnover, basePath = "", seasons, currentSeason }: PlayerCardsProps) {
@@ -47,7 +47,7 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
             <Link href={`${basePath}/member/${p.memberId}`} className="block h-full rounded-2xl">
               <GlassCard hover className="cursor-pointer h-full flex flex-col">
                 <div>
-                  <div className="text-2xl sm:text-4xl font-bold text-accent-purple/80">{getMemberKey(p)}</div>
+                  <div className={`font-bold text-accent-purple/80 ${isStaffRole(p.role) ? "text-base sm:text-2xl" : "text-2xl sm:text-4xl"}`}>{getMemberKey(p)}</div>
                   <div className="text-sm sm:text-lg font-semibold mt-0.5 sm:mt-1">{p.name}</div>
                   <div className="text-[10px] sm:text-xs text-neutral-400">
                     {isStaffRole(p.role) ? getRoleLabel(p.role) : p.summary ? `${p.summary.games} games played` : "Season DNP"}
