@@ -50,6 +50,13 @@ body {
   border-radius: 16px;
   overflow: clip;
 }
+.glass-card-hover {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.glass-card-hover:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
 
 /* Gradient mesh background */
 .gradient-mesh {
@@ -84,6 +91,24 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Scroll hint for horizontal tables */
+.scroll-hint {
+  position: relative;
+}
+.scroll-hint::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 32px;
+  background: linear-gradient(to right, transparent, var(--background));
+  pointer-events: none;
+  border-radius: 0 16px 16px 0;
+  opacity: 1;
+  transition: opacity 0.2s;
 }
 
 /* Recharts overrides */

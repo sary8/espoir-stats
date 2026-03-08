@@ -27,6 +27,7 @@ export default function Header({ seasons }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [seasonOpen, setSeasonOpen] = useState(false);
   const scrolledRef = useRef(false);
+  const seasonRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -48,6 +49,17 @@ export default function Header({ seasons }: HeaderProps) {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!seasonOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (seasonRef.current && !seasonRef.current.contains(e.target as Node)) {
+        setSeasonOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [seasonOpen]);
 
   const handleSeasonChange = (season: SeasonInfo) => {
     const subPath = currentSeasonId
@@ -87,7 +99,7 @@ export default function Header({ seasons }: HeaderProps) {
             </Link>
           ))}
           {seasons && seasons.length > 1 ? (
-            <div className="relative">
+            <div className="relative" ref={seasonRef}>
               <button
                 type="button"
                 onClick={() => setSeasonOpen((v) => !v)}

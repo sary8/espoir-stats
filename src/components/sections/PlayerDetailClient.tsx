@@ -281,7 +281,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
           <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Game Log</h2>
           <GlassCard className="!p-0">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scroll-hint">
               <table className="w-full text-xs sm:text-sm min-w-[900px]" aria-label={`${p.name} ゲームログ`}>
                 <caption className="sr-only">{p.name}の各試合スタッツ</caption>
                 <thead>

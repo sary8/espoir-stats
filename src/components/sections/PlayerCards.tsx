@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import Link from "next/link";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
@@ -31,8 +30,6 @@ function getMemberKey(member: PlayerListEntry): string {
 }
 
 export default function PlayerCards({ members, topScorer, topRebounder, topAssister, top3P, topStealer, topBlocker, topFoul, topTurnover, basePath = "", seasons, currentSeason }: PlayerCardsProps) {
-  const sorted = useMemo(() => [...members], [members]);
-
   return (
     <AnimatedSection id="members" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
@@ -42,7 +39,7 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
         <SeasonSwitcher seasons={seasons} currentSeason={currentSeason} pageType="members" />
       )}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-        {sorted.map((p, i) => (
+        {members.map((p, i) => (
           <AnimatedSection key={p.memberId} delay={i * 0.05}>
             <Link href={`${basePath}/member/${p.memberId}`} className="block h-full rounded-2xl">
               <GlassCard hover className="cursor-pointer h-full flex flex-col">

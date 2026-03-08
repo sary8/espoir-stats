@@ -2,10 +2,9 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Youtube, ArrowLeft } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Youtube, ArrowLeft, MapPin, Trophy, Calendar, Shield } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
-import { MapPin, Trophy, Calendar, Shield } from "lucide-react";
 import PrevNextNav from "../ui/PrevNextNav";
 import type { GameResult, GamePlayerStat } from "@/lib/types";
 import { calcTeamPossEst } from "@/lib/stats";
@@ -535,7 +534,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
         {players.length === 0 ? (
           <p className="text-neutral-400 text-center py-8">データがありません</p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto scroll-hint">
             <table className="w-full text-xs sm:text-sm min-w-[1000px]" aria-label={`${activeTab === "espoir" ? "Espoir" : game.opponent} スタッツ`}>
               <thead>
                 <tr className="border-b border-white/10 text-neutral-400">

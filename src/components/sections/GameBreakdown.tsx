@@ -281,7 +281,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
       </div>
 
       <GlassCard className="!p-0">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scroll-hint">
           <table className="w-full text-xs sm:text-sm min-w-[900px]" aria-label={`${label} 個人スタッツ`}>
             <caption className="sr-only">{label} における各選手のスタッツ</caption>
             <thead>
