@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronUp, ChevronDown, Youtube } from "lucide-react";
+import { ChevronUp, ChevronDown } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { GameSummary } from "./LazyCharts";
@@ -265,17 +265,6 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               <span className="block">{(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}</span>
               <span className="text-xs opacity-75">{g.teamPoints}pts</span>
             </button>
-            {g.youtubeUrl ? (
-              <a
-                href={g.youtubeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${g.opponent}戦の試合動画`}
-                className="p-1.5 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors"
-              >
-                <Youtube size={18} aria-hidden="true" />
-              </a>
-            ) : null}
           </div>
         ))}
       </div>
