@@ -30,37 +30,42 @@ function getMemberKey(member: PlayerListEntry): string {
 }
 
 export default function PlayerCards({ members, topScorer, topRebounder, topAssister, top3P, topStealer, topBlocker, topFoul, topTurnover, basePath = "", seasons, currentSeason }: PlayerCardsProps) {
+  const players = members.filter((m) => !isStaffRole(m.role));
+  const staff = members.filter((m) => isStaffRole(m.role));
+
   return (
     <AnimatedSection id="members" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
         Team <span className="text-accent-purple">Members</span>
       </h2>
-      {seasons && currentSeason && (
+      {seasons && currentSeason ? (
         <SeasonSwitcher seasons={seasons} currentSeason={currentSeason} pageType="members" />
-      )}
+      ) : null}
+
+      {/* Players */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-        {members.map((p, i) => (
+        {players.map((p, i) => (
           <AnimatedSection key={p.memberId} delay={i * 0.05}>
             <Link href={`${basePath}/member/${p.memberId}`} className="block h-full rounded-2xl">
               <GlassCard hover className="cursor-pointer h-full flex flex-col">
                 <div>
-                  <div className={`font-bold text-accent-purple/80 ${isStaffRole(p.role) ? "text-base sm:text-2xl" : "text-2xl sm:text-4xl"}`}>{getMemberKey(p)}</div>
+                  <div className="text-2xl sm:text-4xl font-bold text-accent-purple/80">{getMemberKey(p)}</div>
                   <div className="text-sm sm:text-lg font-semibold mt-0.5 sm:mt-1">{p.name}</div>
                   <div className="text-[10px] sm:text-xs text-neutral-400">
-                    {isStaffRole(p.role) ? getRoleLabel(p.role) : p.summary ? `${p.summary.games} games played` : "Season DNP"}
+                    {p.summary ? `${p.summary.games} games played` : "Season DNP"}
                   </div>
-                  {p.summary && p.number !== null && (p.number === topScorer || p.number === topRebounder || p.number === topAssister || p.number === top3P || p.number === topStealer || p.number === topBlocker || p.number === topFoul || p.number === topTurnover) && (
+                  {p.summary && p.number !== null && (p.number === topScorer || p.number === topRebounder || p.number === topAssister || p.number === top3P || p.number === topStealer || p.number === topBlocker || p.number === topFoul || p.number === topTurnover) ? (
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {p.number === topScorer && <Badge variant="purple">Top Scorer</Badge>}
-                      {p.number === topRebounder && <Badge variant="blue">Top Rebounder</Badge>}
-                      {p.number === topAssister && <Badge variant="green">Top Assists</Badge>}
-                      {p.number === top3P && <Badge variant="pink">Top 3P</Badge>}
-                      {p.number === topStealer && <Badge variant="cyan">Top Steals</Badge>}
-                      {p.number === topBlocker && <Badge variant="yellow">Top Blocks</Badge>}
-                      {p.number === topFoul && <Badge variant="red">Top Fouls</Badge>}
-                      {p.number === topTurnover && <Badge variant="orange">Top Turnovers</Badge>}
+                      {p.number === topScorer ? <Badge variant="purple">Top Scorer</Badge> : null}
+                      {p.number === topRebounder ? <Badge variant="blue">Top Rebounder</Badge> : null}
+                      {p.number === topAssister ? <Badge variant="green">Top Assists</Badge> : null}
+                      {p.number === top3P ? <Badge variant="pink">Top 3P</Badge> : null}
+                      {p.number === topStealer ? <Badge variant="cyan">Top Steals</Badge> : null}
+                      {p.number === topBlocker ? <Badge variant="yellow">Top Blocks</Badge> : null}
+                      {p.number === topFoul ? <Badge variant="red">Top Fouls</Badge> : null}
+                      {p.number === topTurnover ? <Badge variant="orange">Top Turnovers</Badge> : null}
                     </div>
-                  )}
+                  ) : null}
                 </div>
 
                 {p.summary ? (
@@ -88,7 +93,7 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
                   </>
                 ) : (
                   <div className="mt-auto pt-6 text-center text-xs sm:text-sm text-neutral-500">
-                    {isStaffRole(p.role) ? getRoleLabel(p.role) : "Season DNP"}
+                    Season DNP
                   </div>
                 )}
               </GlassCard>
@@ -96,6 +101,27 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
           </AnimatedSection>
         ))}
       </div>
+
+      {/* Staff */}
+      {staff.length > 0 ? (
+        <>
+          <h3 className="text-lg sm:text-xl font-bold mt-10 sm:mt-14 mb-4 sm:mb-6 text-center text-neutral-300">
+            Coaching <span className="text-accent-purple">Staff</span>
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+            {staff.map((p, i) => (
+              <AnimatedSection key={p.memberId} delay={i * 0.05}>
+                <Link href={`${basePath}/member/${p.memberId}`} className="block h-full rounded-2xl">
+                  <GlassCard hover className="cursor-pointer h-full flex flex-col items-center text-center">
+                    <div className="text-base sm:text-2xl font-bold text-accent-purple/80">{getRoleLabel(p.role)}</div>
+                    <div className="text-sm sm:text-lg font-semibold mt-1">{p.name}</div>
+                  </GlassCard>
+                </Link>
+              </AnimatedSection>
+            ))}
+          </div>
+        </>
+      ) : null}
     </AnimatedSection>
   );
 }
