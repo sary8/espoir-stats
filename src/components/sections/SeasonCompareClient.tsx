@@ -59,13 +59,11 @@ function getBestIndex(values: (string | number)[], higherIsBetter: boolean): num
 
 export default function SeasonCompareClient({ seasons, teamStats, playerStats }: SeasonCompareClientProps) {
   const sortedMembers = useMemo(() => {
-    const players = playerStats.filter((m) => m.role === "player").sort((a, b) => {
+    return playerStats.filter((m) => m.role === "player").sort((a, b) => {
       const aNum = a.number ?? 999;
       const bNum = b.number ?? 999;
       return aNum - bNum;
     });
-    const coaches = playerStats.filter((m) => m.role === "coach").sort((a, b) => a.name.localeCompare(b.name, "ja"));
-    return [...players, ...coaches];
   }, [playerStats]);
 
   const [selectedMemberId, setSelectedMemberId] = useState<string>(() => sortedMembers[0]?.memberId ?? "");
@@ -144,7 +142,7 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
             >
               {sortedMembers.map((m) => (
                 <option key={m.memberId} value={m.memberId} className="bg-[#1a1a2e]">
-                  {m.role === "player" && m.number !== null ? `#${m.number} ` : ""}{m.name}{m.role === "coach" ? " (Coach)" : ""}
+                  {m.number !== null ? `#${m.number} ` : ""}{m.name}
                 </option>
               ))}
             </select>
@@ -185,13 +183,12 @@ function renderPlayerRows(member: CrossSeasonMember, seasonIds: string[]) {
   function getCellValue(seasonId: string, getValue: (s: typeof member.seasons[0]) => string): string {
     const s = seasonMap.get(seasonId);
     if (!s) return "-";
-    if (s.role === "coach") return "Coach";
     if (s.games === 0) return "DNP";
     return getValue(s);
   }
 
   const rows: { label: string; values: string[]; higherIsBetter: boolean }[] = [
-    { label: "GP", values: seasonIds.map((sid) => { const s = seasonMap.get(sid); if (!s) return "-"; if (s.role === "coach") return "Coach"; return String(s.games); }), higherIsBetter: true },
+    { label: "GP", values: seasonIds.map((sid) => { const s = seasonMap.get(sid); if (!s) return "-"; return String(s.games); }), higherIsBetter: true },
     { label: "Total PTS", values: seasonIds.map((sid) => getCellValue(sid, (s) => String(s.totalPoints))), higherIsBetter: true },
     { label: "PPG", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmt(s.ppg))), higherIsBetter: true },
     { label: "RPG", values: seasonIds.map((sid) => getCellValue(sid, (s) => fmt(s.rpg))), higherIsBetter: true },
