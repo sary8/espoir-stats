@@ -262,8 +262,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                   : "bg-white/5 text-neutral-400 hover:bg-white/10"
               }`}
             >
-              <span className="block">{(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}</span>
-              <span className="text-xs opacity-75">{g.teamPoints}pts</span>
+              {(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}
             </button>
           </div>
         ))}
