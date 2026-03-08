@@ -361,6 +361,20 @@ export function getMemberById(memberId: string, season?: string): PlayerProfile 
   return { player: member, summary, games: memberGames };
 }
 
+export function findMemberAcrossSeasons(memberId: string): { name: string; seasonIds: string[] } | null {
+  const seasons = getSeasonsWithData();
+  let name = "";
+  const found: string[] = [];
+  for (const s of seasons) {
+    const member = getRosterPlayers(s.id).find((m) => m.memberId === memberId);
+    if (member) {
+      name = member.name;
+      found.push(s.id);
+    }
+  }
+  return found.length > 0 ? { name, seasonIds: found } : null;
+}
+
 export function getPlayerByNumber(number: number, season?: string): PlayerProfile | null {
   const member = getRosterPlayers(season).find((entry) => entry.role === "player" && entry.number === number);
   return member ? getMemberById(member.memberId, season) : null;

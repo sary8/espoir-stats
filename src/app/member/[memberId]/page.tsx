@@ -1,11 +1,17 @@
 import { notFound } from "next/navigation";
-import { getMemberById, getAllMemberIds, getSeasons, getDefaultSeason, getAdjacentMembers } from "@/lib/data";
+import { getMemberById, getAllMemberIds, getSeasons, getDefaultSeason, getAdjacentMembers, getSeasonsWithData, findMemberAcrossSeasons } from "@/lib/data";
 import PlayerDetailClient from "@/components/sections/PlayerDetailClient";
+import MemberNotInSeason from "@/components/sections/MemberNotInSeason";
 
 export function generateStaticParams() {
-  return getAllMemberIds().map((memberId) => ({
-    memberId,
-  }));
+  const seasons = getSeasonsWithData();
+  const allMemberIds = new Set<string>();
+  for (const s of seasons) {
+    for (const id of getAllMemberIds(s.id)) {
+      allMemberIds.add(id);
+    }
+  }
+  return Array.from(allMemberIds).map((memberId) => ({ memberId }));
 }
 
 interface PageProps {
@@ -19,7 +25,13 @@ export default async function MemberPage({ params }: PageProps) {
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
   const data = getMemberById(memberId, season);
 
-  if (!data) notFound();
+  if (!data) {
+    const cross = findMemberAcrossSeasons(memberId);
+    if (cross) {
+      return <MemberNotInSeason memberName={cross.name} seasonLabel={seasonLabel} seasons={seasons} />;
+    }
+    notFound();
+  }
 
   const adjacent = getAdjacentMembers(memberId, season);
 
