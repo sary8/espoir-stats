@@ -167,7 +167,9 @@ describe("getRosterPlayers", () => {
     expect(members.length).toBeGreaterThan(0);
     expect(members.find((member) => member.number === 7)?.name).toBe("北川 友加里");
     expect(members.find((member) => member.number === 3)).toBeUndefined();
-    expect(members.find((member) => member.memberId === "coach")?.role).toBe("coach");
+    expect(members.find((member) => member.memberId === "sato")?.name).toBe("佐藤 諒成");
+    expect(members.find((member) => member.memberId === "nagaya")?.name).toBe("長屋 祐助");
+    expect(members.find((member) => member.memberId === "koyama")?.name).toBe("神山 健司");
   });
 });
 
@@ -176,7 +178,7 @@ describe("getMemberList", () => {
     const members = getMemberList("2025-2026");
     const rosterOnly = members.find((member) => member.number === 7);
     const statPlayer = members.find((member) => member.number === 8);
-    const coach = members.find((member) => member.memberId === "coach");
+    const coach = members.find((member) => member.memberId === "sato");
 
     expect(rosterOnly).toBeDefined();
     expect(rosterOnly!.summary).toBeNull();
@@ -196,18 +198,21 @@ describe("getMemberById", () => {
   });
 
   it("コーチは summary と games を持たない", () => {
-    const result = getMemberById("coach", "2025-2026");
+    const result = getMemberById("sato", "2025-2026");
     expect(result).not.toBeNull();
     expect(result!.player.role).toBe("coach");
+    expect(result!.player.name).toBe("佐藤 諒成");
     expect(result!.summary).toBeNull();
     expect(result!.games).toEqual([]);
   });
 });
 
 describe("getAllMemberIds", () => {
-  it("coach を含む memberId 配列を返す", () => {
+  it("コーチを含む memberId 配列を返す", () => {
     const ids = getAllMemberIds("2025-2026");
     expect(ids).toContain("7");
-    expect(ids).toContain("coach");
+    expect(ids).toContain("sato");
+    expect(ids).toContain("nagaya");
+    expect(ids).toContain("koyama");
   });
 });
