@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import Papa from "papaparse";
-import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo, SeasonInfo, RosterPlayer, PlayerListEntry, PlayerProfile, TeamSeasonStats, PlayerSeasonStats, CrossSeasonMember } from "./types";
+import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo, SeasonInfo, RosterPlayer, PlayerListEntry, PlayerProfile, TeamSeasonStats, PlayerSeasonStats, CrossSeasonMember, MemberRole } from "./types";
 import { parsePctString } from "./utils";
 import { calcEff, calcAdvancedStats, parseMinutesToSeconds } from "./stats";
 
@@ -52,8 +52,13 @@ function parseRosterNumber(value: string | undefined): number | null {
   return parsed > 0 ? parsed : null;
 }
 
-function parseRosterRole(value: string | undefined): "player" | "coach" {
-  return value === "coach" ? "coach" : "player";
+function parseRosterRole(value: string | undefined): MemberRole {
+  const v = (value ?? "").trim();
+  if (v === "head_coach") return "head_coach";
+  if (v === "assistant_coach") return "assistant_coach";
+  if (v === "manager") return "manager";
+  if (v === "coach") return "coach";
+  return "player";
 }
 
 function compareRosterPlayers(a: RosterPlayer, b: RosterPlayer): number {
@@ -390,12 +395,12 @@ export function getAllPlayerNumbers(season?: string): number[] {
     .map((member) => member.number as number);
 }
 
-export function getAdjacentMembers(memberId: string, season?: string): { prev: { memberId: string; number: number | null; name: string } | null; next: { memberId: string; number: number | null; name: string } | null } {
+export function getAdjacentMembers(memberId: string, season?: string): { prev: { memberId: string; number: number | null; name: string; role: MemberRole } | null; next: { memberId: string; number: number | null; name: string; role: MemberRole } | null } {
   const members = getRosterPlayers(season);
   const idx = members.findIndex((member) => member.memberId === memberId);
   return {
-    prev: idx > 0 ? { memberId: members[idx - 1].memberId, number: members[idx - 1].number, name: members[idx - 1].name } : null,
-    next: idx < members.length - 1 ? { memberId: members[idx + 1].memberId, number: members[idx + 1].number, name: members[idx + 1].name } : null,
+    prev: idx > 0 ? { memberId: members[idx - 1].memberId, number: members[idx - 1].number, name: members[idx - 1].name, role: members[idx - 1].role } : null,
+    next: idx < members.length - 1 ? { memberId: members[idx + 1].memberId, number: members[idx + 1].number, name: members[idx + 1].name, role: members[idx + 1].role } : null,
   };
 }
 

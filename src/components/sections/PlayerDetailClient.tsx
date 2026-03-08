@@ -16,7 +16,8 @@ import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import PrevNextNav from "../ui/PrevNextNav";
 import { shootingColors } from "@/config/theme";
-import type { PlayerSummary, GamePlayerStat, SeasonInfo, RosterPlayer } from "@/lib/types";
+import type { PlayerSummary, GamePlayerStat, SeasonInfo, RosterPlayer, MemberRole } from "@/lib/types";
+import { getRoleLabel, isStaffRole } from "@/lib/types";
 import { calcEff, parseMinutesToSeconds } from "@/lib/stats";
 
 function fmtPct(made: number, attempt: number): string {
@@ -24,9 +25,16 @@ function fmtPct(made: number, attempt: number): string {
   return `${((made / attempt) * 100).toFixed(1)}%`;
 }
 
+interface AdjacentMember {
+  memberId: string;
+  number: number | null;
+  name: string;
+  role: MemberRole;
+}
+
 interface AdjacentPlayer {
-  prev: { memberId: string; number: number | null; name: string } | null;
-  next: { memberId: string; number: number | null; name: string } | null;
+  prev: AdjacentMember | null;
+  next: AdjacentMember | null;
 }
 
 interface PlayerDetailClientProps {
@@ -41,11 +49,11 @@ interface PlayerDetailClientProps {
 }
 
 function getMemberLabel(member: RosterPlayer): string {
-  return member.number !== null ? `#${member.number}` : member.role.toUpperCase();
+  return member.number !== null ? `#${member.number}` : getRoleLabel(member.role).toUpperCase();
 }
 
 function getMemberStatus(member: RosterPlayer, summary: PlayerSummary | null): string {
-  if (member.role === "coach") return "Coach";
+  if (isStaffRole(member.role)) return getRoleLabel(member.role);
   return summary ? `${summary.games} Games Played | Total ${summary.totalPoints} Points` : "Season DNP";
 }
 
@@ -131,14 +139,14 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
                   {adjacentPlayers.prev ? (
                     <Link href={`${basePath}/member/${adjacentPlayers.prev.memberId}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
                       <ChevronLeft size={14} aria-hidden="true" />
-                      <span className="hidden sm:inline">{getMemberLabel({ ...adjacentPlayers.prev, role: adjacentPlayers.prev.number !== null ? "player" : "coach", hasImage: false })} {adjacentPlayers.prev.name}</span>
-                      <span className="sm:hidden">{getMemberLabel({ ...adjacentPlayers.prev, role: adjacentPlayers.prev.number !== null ? "player" : "coach", hasImage: false })}</span>
+                      <span className="hidden sm:inline">{getMemberLabel({ ...adjacentPlayers.prev, role: adjacentPlayers.prev.role, hasImage: false })} {adjacentPlayers.prev.name}</span>
+                      <span className="sm:hidden">{getMemberLabel({ ...adjacentPlayers.prev, role: adjacentPlayers.prev.role, hasImage: false })}</span>
                     </Link>
                   ) : null}
                   {adjacentPlayers.next ? (
                     <Link href={`${basePath}/member/${adjacentPlayers.next.memberId}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
-                      <span className="hidden sm:inline">{getMemberLabel({ ...adjacentPlayers.next, role: adjacentPlayers.next.number !== null ? "player" : "coach", hasImage: false })} {adjacentPlayers.next.name}</span>
-                      <span className="sm:hidden">{getMemberLabel({ ...adjacentPlayers.next, role: adjacentPlayers.next.number !== null ? "player" : "coach", hasImage: false })}</span>
+                      <span className="hidden sm:inline">{getMemberLabel({ ...adjacentPlayers.next, role: adjacentPlayers.next.role, hasImage: false })} {adjacentPlayers.next.name}</span>
+                      <span className="sm:hidden">{getMemberLabel({ ...adjacentPlayers.next, role: adjacentPlayers.next.role, hasImage: false })}</span>
                       <ChevronRight size={14} aria-hidden="true" />
                     </Link>
                   ) : null}
@@ -362,8 +370,8 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
         {adjacentPlayers ? (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-12">
             <PrevNextNav
-              prev={adjacentPlayers.prev ? { href: `${basePath}/member/${adjacentPlayers.prev.memberId}`, label: getMemberLabel({ ...adjacentPlayers.prev, role: adjacentPlayers.prev.number !== null ? "player" : "coach", hasImage: false }), sublabel: adjacentPlayers.prev.name } : null}
-              next={adjacentPlayers.next ? { href: `${basePath}/member/${adjacentPlayers.next.memberId}`, label: getMemberLabel({ ...adjacentPlayers.next, role: adjacentPlayers.next.number !== null ? "player" : "coach", hasImage: false }), sublabel: adjacentPlayers.next.name } : null}
+              prev={adjacentPlayers.prev ? { href: `${basePath}/member/${adjacentPlayers.prev.memberId}`, label: getMemberLabel({ ...adjacentPlayers.prev, role: adjacentPlayers.prev.role, hasImage: false }), sublabel: adjacentPlayers.prev.name } : null}
+              next={adjacentPlayers.next ? { href: `${basePath}/member/${adjacentPlayers.next.memberId}`, label: getMemberLabel({ ...adjacentPlayers.next, role: adjacentPlayers.next.role, hasImage: false }), sublabel: adjacentPlayers.next.name } : null}
             />
           </div>
         ) : null}

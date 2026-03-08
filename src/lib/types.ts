@@ -4,7 +4,23 @@ export interface SeasonInfo {
   default?: boolean;
 }
 
-export type MemberRole = "player" | "coach";
+export type MemberRole = "player" | "coach" | "head_coach" | "assistant_coach" | "manager";
+
+const ROLE_LABELS: Record<MemberRole, string> = {
+  player: "Player",
+  coach: "Coach",
+  head_coach: "Head Coach",
+  assistant_coach: "Assistant Coach",
+  manager: "Manager",
+};
+
+export function getRoleLabel(role: MemberRole): string {
+  return ROLE_LABELS[role] ?? role;
+}
+
+export function isStaffRole(role: MemberRole): boolean {
+  return role !== "player";
+}
 
 export interface RosterPlayer {
   memberId: string;

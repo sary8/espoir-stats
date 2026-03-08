@@ -8,6 +8,7 @@ import ProgressRing from "../ui/ProgressRing";
 import Badge from "../ui/Badge";
 import SeasonSwitcher from "../ui/SeasonSwitcher";
 import type { PlayerListEntry, SeasonInfo } from "@/lib/types";
+import { getRoleLabel, isStaffRole } from "@/lib/types";
 import { shootingColors } from "@/config/theme";
 
 interface PlayerCardsProps {
@@ -49,7 +50,7 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
                   <div className="text-2xl sm:text-4xl font-bold text-accent-purple/80">{getMemberKey(p)}</div>
                   <div className="text-sm sm:text-lg font-semibold mt-0.5 sm:mt-1">{p.name}</div>
                   <div className="text-[10px] sm:text-xs text-neutral-400">
-                    {p.role === "coach" ? "Coach" : p.summary ? `${p.summary.games} games played` : "Season DNP"}
+                    {isStaffRole(p.role) ? getRoleLabel(p.role) : p.summary ? `${p.summary.games} games played` : "Season DNP"}
                   </div>
                   {p.summary && p.number !== null && (p.number === topScorer || p.number === topRebounder || p.number === topAssister || p.number === top3P || p.number === topStealer || p.number === topBlocker || p.number === topFoul || p.number === topTurnover) && (
                     <div className="flex flex-wrap gap-1 mt-2">
@@ -90,7 +91,7 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
                   </>
                 ) : (
                   <div className="mt-auto pt-6 text-center text-xs sm:text-sm text-neutral-500">
-                    {p.role === "coach" ? "Coaching Staff" : "Season DNP"}
+                    {isStaffRole(p.role) ? getRoleLabel(p.role) : "Season DNP"}
                   </div>
                 )}
               </GlassCard>
