@@ -79,6 +79,7 @@ export default function Home() {
       <Header seasons={seasons} />
       <main id="main-content">
         <HeroSection
+          seasonLabel={seasonLabel}
           totalPoints={totalPoints}
           totalGames={totalGames}
           totalPlayers={players.length}

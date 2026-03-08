@@ -4,12 +4,13 @@ import { motion, useReducedMotion } from "framer-motion";
 import StatCounter from "../ui/StatCounter";
 
 interface HeroProps {
+  seasonLabel: string;
   totalPoints: number;
   totalGames: number;
   totalPlayers: number;
 }
 
-export default function HeroSection({ totalPoints, totalGames, totalPlayers }: HeroProps) {
+export default function HeroSection({ seasonLabel, totalPoints, totalGames, totalPlayers }: HeroProps) {
   const prefersReducedMotion = useReducedMotion();
   const noMotion = { duration: 0 };
 
@@ -22,6 +23,10 @@ export default function HeroSection({ totalPoints, totalGames, totalPlayers }: H
           animate={{ opacity: 1, y: 0 }}
           transition={prefersReducedMotion ? noMotion : { duration: 0.8 }}
         >
+          <p className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-accent-purple/30 bg-[#0f1020]/70 text-[11px] sm:text-xs font-semibold tracking-[0.28em] text-accent-purple uppercase mb-5">
+            <span className="inline-block h-2 w-2 rounded-full bg-accent-purple" aria-hidden="true" />
+            <span>{seasonLabel} Season</span>
+          </p>
           <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold tracking-wider mb-4 [text-wrap:balance]">
             <span className="text-accent-purple">E</span>SPOIR
           </h1>

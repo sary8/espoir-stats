@@ -91,6 +91,7 @@ export default async function SeasonHome({ params }: PageProps) {
       <Header seasons={seasons} />
       <main id="main-content">
         <HeroSection
+          seasonLabel={seasonInfo.label}
           totalPoints={totalPoints}
           totalGames={totalGames}
           totalPlayers={players.length}
