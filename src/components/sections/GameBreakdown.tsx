@@ -5,6 +5,7 @@ import { ChevronUp, ChevronDown, Youtube } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { GameSummary } from "./LazyCharts";
+import { calcEff } from "@/lib/stats";
 
 function fmtPct(made: number, attempt: number): string {
   if (attempt === 0) return "-";
@@ -22,7 +23,7 @@ type SortKey =
   | "ftMade" | "ftPct"
   | "offReb" | "defReb" | "totalReb"
   | "assists" | "steals" | "blocks" | "turnovers"
-  | "personalFouls" | "foulsDrawn";
+  | "personalFouls" | "foulsDrawn" | "eff";
 
 interface AggregatedPlayer {
   number: number;
@@ -162,6 +163,13 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
     }));
   }, [isAllGames, activeGame, games, allGamesAggregated]);
 
+  const playerEff = (p: AggregatedPlayer): number => calcEff({
+    points: p.points, totalReb: p.totalReb, assists: p.assists, steals: p.steals, blocks: p.blocks,
+    threePointMade: p.threePointMade, threePointAttempt: p.threePointAttempt,
+    twoPointMade: p.twoPointMade, twoPointAttempt: p.twoPointAttempt,
+    ftMade: p.ftMade, ftAttempt: p.ftAttempt, turnovers: p.turnovers,
+  });
+
   const sortedPlayers = useMemo(() => {
     const real = currentPlayers.filter(p => p.name !== "Team/Coaches");
     const tc = currentPlayers.filter(p => p.name === "Team/Coaches");
@@ -176,6 +184,9 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
       } else if (sortKey === "ftPct") {
         va = pctVal(a.ftMade, a.ftAttempt);
         vb = pctVal(b.ftMade, b.ftAttempt);
+      } else if (sortKey === "eff") {
+        va = playerEff(a);
+        vb = playerEff(b);
       } else {
         va = a[sortKey];
         vb = b[sortKey];
@@ -304,6 +315,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                 <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="personalFouls">PF</SortTh>
                 <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="foulsDrawn">FD</SortTh>
                 <th className={thBase} scope="col">MIN</th>
+                <SortTh sortKey={sortKey} sortAsc={sortAsc} onSort={handleSort} k="eff">EFF</SortTh>
               </tr>
             </thead>
             <tbody>
@@ -336,6 +348,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                   <td className={td}>{isTC ? "" : p.personalFouls}</td>
                   <td className={td}>{isTC ? "" : p.foulsDrawn}</td>
                   <td className={`${td} text-neutral-400`}>{isTC ? "" : formatMinutes(p.totalMinutes)}</td>
+                  <td className={`${td} ${isTC ? "" : "font-bold text-accent-purple"}`}>{isTC ? "" : playerEff(p)}</td>
                 </tr>
                 );
               })}
@@ -361,6 +374,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                 <td className={td}>{teamTotals.personalFouls}</td>
                 <td className={td}>{teamTotals.foulsDrawn}</td>
                 <td className={`${td} text-neutral-400`}>{formatMinutes(teamTotals.totalMinutes)}</td>
+                <td className={`${td} font-bold text-accent-purple`}>{calcEff({ points: teamTotals.points, totalReb: teamTotals.totalReb, assists: teamTotals.assists, steals: teamTotals.steals, blocks: teamTotals.blocks, threePointMade: teamTotals.threePointMade, threePointAttempt: teamTotals.threePointAttempt, twoPointMade: teamTotals.twoPointMade, twoPointAttempt: teamTotals.twoPointAttempt, ftMade: teamTotals.ftMade, ftAttempt: teamTotals.ftAttempt, turnovers: teamTotals.turnovers })}</td>
               </tr>
             </tfoot>
           </table>

@@ -51,7 +51,10 @@ export default function StatsRanking({ players }: StatsRankingProps) {
   const rankedCategories = useMemo(
     () => categories.map((cat) => {
       const sorted = [...players].sort((a, b) => getValue(cat, b) - getValue(cat, a));
-      return { ...cat, sorted, maxVal: getValue(cat, sorted[0]) };
+      const values = sorted.map((p) => getValue(cat, p));
+      const minVal = Math.min(...values);
+      const maxVal = Math.max(...values);
+      return { ...cat, sorted, maxVal, minVal };
     }),
     [players]
   );
@@ -63,7 +66,8 @@ export default function StatsRanking({ players }: StatsRankingProps) {
       </h2>
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4">
         {rankedCategories.map((cat, ci) => {
-          const { sorted, maxVal } = cat;
+          const { sorted, maxVal, minVal } = cat;
+          const range = maxVal - Math.min(minVal, 0);
 
           return (
             <AnimatedSection key={cat.label} delay={ci * 0.05}>
@@ -75,7 +79,7 @@ export default function StatsRanking({ players }: StatsRankingProps) {
                 <ol className="space-y-1.5">
                   {sorted.map((p, rank) => {
                     const val = getValue(cat, p);
-                    const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                    const pct = range > 0 ? (Math.max(val, 0) / range) * 100 : 0;
                     const isFirst = rank === 0;
                     return (
                       <li key={p.number} className="flex items-center gap-2 text-sm">

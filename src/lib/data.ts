@@ -406,7 +406,7 @@ export function getAdjacentGames(gameId: string, season?: string): { prev: { gam
 }
 
 export function getAllTeamSeasonStats(): TeamSeasonStats[] {
-  const seasons = getSeasonsWithData();
+  const seasons = [...getSeasonsWithData()].reverse();
   return seasons.map((season) => {
     const games = getGameStats(season.id);
     const totalGames = games.length;
@@ -482,7 +482,7 @@ export function getAllTeamSeasonStats(): TeamSeasonStats[] {
 }
 
 export function getAllPlayerSeasonStats(): CrossSeasonMember[] {
-  const seasons = getSeasonsWithData();
+  const seasons = [...getSeasonsWithData()].reverse();
   const memberMap = new Map<string, CrossSeasonMember>();
 
   for (const season of seasons) {
