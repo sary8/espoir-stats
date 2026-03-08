@@ -1,8 +1,9 @@
 import fs from "fs";
 import path from "path";
 import Papa from "papaparse";
-import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo, SeasonInfo, RosterPlayer, PlayerListEntry, PlayerProfile } from "./types";
+import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo, SeasonInfo, RosterPlayer, PlayerListEntry, PlayerProfile, TeamSeasonStats, PlayerSeasonStats, CrossSeasonMember } from "./types";
 import { parsePctString } from "./utils";
+import { calcEff, calcAdvancedStats, parseMinutesToSeconds } from "./stats";
 
 // --- Season management ---
 
@@ -402,4 +403,132 @@ export function getAdjacentGames(gameId: string, season?: string): { prev: { gam
     prev: idx > 0 ? { gameId: games[idx - 1].gameId, opponent: games[idx - 1].opponent, date: games[idx - 1].date } : null,
     next: idx < games.length - 1 ? { gameId: games[idx + 1].gameId, opponent: games[idx + 1].opponent, date: games[idx + 1].date } : null,
   };
+}
+
+export function getAllTeamSeasonStats(): TeamSeasonStats[] {
+  const seasons = getSeasonsWithData();
+  return seasons.map((season) => {
+    const games = getGameStats(season.id);
+    const totalGames = games.length;
+    const wins = games.filter((g) => g.teamPoints > g.opponentPoints).length;
+    const losses = totalGames - wins;
+    const totalPoints = games.reduce((s, g) => s + g.teamPoints, 0);
+
+    let total3PM = 0, total3PA = 0, totalReb = 0, totalAst = 0, totalStl = 0, totalBlk = 0, totalTo = 0;
+    const espoirTotals = { threePointMade: 0, threePointAttempt: 0, twoPointMade: 0, twoPointAttempt: 0, ftAttempt: 0, offReb: 0, defReb: 0, turnovers: 0, points: 0, totalMinutes: 0 };
+    const opponentTotals = { threePointMade: 0, threePointAttempt: 0, twoPointMade: 0, twoPointAttempt: 0, ftAttempt: 0, offReb: 0, defReb: 0, turnovers: 0, points: 0, totalMinutes: 0 };
+
+    for (const g of games) {
+      for (const p of g.players) {
+        total3PM += p.threePointMade;
+        total3PA += p.threePointAttempt;
+        totalReb += p.totalReb;
+        totalAst += p.assists;
+        totalStl += p.steals;
+        totalBlk += p.blocks;
+        totalTo += p.turnovers;
+        espoirTotals.threePointMade += p.threePointMade;
+        espoirTotals.threePointAttempt += p.threePointAttempt;
+        espoirTotals.twoPointMade += p.twoPointMade;
+        espoirTotals.twoPointAttempt += p.twoPointAttempt;
+        espoirTotals.ftAttempt += p.ftAttempt;
+        espoirTotals.offReb += p.offReb;
+        espoirTotals.defReb += p.defReb;
+        espoirTotals.turnovers += p.turnovers;
+        espoirTotals.totalMinutes += parseMinutesToSeconds(p.minutes);
+      }
+      espoirTotals.points += g.teamPoints;
+      opponentTotals.points += g.opponentPoints;
+      for (const p of g.opponentPlayers) {
+        opponentTotals.threePointMade += p.threePointMade;
+        opponentTotals.threePointAttempt += p.threePointAttempt;
+        opponentTotals.twoPointMade += p.twoPointMade;
+        opponentTotals.twoPointAttempt += p.twoPointAttempt;
+        opponentTotals.ftAttempt += p.ftAttempt;
+        opponentTotals.offReb += p.offReb;
+        opponentTotals.defReb += p.defReb;
+        opponentTotals.turnovers += p.turnovers;
+        opponentTotals.totalMinutes += parseMinutesToSeconds(p.minutes);
+      }
+    }
+
+    const advanced = totalGames > 0 ? calcAdvancedStats(espoirTotals, opponentTotals) : { pace: 0, offRtg: 0, defRtg: 0, netRtg: 0 };
+
+    return {
+      seasonId: season.id,
+      label: season.label,
+      games: totalGames,
+      wins,
+      losses,
+      avgPoints: totalGames > 0 ? totalPoints / totalGames : 0,
+      threePointPct: total3PA > 0 ? (total3PM / total3PA) * 100 : null,
+      rebounds: totalGames > 0 ? totalReb / totalGames : 0,
+      assists: totalGames > 0 ? totalAst / totalGames : 0,
+      steals: totalGames > 0 ? totalStl / totalGames : 0,
+      blocks: totalGames > 0 ? totalBlk / totalGames : 0,
+      turnovers: totalGames > 0 ? totalTo / totalGames : 0,
+      pace: advanced.pace,
+      offRtg: advanced.offRtg,
+      defRtg: advanced.defRtg,
+      netRtg: advanced.netRtg,
+    };
+  });
+}
+
+export function getAllPlayerSeasonStats(): CrossSeasonMember[] {
+  const seasons = getSeasonsWithData();
+  const memberMap = new Map<string, CrossSeasonMember>();
+
+  for (const season of seasons) {
+    const roster = getRosterPlayers(season.id);
+    const summaries = getPlayerSummaries(season.id);
+    const summaryMap = new Map(summaries.map((s) => [s.number, s]));
+
+    for (const member of roster) {
+      const summary = member.number !== null && member.role === "player" ? (summaryMap.get(member.number) ?? null) : null;
+
+      const playerSeason: PlayerSeasonStats = {
+        seasonId: season.id,
+        label: season.label,
+        memberId: member.memberId,
+        name: member.name,
+        number: member.number,
+        role: member.role,
+        games: summary?.games ?? 0,
+        totalPoints: summary?.totalPoints ?? 0,
+        ppg: summary?.ppg ?? 0,
+        rpg: summary && summary.games > 0 ? summary.totalReb / summary.games : 0,
+        apg: summary && summary.games > 0 ? summary.assists / summary.games : 0,
+        spg: summary && summary.games > 0 ? summary.steals / summary.games : 0,
+        bpg: summary && summary.games > 0 ? summary.blocks / summary.games : 0,
+        threePointPct: summary?.threePointPct ?? null,
+        twoPointPct: summary?.twoPointPct ?? null,
+        ftPct: summary?.ftPct ?? null,
+        eff: summary ? calcEff({
+          points: summary.totalPoints, totalReb: summary.totalReb, assists: summary.assists, steals: summary.steals, blocks: summary.blocks,
+          threePointMade: summary.threePointMade, threePointAttempt: summary.threePointAttempt,
+          twoPointMade: summary.twoPointMade, twoPointAttempt: summary.twoPointAttempt,
+          ftMade: summary.ftMade, ftAttempt: summary.ftAttempt, turnovers: summary.turnovers,
+        }) : 0,
+      };
+
+      if (!memberMap.has(member.memberId)) {
+        memberMap.set(member.memberId, {
+          memberId: member.memberId,
+          name: member.name,
+          number: member.number,
+          role: member.role,
+          seasons: [playerSeason],
+        });
+      } else {
+        const existing = memberMap.get(member.memberId)!;
+        existing.name = member.name;
+        existing.number = member.number;
+        existing.role = member.role;
+        existing.seasons.push(playerSeason);
+      }
+    }
+  }
+
+  return Array.from(memberMap.values());
 }

@@ -94,6 +94,53 @@ export interface GameInfo {
   gameType: string | null;
 }
 
+export interface TeamSeasonStats {
+  seasonId: string;
+  label: string;
+  games: number;
+  wins: number;
+  losses: number;
+  avgPoints: number;
+  threePointPct: number | null;
+  rebounds: number;
+  assists: number;
+  steals: number;
+  blocks: number;
+  turnovers: number;
+  pace: number;
+  offRtg: number;
+  defRtg: number;
+  netRtg: number;
+}
+
+export interface PlayerSeasonStats {
+  seasonId: string;
+  label: string;
+  memberId: string;
+  name: string;
+  number: number | null;
+  role: MemberRole;
+  games: number;
+  totalPoints: number;
+  ppg: number;
+  rpg: number;
+  apg: number;
+  spg: number;
+  bpg: number;
+  threePointPct: number | null;
+  twoPointPct: number | null;
+  ftPct: number | null;
+  eff: number;
+}
+
+export interface CrossSeasonMember {
+  memberId: string;
+  name: string;
+  number: number | null;
+  role: MemberRole;
+  seasons: PlayerSeasonStats[];
+}
+
 export interface GameResult {
   gameId: string;
   opponent: string;
