@@ -43,6 +43,9 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
       ) : null}
 
       {/* Players */}
+      <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center text-neutral-300">
+        <span className="text-accent-purple">Players</span>
+      </h3>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         {players.map((p, i) => (
           <AnimatedSection key={p.memberId} delay={i * 0.05}>
@@ -108,13 +111,18 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
           <h3 className="text-lg sm:text-xl font-bold mt-10 sm:mt-14 mb-4 sm:mb-6 text-center text-neutral-300">
             Coaching <span className="text-accent-purple">Staff</span>
           </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {staff.map((p, i) => (
               <AnimatedSection key={p.memberId} delay={i * 0.05}>
                 <Link href={`${basePath}/member/${p.memberId}`} className="block h-full rounded-2xl">
-                  <GlassCard hover className="cursor-pointer h-full flex flex-col items-center text-center">
-                    <div className="text-base sm:text-2xl font-bold text-accent-purple/80">{getRoleLabel(p.role)}</div>
-                    <div className="text-sm sm:text-lg font-semibold mt-1">{p.name}</div>
+                  <GlassCard hover className="cursor-pointer h-full flex flex-col">
+                    <div>
+                      <div className="text-base sm:text-2xl font-bold text-accent-purple/80">{getRoleLabel(p.role)}</div>
+                      <div className="text-sm sm:text-lg font-semibold mt-0.5 sm:mt-1">{p.name}</div>
+                    </div>
+                    <div className="mt-auto pt-6 text-center text-xs sm:text-sm text-neutral-500">
+                      {getRoleLabel(p.role)}
+                    </div>
                   </GlassCard>
                 </Link>
               </AnimatedSection>
