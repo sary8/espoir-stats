@@ -15,10 +15,22 @@ import StatCounter from "../ui/StatCounter";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import PrevNextNav from "../ui/PrevNextNav";
+import Badge from "../ui/Badge";
 import { shootingColors } from "@/config/theme";
 import type { PlayerSummary, GamePlayerStat, SeasonInfo, RosterPlayer, MemberRole } from "@/lib/types";
 import { getRoleLabel, isStaffRole } from "@/lib/types";
 import { calcEff, parseMinutesToSeconds } from "@/lib/stats";
+
+interface TopBadges {
+  topScorer: number;
+  topRebounder: number;
+  topAssister: number;
+  top3P: number;
+  topStealer: number;
+  topBlocker: number;
+  topFoul: number;
+  topTurnover: number;
+}
 
 function fmtPct(made: number, attempt: number): string {
   if (attempt === 0) return "-";
@@ -46,6 +58,7 @@ interface PlayerDetailClientProps {
   seasonLabel?: string;
   seasonId?: string;
   adjacentPlayers?: AdjacentPlayer;
+  badges?: TopBadges;
 }
 
 function getMemberLabel(member: RosterPlayer): string {
@@ -57,11 +70,11 @@ function getMemberStatus(member: RosterPlayer, summary: PlayerSummary | null): s
   return summary ? `${summary.games} Games Played | Total ${summary.totalPoints} Points` : "Season DNP";
 }
 
-export default function PlayerDetailClient({ member, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers }: PlayerDetailClientProps) {
+export default function PlayerDetailClient({ member, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers, badges }: PlayerDetailClientProps) {
   const prefersReducedMotion = useReducedMotion();
   const p = member;
 
-  const lineData = useMemo(() => games.map((g) => ({
+  const lineData = useMemo(() => [...games].reverse().map((g) => ({
     game: g.opponent,
     PTS: g.stat.points,
     REB: g.stat.totalReb,
@@ -160,6 +173,18 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
                 <p className="text-sm sm:text-base text-neutral-400 mt-2">
                   {getMemberStatus(p, summary)}
                 </p>
+                {badges && p.number !== null && (
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {p.number === badges.topScorer ? <Badge variant="purple">Top Scorer</Badge> : null}
+                    {p.number === badges.topRebounder ? <Badge variant="blue">Top Rebounder</Badge> : null}
+                    {p.number === badges.topAssister ? <Badge variant="green">Top Assists</Badge> : null}
+                    {p.number === badges.top3P ? <Badge variant="pink">Top 3P</Badge> : null}
+                    {p.number === badges.topStealer ? <Badge variant="cyan">Top Steals</Badge> : null}
+                    {p.number === badges.topBlocker ? <Badge variant="yellow">Top Blocks</Badge> : null}
+                    {p.number === badges.topFoul ? <Badge variant="red">Top Fouls</Badge> : null}
+                    {p.number === badges.topTurnover ? <Badge variant="orange">Top Turnovers</Badge> : null}
+                  </div>
+                )}
               </div>
               {seasonId && p.hasImage ? (
                 <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 shrink-0">

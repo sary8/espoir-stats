@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getMemberById, getAllMemberIds, getSeasons, getDefaultSeason, getAdjacentMembers, getSeasonsWithData, findMemberAcrossSeasons } from "@/lib/data";
+import { getMemberById, getAllMemberIds, getSeasons, getDefaultSeason, getAdjacentMembers, getSeasonsWithData, findMemberAcrossSeasons, getPlayerSummaries, getTopPlayers } from "@/lib/data";
 import PlayerDetailClient from "@/components/sections/PlayerDetailClient";
 import MemberNotInSeason from "@/components/sections/MemberNotInSeason";
 
@@ -34,6 +34,8 @@ export default async function MemberPage({ params }: PageProps) {
   }
 
   const adjacent = getAdjacentMembers(memberId, season);
+  const players = getPlayerSummaries(season);
+  const badges = players.length > 0 ? getTopPlayers(players) : undefined;
 
-  return <PlayerDetailClient member={data.player} summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} adjacentPlayers={adjacent} />;
+  return <PlayerDetailClient member={data.player} summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} adjacentPlayers={adjacent} badges={badges} />;
 }
