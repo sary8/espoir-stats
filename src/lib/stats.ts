@@ -1,3 +1,30 @@
+export interface EffInput {
+  points: number;
+  totalReb: number;
+  assists: number;
+  steals: number;
+  blocks: number;
+  threePointMade: number;
+  threePointAttempt: number;
+  twoPointMade: number;
+  twoPointAttempt: number;
+  ftMade: number;
+  ftAttempt: number;
+  turnovers: number;
+}
+
+export function calcEff(s: EffInput): number {
+  const fgm = s.threePointMade + s.twoPointMade;
+  const fga = s.threePointAttempt + s.twoPointAttempt;
+  return (s.points + s.totalReb + s.assists + s.steals + s.blocks) - ((fga - fgm) + (s.ftAttempt - s.ftMade) + s.turnovers);
+}
+
+export function parseMinutesToSeconds(min: string): number {
+  if (!min) return 0;
+  const parts = min.split(":");
+  return parseInt(parts[0], 10) * 60 + parseInt(parts[1] || "0", 10);
+}
+
 export interface TeamTotals {
   threePointMade: number;
   threePointAttempt: number;

@@ -17,16 +17,11 @@ import Footer from "../layout/Footer";
 import PrevNextNav from "../ui/PrevNextNav";
 import { shootingColors } from "@/config/theme";
 import type { PlayerSummary, GamePlayerStat, SeasonInfo, RosterPlayer } from "@/lib/types";
+import { calcEff, parseMinutesToSeconds } from "@/lib/stats";
 
 function fmtPct(made: number, attempt: number): string {
   if (attempt === 0) return "-";
   return `${((made / attempt) * 100).toFixed(1)}%`;
-}
-
-function calcEff(s: { points: number; totalReb: number; assists: number; steals: number; blocks: number; threePointMade: number; threePointAttempt: number; twoPointMade: number; twoPointAttempt: number; ftMade: number; ftAttempt: number; turnovers: number }) {
-  const fgm = s.threePointMade + s.twoPointMade;
-  const fga = s.threePointAttempt + s.twoPointAttempt;
-  return (s.points + s.totalReb + s.assists + s.steals + s.blocks) - ((fga - fgm) + (s.ftAttempt - s.ftMade) + s.turnovers);
 }
 
 interface AdjacentPlayer {
@@ -111,7 +106,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
       t.turnovers += s.turnovers;
       t.personalFouls += s.personalFouls;
       t.foulsDrawn += s.foulsDrawn;
-      t.totalMinutes += parseMinutes(s.minutes);
+      t.totalMinutes += parseMinutesToSeconds(s.minutes);
     }
     return t;
   }, [games]);
@@ -376,12 +371,6 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
       <Footer seasonLabel={seasonLabel} />
     </>
   );
-}
-
-function parseMinutes(min: string): number {
-  if (!min) return 0;
-  const parts = min.split(":");
-  return parseInt(parts[0], 10) * 60 + parseInt(parts[1] || "0", 10);
 }
 
 function formatMinutes(totalSeconds: number): string {

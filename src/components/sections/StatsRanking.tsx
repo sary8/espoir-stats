@@ -5,11 +5,15 @@ import { Crown, CircleDot, MoveUp, MoveDown, Grab, Handshake, Scissors, Ban, Rot
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import type { PlayerSummary } from "@/lib/types";
+import { calcEff } from "@/lib/stats";
 
 function calcAvgEff(p: PlayerSummary): number {
-  const fgMissed = (p.threePointAttempt + p.twoPointAttempt) - (p.threePointMade + p.twoPointMade);
-  const ftMissed = p.ftAttempt - p.ftMade;
-  const eff = p.totalPoints + p.totalReb + p.assists + p.steals + p.blocks - fgMissed - ftMissed - p.turnovers;
+  const eff = calcEff({
+    points: p.totalPoints, totalReb: p.totalReb, assists: p.assists, steals: p.steals, blocks: p.blocks,
+    threePointMade: p.threePointMade, threePointAttempt: p.threePointAttempt,
+    twoPointMade: p.twoPointMade, twoPointAttempt: p.twoPointAttempt,
+    ftMade: p.ftMade, ftAttempt: p.ftAttempt, turnovers: p.turnovers,
+  });
   return p.games > 0 ? eff / p.games : 0;
 }
 
