@@ -60,7 +60,7 @@ export default function Header({ seasons }: HeaderProps) {
 
   const navLinks = [
     { href: `${basePath}/`, label: "Top" },
-    { href: `${basePath}/players`, label: "Players" },
+    { href: `${basePath}/members`, label: "Members" },
     { href: `${basePath}/games`, label: "Games" },
     { href: "/glossary", label: "Stats Guide" },
   ];

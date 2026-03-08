@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getDefaultSeason, getPlayerList } from "@/lib/data";
+import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getDefaultSeason, getMemberList } from "@/lib/data";
 import { calcAdvancedStats } from "@/lib/stats";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -14,7 +14,7 @@ export default function Home() {
   const season = getDefaultSeason();
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
   const players = getPlayerSummaries(season);
-  const rosterPlayers = getPlayerList(season);
+  const members = getMemberList(season);
   const games = getGameStats(season);
 
   let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;
@@ -83,7 +83,7 @@ export default function Home() {
           seasonLabel={seasonLabel}
           totalPoints={totalPoints}
           totalGames={totalGames}
-          totalPlayers={rosterPlayers.length}
+          totalMembers={members.length}
         />
         <TeamOverview
           totalPoints={totalPoints}
@@ -115,7 +115,7 @@ export default function Home() {
           />
         </Suspense>
         <PlayerCards
-          players={rosterPlayers}
+          members={members}
           {...topPlayers}
         />
         <StatsRanking players={players} />

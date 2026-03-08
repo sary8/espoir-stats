@@ -30,12 +30,12 @@ function calcEff(s: { points: number; totalReb: number; assists: number; steals:
 }
 
 interface AdjacentPlayer {
-  prev: { number: number; name: string } | null;
-  next: { number: number; name: string } | null;
+  prev: { memberId: string; number: number | null; name: string } | null;
+  next: { memberId: string; number: number | null; name: string } | null;
 }
 
 interface PlayerDetailClientProps {
-  player: RosterPlayer;
+  member: RosterPlayer;
   summary: PlayerSummary | null;
   games: { gameId: string; opponent: string; date: string; stat: GamePlayerStat }[];
   basePath?: string;
@@ -45,9 +45,18 @@ interface PlayerDetailClientProps {
   adjacentPlayers?: AdjacentPlayer;
 }
 
-export default function PlayerDetailClient({ player, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers }: PlayerDetailClientProps) {
+function getMemberLabel(member: RosterPlayer): string {
+  return member.number !== null ? `#${member.number}` : member.role.toUpperCase();
+}
+
+function getMemberStatus(member: RosterPlayer, summary: PlayerSummary | null): string {
+  if (member.role === "coach") return "Coach";
+  return summary ? `${summary.games} Games Played | Total ${summary.totalPoints} Points` : "Season DNP";
+}
+
+export default function PlayerDetailClient({ member, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers }: PlayerDetailClientProps) {
   const prefersReducedMotion = useReducedMotion();
-  const p = player;
+  const p = member;
 
   const lineData = useMemo(() => games.map((g) => ({
     game: g.opponent,
@@ -119,22 +128,22 @@ export default function PlayerDetailClient({ player, summary, games, basePath = 
           <div className="absolute inset-0 bg-[#0a0a0f]/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-between mb-6 sm:mb-8">
-              <Link href={`${basePath}/players`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors rounded">
-                <ArrowLeft size={18} aria-hidden="true" /> Back to Roster
+              <Link href={`${basePath}/members`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors rounded">
+                <ArrowLeft size={18} aria-hidden="true" /> Back to Members
               </Link>
               {adjacentPlayers ? (
                 <div className="flex items-center gap-2">
                   {adjacentPlayers.prev ? (
-                    <Link href={`${basePath}/player/${adjacentPlayers.prev.number}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+                    <Link href={`${basePath}/member/${adjacentPlayers.prev.memberId}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
                       <ChevronLeft size={14} aria-hidden="true" />
-                      <span className="hidden sm:inline">#{adjacentPlayers.prev.number} {adjacentPlayers.prev.name}</span>
-                      <span className="sm:hidden">#{adjacentPlayers.prev.number}</span>
+                      <span className="hidden sm:inline">{getMemberLabel({ ...adjacentPlayers.prev, role: adjacentPlayers.prev.number !== null ? "player" : "coach", hasImage: false })} {adjacentPlayers.prev.name}</span>
+                      <span className="sm:hidden">{getMemberLabel({ ...adjacentPlayers.prev, role: adjacentPlayers.prev.number !== null ? "player" : "coach", hasImage: false })}</span>
                     </Link>
                   ) : null}
                   {adjacentPlayers.next ? (
-                    <Link href={`${basePath}/player/${adjacentPlayers.next.number}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
-                      <span className="hidden sm:inline">#{adjacentPlayers.next.number} {adjacentPlayers.next.name}</span>
-                      <span className="sm:hidden">#{adjacentPlayers.next.number}</span>
+                    <Link href={`${basePath}/member/${adjacentPlayers.next.memberId}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+                      <span className="hidden sm:inline">{getMemberLabel({ ...adjacentPlayers.next, role: adjacentPlayers.next.number !== null ? "player" : "coach", hasImage: false })} {adjacentPlayers.next.name}</span>
+                      <span className="sm:hidden">{getMemberLabel({ ...adjacentPlayers.next, role: adjacentPlayers.next.number !== null ? "player" : "coach", hasImage: false })}</span>
                       <ChevronRight size={14} aria-hidden="true" />
                     </Link>
                   ) : null}
@@ -143,16 +152,16 @@ export default function PlayerDetailClient({ player, summary, games, basePath = 
             </div>
             <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }} className="flex items-end justify-between gap-4">
               <div>
-                <div className="text-6xl sm:text-8xl md:text-9xl font-bold text-accent-purple/20">#{p.number}</div>
+                <div className="text-5xl sm:text-7xl md:text-8xl font-bold text-accent-purple/20">{getMemberLabel(p)}</div>
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6">{p.name}</h1>
                 <p className="text-sm sm:text-base text-neutral-400 mt-2">
-                  {summary ? `${summary.games} Games Played | Total ${summary.totalPoints} Points` : "Season DNP"}
+                  {getMemberStatus(p, summary)}
                 </p>
               </div>
               {seasonId && p.hasImage ? (
                 <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 shrink-0">
                   <Image
-                    src={`/api/players/${seasonId}/${p.number}.png`}
+                    src={`/api/players/${seasonId}/${p.memberId}.png`}
                     alt={`${p.name}のプロフィール写真`}
                     fill
                     unoptimized
@@ -164,7 +173,7 @@ export default function PlayerDetailClient({ player, summary, games, basePath = 
               ) : seasonId ? (
                 <div className="flex h-48 w-48 sm:h-60 sm:w-60 md:h-72 md:w-72 shrink-0 items-center justify-center rounded-[2rem] border border-white/10 bg-white/5 text-center">
                   <div>
-                    <div className="text-4xl sm:text-5xl font-bold text-accent-purple/70">#{p.number}</div>
+                    <div className="text-4xl sm:text-5xl font-bold text-accent-purple/70">{getMemberLabel(p)}</div>
                     <p className="mt-2 text-xs sm:text-sm text-neutral-400">No Photo</p>
                   </div>
                 </div>
@@ -358,8 +367,8 @@ export default function PlayerDetailClient({ player, summary, games, basePath = 
         {adjacentPlayers ? (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-12">
             <PrevNextNav
-              prev={adjacentPlayers.prev ? { href: `${basePath}/player/${adjacentPlayers.prev.number}`, label: `#${adjacentPlayers.prev.number}`, sublabel: adjacentPlayers.prev.name } : null}
-              next={adjacentPlayers.next ? { href: `${basePath}/player/${adjacentPlayers.next.number}`, label: `#${adjacentPlayers.next.number}`, sublabel: adjacentPlayers.next.name } : null}
+              prev={adjacentPlayers.prev ? { href: `${basePath}/member/${adjacentPlayers.prev.memberId}`, label: getMemberLabel({ ...adjacentPlayers.prev, role: adjacentPlayers.prev.number !== null ? "player" : "coach", hasImage: false }), sublabel: adjacentPlayers.prev.name } : null}
+              next={adjacentPlayers.next ? { href: `${basePath}/member/${adjacentPlayers.next.memberId}`, label: getMemberLabel({ ...adjacentPlayers.next, role: adjacentPlayers.next.number !== null ? "player" : "coach", hasImage: false }), sublabel: adjacentPlayers.next.name } : null}
             />
           </div>
         ) : null}

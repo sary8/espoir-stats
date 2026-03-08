@@ -7,10 +7,10 @@ interface HeroProps {
   seasonLabel: string;
   totalPoints: number;
   totalGames: number;
-  totalPlayers: number;
+  totalMembers: number;
 }
 
-export default function HeroSection({ seasonLabel, totalPoints, totalGames, totalPlayers }: HeroProps) {
+export default function HeroSection({ seasonLabel, totalPoints, totalGames, totalMembers }: HeroProps) {
   const prefersReducedMotion = useReducedMotion();
   const noMotion = { duration: 0 };
 
@@ -55,9 +55,9 @@ export default function HeroSection({ seasonLabel, totalPoints, totalGames, tota
           </div>
           <div className="text-center">
             <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-              <StatCounter end={totalPlayers} />
+              <StatCounter end={totalMembers} />
             </div>
-            <div className="text-xs sm:text-sm text-neutral-400 mt-1">PLAYERS</div>
+            <div className="text-xs sm:text-sm text-neutral-400 mt-1">MEMBERS</div>
           </div>
         </motion.div>
       </div>

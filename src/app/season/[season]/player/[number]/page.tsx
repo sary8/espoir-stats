@@ -1,6 +1,5 @@
-import { notFound } from "next/navigation";
-import { getPlayerByNumber, getAllPlayerNumbers, getSeasons, getSeasonsWithData, getAdjacentPlayers } from "@/lib/data";
-import PlayerDetailClient from "@/components/sections/PlayerDetailClient";
+import { redirect } from "next/navigation";
+import { getAllPlayerNumbers, getSeasonsWithData } from "@/lib/data";
 
 export function generateStaticParams() {
   const seasons = getSeasonsWithData();
@@ -19,17 +18,5 @@ interface PageProps {
 
 export default async function SeasonPlayerPage({ params }: PageProps) {
   const { season, number } = await params;
-  const seasons = getSeasons();
-  const seasonInfo = seasons.find((s) => s.id === season);
-  if (!seasonInfo) notFound();
-
-  const basePath = `/season/${season}`;
-  const playerNum = parseInt(number, 10);
-  const data = getPlayerByNumber(playerNum, season);
-
-  if (!data) notFound();
-
-  const adjacent = getAdjacentPlayers(playerNum, season);
-
-  return <PlayerDetailClient player={data.player} summary={data.summary} games={data.games} basePath={basePath} seasons={seasons} seasonLabel={seasonInfo.label} seasonId={season} adjacentPlayers={adjacent} />;
+  redirect(`/season/${season}/member/${number}`);
 }

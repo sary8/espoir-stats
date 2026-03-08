@@ -6,7 +6,7 @@ import type { SeasonInfo } from "@/lib/types";
 interface SeasonSwitcherProps {
   seasons: SeasonInfo[];
   currentSeason: string;
-  pageType: "games" | "players";
+  pageType: "games" | "members";
 }
 
 export default function SeasonSwitcher({ seasons, currentSeason, pageType }: SeasonSwitcherProps) {

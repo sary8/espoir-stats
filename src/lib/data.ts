@@ -39,12 +39,29 @@ export function getSeasonsWithData(): SeasonInfo[] {
   return getSeasons().filter((s) => seasonHasData(s.id));
 }
 
-function hasPlayerImage(season: string, number: number): boolean {
-  const filePath = path.join(process.cwd(), "private", "players", season, `${number}.png`);
+function hasMemberImage(season: string, memberId: string): boolean {
+  const filePath = path.join(process.cwd(), "private", "players", season, `${memberId}.png`);
   return fs.existsSync(filePath);
 }
 
 const _rosterCache = new Map<string, RosterPlayer[]>();
+
+function parseRosterNumber(value: string | undefined): number | null {
+  const parsed = parseStatInt(value);
+  return parsed > 0 ? parsed : null;
+}
+
+function parseRosterRole(value: string | undefined): "player" | "coach" {
+  return value === "coach" ? "coach" : "player";
+}
+
+function compareRosterPlayers(a: RosterPlayer, b: RosterPlayer): number {
+  if (a.role !== b.role) return a.role === "player" ? -1 : 1;
+  if (a.number !== null && b.number !== null) return a.number - b.number;
+  if (a.number !== null) return -1;
+  if (b.number !== null) return 1;
+  return a.name.localeCompare(b.name, "ja");
+}
 
 export function getRosterPlayers(season?: string): RosterPlayer[] {
   const s = season ?? getDefaultSeason();
@@ -53,13 +70,19 @@ export function getRosterPlayers(season?: string): RosterPlayer[] {
   const csv = readCsv(s, "roster.csv");
   const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
   const roster = data
-    .map((row) => ({
-      number: parseStatInt(row["No."]),
-      name: row["選手名"],
-      hasImage: hasPlayerImage(s, parseStatInt(row["No."])),
-    }))
-    .filter((player) => player.number > 0)
-    .sort((a, b) => a.number - b.number);
+    .map((row) => {
+      const number = parseRosterNumber(row["No."]);
+      const memberId = (row["memberId"] ?? "").trim() || (number !== null ? String(number) : "");
+      return {
+        memberId,
+        role: parseRosterRole(row["role"]),
+        number,
+        name: row["選手名"],
+        hasImage: memberId ? hasMemberImage(s, memberId) : false,
+      };
+    })
+    .filter((member) => member.memberId && member.name)
+    .sort(compareRosterPlayers);
 
   _rosterCache.set(s, roster);
   return roster;
@@ -185,14 +208,18 @@ export function getPlayerSummaries(season?: string): PlayerSummary[] {
   return result;
 }
 
-export function getPlayerList(season?: string): PlayerListEntry[] {
+export function getMemberList(season?: string): PlayerListEntry[] {
   const roster = getRosterPlayers(season);
   const summaries = getPlayerSummaries(season);
   const summaryMap = new Map(summaries.map((summary) => [summary.number, summary]));
-  return roster.map((player) => ({
-    ...player,
-    summary: summaryMap.get(player.number) ?? null,
+  return roster.map((member) => ({
+    ...member,
+    summary: member.number !== null && member.role === "player" ? (summaryMap.get(member.number) ?? null) : null,
   }));
+}
+
+export function getPlayerList(season?: string): PlayerListEntry[] {
+  return getMemberList(season);
 }
 
 interface GameInfoRow {
@@ -310,35 +337,61 @@ export function getAllGameIds(season?: string): string[] {
   return getGameStats(season).map((g) => g.gameId);
 }
 
-export function getPlayerByNumber(number: number, season?: string): PlayerProfile | null {
+export function getMemberById(memberId: string, season?: string): PlayerProfile | null {
   const roster = getRosterPlayers(season);
-  const player = roster.find((entry) => entry.number === number);
-  if (!player) return null;
+  const member = roster.find((entry) => entry.memberId === memberId);
+  if (!member) return null;
 
   const summaries = getPlayerSummaries(season);
   const games = getGameStats(season);
-  const summary = summaries.find((p) => p.number === number);
+  const summary = member.number !== null && member.role === "player"
+    ? (summaries.find((p) => p.number === member.number) ?? null)
+    : null;
 
-  const playerGames = games
+  const memberGames = member.number !== null && member.role === "player"
+    ? games
     .map((g) => {
-      const stat = g.players.find((p) => p.number === number);
+      const stat = g.players.find((p) => p.number === member.number);
       return stat ? { gameId: g.gameId, opponent: g.opponent, date: g.date, stat } : null;
     })
-    .filter((g): g is { gameId: string; opponent: string; date: string; stat: GamePlayerStat } => g !== null);
+    .filter((g): g is { gameId: string; opponent: string; date: string; stat: GamePlayerStat } => g !== null)
+    : [];
 
-  return { player, summary: summary ?? null, games: playerGames };
+  return { player: member, summary, games: memberGames };
+}
+
+export function getPlayerByNumber(number: number, season?: string): PlayerProfile | null {
+  const member = getRosterPlayers(season).find((entry) => entry.role === "player" && entry.number === number);
+  return member ? getMemberById(member.memberId, season) : null;
+}
+
+export function getAllMemberIds(season?: string): string[] {
+  return getRosterPlayers(season).map((member) => member.memberId);
 }
 
 export function getAllPlayerNumbers(season?: string): number[] {
-  return getRosterPlayers(season).map((p) => p.number);
+  return getRosterPlayers(season)
+    .filter((member) => member.role === "player" && member.number !== null)
+    .map((member) => member.number as number);
+}
+
+export function getAdjacentMembers(memberId: string, season?: string): { prev: { memberId: string; number: number | null; name: string } | null; next: { memberId: string; number: number | null; name: string } | null } {
+  const members = getRosterPlayers(season);
+  const idx = members.findIndex((member) => member.memberId === memberId);
+  return {
+    prev: idx > 0 ? { memberId: members[idx - 1].memberId, number: members[idx - 1].number, name: members[idx - 1].name } : null,
+    next: idx < members.length - 1 ? { memberId: members[idx + 1].memberId, number: members[idx + 1].number, name: members[idx + 1].name } : null,
+  };
 }
 
 export function getAdjacentPlayers(number: number, season?: string): { prev: { number: number; name: string } | null; next: { number: number; name: string } | null } {
-  const players = getRosterPlayers(season);
+  const players = getRosterPlayers(season).filter((member) => member.role === "player" && member.number !== null);
   const idx = players.findIndex((p) => p.number === number);
+  const prevPlayer = idx > 0 ? players[idx - 1] : null;
+  const nextPlayer = idx < players.length - 1 ? players[idx + 1] : null;
   return {
-    prev: idx > 0 ? { number: players[idx - 1].number, name: players[idx - 1].name } : null,
-    next: idx < players.length - 1 ? { number: players[idx + 1].number, name: players[idx + 1].name } : null,
+    prev: prevPlayer && prevPlayer.number !== null ? { number: prevPlayer.number, name: prevPlayer.name } : null,
+    next: nextPlayer && nextPlayer.number !== null ? { number: nextPlayer.number, name: nextPlayer.name } : null,
   };
 }
 

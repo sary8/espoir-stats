@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getPlayerSummaries, getGameStats, getPlayerByNumber, getAllPlayerNumbers, getGameById, getAllGameIds, getRosterPlayers, getPlayerList } from "./data";
+import { getPlayerSummaries, getGameStats, getPlayerByNumber, getAllPlayerNumbers, getGameById, getAllGameIds, getRosterPlayers, getMemberList, getMemberById, getAllMemberIds } from "./data";
 
 function parseMinutes(value: string): number {
   const [m, s = "0"] = value.split(":");
@@ -163,22 +163,51 @@ describe("getAllPlayerNumbers", () => {
 
 describe("getRosterPlayers", () => {
   it("ロスターCSVから選手一覧を返す", () => {
-    const players = getRosterPlayers("2025-2026");
-    expect(players.length).toBeGreaterThan(0);
-    expect(players.find((player) => player.number === 7)?.name).toBe("北川 友加里");
-    expect(players.find((player) => player.number === 3)).toBeUndefined();
+    const members = getRosterPlayers("2025-2026");
+    expect(members.length).toBeGreaterThan(0);
+    expect(members.find((member) => member.number === 7)?.name).toBe("北川 友加里");
+    expect(members.find((member) => member.number === 3)).toBeUndefined();
+    expect(members.find((member) => member.memberId === "coach")?.role).toBe("coach");
   });
 });
 
-describe("getPlayerList", () => {
+describe("getMemberList", () => {
   it("ロスター基準でサマリを left join する", () => {
-    const players = getPlayerList("2025-2026");
-    const rosterOnly = players.find((player) => player.number === 7);
-    const statPlayer = players.find((player) => player.number === 8);
+    const members = getMemberList("2025-2026");
+    const rosterOnly = members.find((member) => member.number === 7);
+    const statPlayer = members.find((member) => member.number === 8);
+    const coach = members.find((member) => member.memberId === "coach");
 
     expect(rosterOnly).toBeDefined();
     expect(rosterOnly!.summary).toBeNull();
     expect(statPlayer).toBeDefined();
     expect(statPlayer!.summary).not.toBeNull();
+    expect(coach).toBeDefined();
+    expect(coach!.summary).toBeNull();
+  });
+});
+
+describe("getMemberById", () => {
+  it("存在する memberId でメンバーデータを返す", () => {
+    const result = getMemberById("7", "2025-2026");
+    expect(result).not.toBeNull();
+    expect(result!.player.memberId).toBe("7");
+    expect(result!.player.number).toBe(7);
+  });
+
+  it("コーチは summary と games を持たない", () => {
+    const result = getMemberById("coach", "2025-2026");
+    expect(result).not.toBeNull();
+    expect(result!.player.role).toBe("coach");
+    expect(result!.summary).toBeNull();
+    expect(result!.games).toEqual([]);
+  });
+});
+
+describe("getAllMemberIds", () => {
+  it("coach を含む memberId 配列を返す", () => {
+    const ids = getAllMemberIds("2025-2026");
+    expect(ids).toContain("7");
+    expect(ids).toContain("coach");
   });
 });

@@ -4,8 +4,12 @@ export interface SeasonInfo {
   default?: boolean;
 }
 
+export type MemberRole = "player" | "coach";
+
 export interface RosterPlayer {
-  number: number;
+  memberId: string;
+  role: MemberRole;
+  number: number | null;
   name: string;
   hasImage: boolean;
 }

@@ -26,7 +26,7 @@ export default function Footer({ seasonLabel }: FooterProps) {
         {isHome ? (
           <nav className="flex justify-center gap-6 mb-4" aria-label="フッターナビゲーション">
             <a href="#overview" className="hover:text-white transition-colors rounded">Overview</a>
-            <a href="#players" className="hover:text-white transition-colors rounded">Players</a>
+            <a href="#members" className="hover:text-white transition-colors rounded">Members</a>
             <a href="#games" className="hover:text-white transition-colors rounded">Games</a>
           </nav>
         ) : (
