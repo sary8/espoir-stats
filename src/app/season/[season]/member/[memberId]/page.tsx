@@ -53,6 +53,7 @@ export default async function SeasonMemberPage({ params }: PageProps) {
   const crossSeasonMembers = getAllPlayerSeasonStats();
   const seasonAwards = getSeasonAwards(players, gameStats, roster, crossSeasonMembers);
   const awards = getPlayerAwards(memberId, seasonAwards);
+  const crossSeasonData = crossSeasonMembers.find((m) => m.memberId === memberId);
 
-  return <PlayerDetailClient member={data.player} summary={data.summary} games={data.games} basePath={basePath} seasons={seasons} seasonLabel={seasonInfo.label} seasonId={season} adjacentPlayers={adjacent} badges={badges} playerAwards={awards} />;
+  return <PlayerDetailClient member={data.player} summary={data.summary} games={data.games} basePath={basePath} seasons={seasons} seasonLabel={seasonInfo.label} seasonId={season} adjacentPlayers={adjacent} badges={badges} playerAwards={awards} crossSeasonData={crossSeasonData} />;
 }

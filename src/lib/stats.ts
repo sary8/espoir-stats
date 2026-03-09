@@ -48,6 +48,19 @@ export function calcTeamPossEst(
   return fga + 0.4 * team.ftAttempt - 1.07 * orebFactor * (fga - fgm) + team.turnovers;
 }
 
+export interface GrowthEntry {
+  label: string;
+  prev: number;
+  current: number;
+  diff: number;
+  growthRate: number | null;
+}
+
+export function calcGrowthRate(prev: number, current: number): number | null {
+  if (prev === 0) return current > 0 ? null : null;
+  return ((current - prev) / Math.abs(prev)) * 100;
+}
+
 export function calcAdvancedStats(espoir: TeamTotals, opponent: TeamTotals) {
   const ePossEst = calcTeamPossEst(espoir, opponent.defReb);
   const oPossEst = calcTeamPossEst(opponent, espoir.defReb);

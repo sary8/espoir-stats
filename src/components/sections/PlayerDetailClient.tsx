@@ -17,9 +17,10 @@ import Footer from "../layout/Footer";
 import PrevNextNav from "../ui/PrevNextNav";
 import Badge from "../ui/Badge";
 import { shootingColors } from "@/config/theme";
-import type { PlayerSummary, GamePlayerStat, SeasonInfo, RosterPlayer, MemberRole, Award } from "@/lib/types";
+import type { PlayerSummary, GamePlayerStat, SeasonInfo, RosterPlayer, MemberRole, Award, CrossSeasonMember } from "@/lib/types";
 import { getRoleLabel, isStaffRole } from "@/lib/types";
 import { calcEff, parseMinutesToSeconds } from "@/lib/stats";
+import PlayerGrowthSection from "./PlayerGrowthSection";
 
 interface TopBadges {
   topScorer: number;
@@ -60,6 +61,7 @@ interface PlayerDetailClientProps {
   adjacentPlayers?: AdjacentPlayer;
   badges?: TopBadges;
   playerAwards?: Award[];
+  crossSeasonData?: CrossSeasonMember;
 }
 
 function getMemberLabel(member: RosterPlayer): string {
@@ -90,7 +92,7 @@ const awardBadgeVariant: Record<string, "purple" | "blue" | "green" | "pink" | "
   "通算50試合出場": "yellow",
 };
 
-export default function PlayerDetailClient({ member, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers, badges, playerAwards }: PlayerDetailClientProps) {
+export default function PlayerDetailClient({ member, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers, badges, playerAwards, crossSeasonData }: PlayerDetailClientProps) {
   const prefersReducedMotion = useReducedMotion();
   const p = member;
 
@@ -419,6 +421,10 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
         </AnimatedSection>
           </>
         )}
+
+        {crossSeasonData && crossSeasonData.seasons.length >= 2 ? (
+          <PlayerGrowthSection crossSeasonData={crossSeasonData} />
+        ) : null}
 
         {adjacentPlayers ? (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-12">
