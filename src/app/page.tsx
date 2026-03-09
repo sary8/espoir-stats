@@ -114,11 +114,11 @@ export default function Home() {
             }))}
           />
         </Suspense>
+        <StatsRanking players={players} />
         <PlayerCards
           members={members}
           {...topPlayers}
         />
-        <StatsRanking players={players} />
       </main>
       <Footer seasonLabel={seasonLabel} />
     </>
