@@ -153,8 +153,8 @@ describe("getMilestones", () => {
         number: 1,
         role: "player",
         seasons: [
-          { seasonId: "s1", label: "S1", memberId: "1", name: "選手1", number: 1, role: "player", games: 10, totalPoints: 60, ppg: 6, totalRebounds: 10, rpg: 1, totalAssists: 5, apg: 0.5, totalSteals: 3, spg: 0.3, totalBlocks: 1, bpg: 0.1, threePointPct: 30, twoPointPct: 40, ftPct: 70, eff: 20, avgEff: 2 },
-          { seasonId: "s2", label: "S2", memberId: "1", name: "選手1", number: 1, role: "player", games: 10, totalPoints: 50, ppg: 5, totalRebounds: 10, rpg: 1, totalAssists: 5, apg: 0.5, totalSteals: 3, spg: 0.3, totalBlocks: 1, bpg: 0.1, threePointPct: 30, twoPointPct: 40, ftPct: 70, eff: 20, avgEff: 2 },
+          { seasonId: "s1", label: "S1", memberId: "1", name: "選手1", number: 1, role: "player", games: 10, totalPoints: 60, ppg: 6, totalRebounds: 10, rpg: 1, totalAssists: 5, apg: 0.5, totalSteals: 3, spg: 0.3, totalBlocks: 1, bpg: 0.1, totalTurnovers: 5, topg: 0.5, totalPersonalFouls: 10, pfpg: 1, totalFoulsDrawn: 8, fdpg: 0.8, threePointPct: 30, twoPointPct: 40, ftPct: 70, eff: 20, avgEff: 2 },
+          { seasonId: "s2", label: "S2", memberId: "1", name: "選手1", number: 1, role: "player", games: 10, totalPoints: 50, ppg: 5, totalRebounds: 10, rpg: 1, totalAssists: 5, apg: 0.5, totalSteals: 3, spg: 0.3, totalBlocks: 1, bpg: 0.1, totalTurnovers: 5, topg: 0.5, totalPersonalFouls: 10, pfpg: 1, totalFoulsDrawn: 8, fdpg: 0.8, threePointPct: 30, twoPointPct: 40, ftPct: 70, eff: 20, avgEff: 2 },
         ],
       },
     ];
@@ -172,7 +172,7 @@ describe("getMilestones", () => {
         number: 1,
         role: "player",
         seasons: [
-          { seasonId: "s1", label: "S1", memberId: "1", name: "選手1", number: 1, role: "player", games: 5, totalPoints: 20, ppg: 4, totalRebounds: 5, rpg: 1, totalAssists: 2, apg: 0.4, totalSteals: 1, spg: 0.2, totalBlocks: 0, bpg: 0, threePointPct: 20, twoPointPct: 30, ftPct: 50, eff: 5, avgEff: 1 },
+          { seasonId: "s1", label: "S1", memberId: "1", name: "選手1", number: 1, role: "player", games: 5, totalPoints: 20, ppg: 4, totalRebounds: 5, rpg: 1, totalAssists: 2, apg: 0.4, totalSteals: 1, spg: 0.2, totalBlocks: 0, bpg: 0, totalTurnovers: 3, topg: 0.6, totalPersonalFouls: 5, pfpg: 1, totalFoulsDrawn: 4, fdpg: 0.8, threePointPct: 20, twoPointPct: 30, ftPct: 50, eff: 5, avgEff: 1 },
         ],
       },
     ];
