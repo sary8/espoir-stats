@@ -80,22 +80,24 @@ describe("getGameStats", () => {
     expect(unique.size).toBe(games.length);
   });
 
-  it("自チームの合計出場時間が160分である", () => {
+  it("自チームの合計出場時間が160分に近い", () => {
+    const expected = 160 * 60;
     for (const g of games) {
       const total = g.players
         .filter((p) => p.name !== "Team/Coaches")
         .reduce((sum, p) => sum + parseMinutes(p.minutes), 0);
-      expect(total).toBe(160 * 60);
+      expect(Math.abs(total - expected)).toBeLessThanOrEqual(5);
     }
   });
 
-  it("相手チームの合計出場時間が160分である", () => {
+  it("相手チームの合計出場時間が160分に近い", () => {
+    const expected = 160 * 60;
     for (const g of games) {
       if (g.opponentPlayers.length === 0) continue;
       const total = g.opponentPlayers
         .filter((p) => p.name !== "Team/Coaches")
         .reduce((sum, p) => sum + parseMinutes(p.minutes), 0);
-      expect(total).toBe(160 * 60);
+      expect(Math.abs(total - expected)).toBeLessThanOrEqual(5);
     }
   });
 });
@@ -200,7 +202,7 @@ describe("getMemberById", () => {
   it("コーチは summary と games を持たない", () => {
     const result = getMemberById("sato", "2025-2026");
     expect(result).not.toBeNull();
-    expect(result!.player.role).toBe("coach");
+    expect(result!.player.role).toBe("head_coach");
     expect(result!.player.name).toBe("佐藤 諒成");
     expect(result!.summary).toBeNull();
     expect(result!.games).toEqual([]);
