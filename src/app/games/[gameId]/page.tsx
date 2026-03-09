@@ -5,8 +5,8 @@ import Footer from "@/components/layout/Footer";
 import GameDetailClient from "@/components/sections/GameDetailClient";
 import GameNotInSeason from "@/components/sections/GameNotInSeason";
 
-export function generateStaticParams() {
-  return getAllGameIds().map((gameId) => ({
+export async function generateStaticParams() {
+  return (await getAllGameIds()).map((gameId) => ({
     gameId,
   }));
 }
@@ -17,21 +17,21 @@ interface PageProps {
 
 export default async function GameDetailPage({ params }: PageProps) {
   const { gameId } = await params;
-  const seasons = getSeasons();
-  const season = getDefaultSeason();
+  const seasons = await getSeasons();
+  const season = await getDefaultSeason();
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
   const decodedGameId = decodeURIComponent(gameId);
-  const game = getGameById(decodedGameId, season);
+  const game = await getGameById(decodedGameId, season);
 
   if (!game) {
-    const cross = findGameAcrossSeasons(decodedGameId);
+    const cross = await findGameAcrossSeasons(decodedGameId);
     if (cross) {
       return <GameNotInSeason opponent={cross.opponent} seasonLabel={seasonLabel} seasons={seasons} gameSeasonIds={cross.seasonIds} />;
     }
     notFound();
   }
 
-  const adjacent = getAdjacentGames(decodedGameId, season);
+  const adjacent = await getAdjacentGames(decodedGameId, season);
 
   return (
     <>

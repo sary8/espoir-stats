@@ -1,63 +1,42 @@
-import fs from "fs";
-import path from "path";
-import Papa from "papaparse";
-import type { PlayerSummary, GamePlayerStat, GameResult, QuarterScore, GameInfo, SeasonInfo, RosterPlayer, PlayerListEntry, PlayerProfile, TeamSeasonStats, PlayerSeasonStats, CrossSeasonMember, MemberRole } from "./types";
-import { parsePctString } from "./utils";
+import { eq, and, asc, desc } from "drizzle-orm";
+import { db } from "./db";
+import * as schema from "./db/schema";
+import type {
+  PlayerSummary,
+  GamePlayerStat,
+  GameResult,
+  QuarterScore,
+  GameInfo,
+  SeasonInfo,
+  RosterPlayer,
+  PlayerListEntry,
+  PlayerProfile,
+  TeamSeasonStats,
+  PlayerSeasonStats,
+  CrossSeasonMember,
+  MemberRole,
+} from "./types";
 import { calcEff, calcAdvancedStats, parseMinutesToSeconds } from "./stats";
 
-// --- Season management ---
+// --- helpers ---
 
-let _cachedSeasons: SeasonInfo[] | null = null;
-
-export function getSeasons(): SeasonInfo[] {
-  if (_cachedSeasons) return _cachedSeasons;
-  const filePath = path.join(process.cwd(), "stats-csv", "seasons.json");
-  const json = fs.readFileSync(filePath, "utf-8");
-  const parsed = JSON.parse(json) as { seasons: SeasonInfo[] };
-  _cachedSeasons = parsed.seasons;
-  return parsed.seasons;
+function toNumber(val: string | null | undefined): number {
+  if (!val) return 0;
+  const n = parseFloat(val);
+  return isNaN(n) ? 0 : n;
 }
 
-export function getDefaultSeason(): string {
-  const seasons = getSeasons();
-  const def = seasons.find((s) => s.default);
-  return def ? def.id : seasons[0].id;
+function toNullableNumber(val: string | null | undefined): number | null {
+  if (val === null || val === undefined) return null;
+  const n = parseFloat(val);
+  return isNaN(n) ? null : n;
 }
 
-// --- CSV reading ---
-
-function readCsv(season: string, filename: string): string {
-  const filePath = path.join(process.cwd(), "stats-csv", season, filename);
-  return fs.readFileSync(filePath, "utf-8");
-}
-
-function seasonHasData(season: string): boolean {
-  const filePath = path.join(process.cwd(), "stats-csv", season, "選手別サマリ.csv");
-  return fs.existsSync(filePath);
-}
-
-export function getSeasonsWithData(): SeasonInfo[] {
-  return getSeasons().filter((s) => seasonHasData(s.id));
-}
-
-function hasMemberImage(season: string, memberId: string): boolean {
-  const filePath = path.join(process.cwd(), "private", "players", season, `${memberId}.png`);
-  return fs.existsSync(filePath);
-}
-
-const _rosterCache = new Map<string, RosterPlayer[]>();
-
-function parseRosterNumber(value: string | undefined): number | null {
-  const parsed = parseStatInt(value);
-  return parsed > 0 ? parsed : null;
-}
-
-function parseRosterRole(value: string | undefined): MemberRole {
-  const v = (value ?? "").trim();
-  if (v === "head_coach") return "head_coach";
-  if (v === "assistant_coach") return "assistant_coach";
-  if (v === "manager") return "manager";
-  if (v === "coach") return "coach";
+function toRole(val: string): MemberRole {
+  if (val === "head_coach") return "head_coach";
+  if (val === "assistant_coach") return "assistant_coach";
+  if (val === "manager") return "manager";
+  if (val === "coach") return "coach";
   return "player";
 }
 
@@ -69,154 +48,132 @@ function compareRosterPlayers(a: RosterPlayer, b: RosterPlayer): number {
   return a.name.localeCompare(b.name, "ja");
 }
 
-export function getRosterPlayers(season?: string): RosterPlayer[] {
-  const s = season ?? getDefaultSeason();
-  if (_rosterCache.has(s)) return _rosterCache.get(s)!;
-
-  const csv = readCsv(s, "roster.csv");
-  const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
-  const roster = data
-    .map((row) => {
-      const number = parseRosterNumber(row["No."]);
-      const memberId = (row["memberId"] ?? "").trim() || (number !== null ? String(number) : "");
-      return {
-        memberId,
-        role: parseRosterRole(row["role"]),
-        number,
-        name: row["選手名"],
-        hasImage: memberId ? hasMemberImage(s, memberId) : false,
-      };
-    })
-    .filter((member) => member.memberId && member.name)
-    .sort(compareRosterPlayers);
-
-  _rosterCache.set(s, roster);
-  return roster;
-}
-
-function isTeamCoaches(row: Record<string, string>): boolean {
-  return row["選手名"] === "Team/Coaches";
-}
-
-function parseStatInt(value: string | undefined): number {
-  const parsed = parseInt(value ?? "", 10);
-  return Number.isNaN(parsed) ? 0 : parsed;
-}
-
-function getGameIdFromInfoRow(row: Record<string, string>): string {
-  const gameId = row["試合ID"];
-  if (gameId) return gameId;
-
-  const date = row["日付"];
-  const opponent = row["対戦相手"];
-  if (!date || !opponent) {
-    throw new Error("試合情報.csv に必要な試合識別情報がありません");
-  }
-
-  return `${date}__${opponent}`;
-}
-
-function getGameIdFromStatsRow(row: Record<string, string>): string {
-  const gameId = row["試合ID"];
-  if (!gameId) {
-    throw new Error("スタッツCSV に 試合ID 列がありません");
-  }
-  return gameId;
-}
-
-function parseGamePlayerStat(row: Record<string, string>): GamePlayerStat {
+function mapGamePlayerStat(
+  row: typeof schema.gamePlayerStats.$inferSelect,
+  gameId: string,
+  opponent: string,
+): GamePlayerStat {
   return {
-    gameId: getGameIdFromStatsRow(row),
-    opponent: row["対戦相手"],
-    number: parseStatInt(row["No."]) || -1,
-    name: row["選手名"],
-    starter: row["GS"] === "●",
-    points: parseStatInt(row["PTS"]),
-    threePointMade: parseStatInt(row["3PM"]),
-    threePointAttempt: parseStatInt(row["3PA"]),
-    threePointPct: parsePctString(row["3P%"]),
-    twoPointMade: parseStatInt(row["2PM"]),
-    twoPointAttempt: parseStatInt(row["2PA"]),
-    twoPointPct: parsePctString(row["2P%"]),
-    dunk: parseStatInt(row["DK"]),
-    ftMade: parseStatInt(row["FTM"]),
-    ftAttempt: parseStatInt(row["FTA"]),
-    ftPct: parsePctString(row["FT%"]),
-    offReb: parseStatInt(row["OR"]),
-    defReb: parseStatInt(row["DR"]),
-    totalReb: parseStatInt(row["TOT"]),
-    assists: parseStatInt(row["AST"]),
-    steals: parseStatInt(row["STL"]),
-    blocks: parseStatInt(row["BLK"]),
-    turnovers: parseStatInt(row["TO"]),
-    personalFouls: parseStatInt(row["PF"]),
-    technicalFouls: parseStatInt(row["TF"]),
-    offensiveFouls: parseStatInt(row["OF"]),
-    foulsDrawn: parseStatInt(row["FO"]),
-    disqualifications: parseStatInt(row["DQ"]),
-    minutes: row["MIN"],
+    gameId,
+    opponent,
+    number: row.number,
+    name: row.name,
+    starter: row.starter,
+    points: row.points,
+    threePointMade: row.threePointMade,
+    threePointAttempt: row.threePointAttempt,
+    threePointPct: toNullableNumber(row.threePointPct),
+    twoPointMade: row.twoPointMade,
+    twoPointAttempt: row.twoPointAttempt,
+    twoPointPct: toNullableNumber(row.twoPointPct),
+    dunk: row.dunk,
+    ftMade: row.ftMade,
+    ftAttempt: row.ftAttempt,
+    ftPct: toNullableNumber(row.ftPct),
+    offReb: row.offReb,
+    defReb: row.defReb,
+    totalReb: row.totalReb,
+    assists: row.assists,
+    steals: row.steals,
+    blocks: row.blocks,
+    turnovers: row.turnovers,
+    personalFouls: row.personalFouls,
+    technicalFouls: row.technicalFouls,
+    offensiveFouls: row.offensiveFouls,
+    foulsDrawn: row.foulsDrawn,
+    disqualifications: row.disqualifications,
+    minutes: row.minutes ?? "",
   };
 }
 
-// --- Cached data with season key ---
+// --- Season management ---
 
-const _playerSummariesCache = new Map<string, PlayerSummary[]>();
+export async function getSeasons(): Promise<SeasonInfo[]> {
+  const rows = await db.select().from(schema.seasons);
+  return rows.map((r) => ({
+    id: r.id,
+    label: r.label,
+    default: r.isDefault || undefined,
+  }));
+}
 
-export function getPlayerSummaries(season?: string): PlayerSummary[] {
-  const s = season ?? getDefaultSeason();
-  if (_playerSummariesCache.has(s)) return _playerSummariesCache.get(s)!;
+export async function getDefaultSeason(): Promise<string> {
+  const seasons = await getSeasons();
+  const def = seasons.find((s) => s.default);
+  return def ? def.id : seasons[0].id;
+}
 
-  const csv = readCsv(s, "選手別サマリ.csv");
-  const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
-
-  const gameCsv = readCsv(s, "全試合スタッツ.csv");
-  const { data: gameData } = Papa.parse<Record<string, string>>(gameCsv, { header: true, skipEmptyLines: true });
-  const foulMap = new Map<number, { pf: number; fo: number }>();
-  for (const row of gameData) {
-    if (isTeamCoaches(row)) continue;
-    const num = parseStatInt(row["No."]);
-    const entry = foulMap.get(num) ?? { pf: 0, fo: 0 };
-    entry.pf += parseStatInt(row["PF"]);
-    entry.fo += parseStatInt(row["FO"]);
-    foulMap.set(num, entry);
+export async function getSeasonsWithData(): Promise<SeasonInfo[]> {
+  const seasons = await getSeasons();
+  const result: SeasonInfo[] = [];
+  for (const s of seasons) {
+    const [row] = await db
+      .select({ id: schema.playerSummaries.id })
+      .from(schema.playerSummaries)
+      .where(eq(schema.playerSummaries.seasonId, s.id))
+      .limit(1);
+    if (row) result.push(s);
   }
-
-  const result = data.map((row) => {
-    const num = parseStatInt(row["No."]);
-    const fouls = foulMap.get(num) ?? { pf: 0, fo: 0 };
-    return {
-      number: num,
-      name: row["選手名"],
-      games: parseStatInt(row["試合数"]),
-      totalPoints: parseStatInt(row["合計得点"]),
-      ppg: parseFloat(row["平均得点"]),
-      threePointMade: parseStatInt(row["3PM"]),
-      threePointAttempt: parseStatInt(row["3PA"]),
-      threePointPct: parsePctString(row["3P%"]),
-      twoPointMade: parseStatInt(row["2PM"]),
-      twoPointAttempt: parseStatInt(row["2PA"]),
-      twoPointPct: parsePctString(row["2P%"]),
-      ftMade: parseStatInt(row["FTM"]),
-      ftAttempt: parseStatInt(row["FTA"]),
-      ftPct: parsePctString(row["FT%"]),
-      offReb: parseStatInt(row["OR"]),
-      defReb: parseStatInt(row["DR"]),
-      totalReb: parseStatInt(row["TOT REB"]),
-      assists: parseStatInt(row["AST"]),
-      steals: parseStatInt(row["STL"]),
-      blocks: parseStatInt(row["BLK"]),
-      turnovers: parseStatInt(row["TO"]),
-      personalFouls: fouls.pf,
-      foulsDrawn: fouls.fo,
-    };
-  });
-  _playerSummariesCache.set(s, result);
   return result;
 }
 
-export function getMemberList(season?: string): PlayerListEntry[] {
-  const roster = getRosterPlayers(season);
-  const summaries = getPlayerSummaries(season);
+// --- Roster ---
+
+export async function getRosterPlayers(season?: string): Promise<RosterPlayer[]> {
+  const s = season ?? await getDefaultSeason();
+  const rows = await db
+    .select()
+    .from(schema.roster)
+    .where(eq(schema.roster.seasonId, s));
+  return rows
+    .map((r) => ({
+      memberId: r.memberId,
+      role: toRole(r.role),
+      number: r.number,
+      name: r.name,
+      hasImage: r.hasImage,
+    }))
+    .sort(compareRosterPlayers);
+}
+
+// --- Player summaries ---
+
+export async function getPlayerSummaries(season?: string): Promise<PlayerSummary[]> {
+  const s = season ?? await getDefaultSeason();
+  const rows = await db
+    .select()
+    .from(schema.playerSummaries)
+    .where(eq(schema.playerSummaries.seasonId, s));
+  return rows.map((r) => ({
+    number: r.number,
+    name: r.name,
+    games: r.games,
+    totalPoints: r.totalPoints,
+    ppg: toNumber(r.ppg),
+    threePointMade: r.threePointMade,
+    threePointAttempt: r.threePointAttempt,
+    threePointPct: toNullableNumber(r.threePointPct),
+    twoPointMade: r.twoPointMade,
+    twoPointAttempt: r.twoPointAttempt,
+    twoPointPct: toNullableNumber(r.twoPointPct),
+    ftMade: r.ftMade,
+    ftAttempt: r.ftAttempt,
+    ftPct: toNullableNumber(r.ftPct),
+    offReb: r.offReb,
+    defReb: r.defReb,
+    totalReb: r.totalReb,
+    assists: r.assists,
+    steals: r.steals,
+    blocks: r.blocks,
+    turnovers: r.turnovers,
+    personalFouls: r.personalFouls,
+    foulsDrawn: r.foulsDrawn,
+  }));
+}
+
+export async function getMemberList(season?: string): Promise<PlayerListEntry[]> {
+  const roster = await getRosterPlayers(season);
+  const summaries = await getPlayerSummaries(season);
   const summaryMap = new Map(summaries.map((summary) => [summary.number, summary]));
   return roster.map((member) => ({
     ...member,
@@ -224,101 +181,69 @@ export function getMemberList(season?: string): PlayerListEntry[] {
   }));
 }
 
-export function getPlayerList(season?: string): PlayerListEntry[] {
+export async function getPlayerList(season?: string): Promise<PlayerListEntry[]> {
   return getMemberList(season);
 }
 
-interface GameInfoRow {
-  gameId: string;
-  date: string;
-  youtubeUrl: string | null;
-  quarterScores: QuarterScore[];
-  gameInfo: GameInfo;
-}
+// --- Games ---
 
-function getGameInfoMap(season: string): Map<string, GameInfoRow> {
-  const csv = readCsv(season, "試合情報.csv");
-  const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
-  const map = new Map<string, GameInfoRow>();
-  for (const row of data) {
-    const gameId = getGameIdFromInfoRow(row);
-    const quarters: QuarterScore[] = [];
-    for (const q of ["1Q", "2Q", "3Q", "4Q"]) {
-      const espoir = parseInt(row[`${q}_自`] ?? "", 10);
-      const opp = parseInt(row[`${q}_相手`] ?? "", 10);
-      if (!isNaN(espoir) && !isNaN(opp)) {
-        quarters.push({ quarter: q, espoir, opponent: opp });
-      }
-    }
-    map.set(gameId, {
-      gameId,
-      date: row["日付"] ?? "9999-12-31",
-      youtubeUrl: row["YouTube"] || null,
-      quarterScores: quarters,
-      gameInfo: {
-        tournament: row["大会名"] || null,
-        venue: row["会場"] || null,
-        gameType: row["試合種別"] || null,
-      },
+export async function getGameStats(season?: string): Promise<GameResult[]> {
+  const s = season ?? await getDefaultSeason();
+  const gameRows = await db
+    .select()
+    .from(schema.games)
+    .where(eq(schema.games.seasonId, s));
+
+  const results: GameResult[] = [];
+  for (const g of gameRows) {
+    const [playerStats, oppStats, quarters] = await Promise.all([
+      db
+        .select()
+        .from(schema.gamePlayerStats)
+        .where(and(eq(schema.gamePlayerStats.gamePk, g.id), eq(schema.gamePlayerStats.isOpponent, false))),
+      db
+        .select()
+        .from(schema.gamePlayerStats)
+        .where(and(eq(schema.gamePlayerStats.gamePk, g.id), eq(schema.gamePlayerStats.isOpponent, true))),
+      db
+        .select()
+        .from(schema.quarterScores)
+        .where(eq(schema.quarterScores.gamePk, g.id)),
+    ]);
+
+    const players = playerStats
+      .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
+      .sort((a, b) => a.number - b.number);
+    const opponentPlayers = oppStats
+      .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
+      .sort((a, b) => a.number - b.number);
+    const quarterScores: QuarterScore[] = quarters.map((q) => ({
+      quarter: q.quarter,
+      espoir: q.espoir,
+      opponent: q.opponent,
+    }));
+
+    const gameInfo: GameInfo = {
+      tournament: g.tournament,
+      venue: g.venue,
+      gameType: g.gameType,
+    };
+
+    results.push({
+      gameId: g.gameId,
+      opponent: g.opponent,
+      date: g.date,
+      players,
+      teamPoints: g.teamPoints,
+      opponentPlayers,
+      opponentPoints: g.opponentPoints,
+      youtubeUrl: g.youtubeUrl,
+      quarterScores,
+      gameInfo,
     });
   }
-  return map;
-}
 
-function getOpponentStatsMap(season: string): Map<string, GamePlayerStat[]> {
-  const csv = readCsv(season, "相手チームスタッツ.csv");
-  const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
-  const map = new Map<string, GamePlayerStat[]>();
-  for (const row of data) {
-    const gameId = getGameIdFromStatsRow(row);
-    if (!map.has(gameId)) map.set(gameId, []);
-    map.get(gameId)!.push(parseGamePlayerStat(row));
-  }
-  return map;
-}
-
-const _gameStatsCache = new Map<string, GameResult[]>();
-
-export function getGameStats(season?: string): GameResult[] {
-  const s = season ?? getDefaultSeason();
-  if (_gameStatsCache.has(s)) return _gameStatsCache.get(s)!;
-
-  const csv = readCsv(s, "全試合スタッツ.csv");
-  const { data } = Papa.parse<Record<string, string>>(csv, { header: true, skipEmptyLines: true });
-  const gameInfo = getGameInfoMap(s);
-  const opponentStats = getOpponentStatsMap(s);
-
-  const gameMap = new Map<string, GamePlayerStat[]>();
-
-  for (const row of data) {
-    const gameId = getGameIdFromStatsRow(row);
-    if (!gameMap.has(gameId)) gameMap.set(gameId, []);
-    gameMap.get(gameId)!.push(parseGamePlayerStat(row));
-  }
-
-  const result = Array.from(gameMap.entries())
-    .map(([gameId, players]) => {
-      const info = gameInfo.get(gameId);
-      const opponent = players[0]?.opponent ?? "";
-      const oppPlayers = opponentStats.get(gameId) ?? [];
-      const sortedPlayers = players.sort((a, b) => a.number - b.number);
-      const sortedOpp = oppPlayers.sort((a, b) => a.number - b.number);
-      return {
-        gameId,
-        opponent,
-        date: info?.date ?? "9999-12-31",
-        players: sortedPlayers,
-        teamPoints: players.reduce((sum, p) => sum + p.points, 0),
-        opponentPlayers: sortedOpp,
-        opponentPoints: oppPlayers.reduce((sum, p) => sum + p.points, 0),
-        youtubeUrl: info?.youtubeUrl ?? null,
-        quarterScores: info?.quarterScores ?? [],
-        gameInfo: info?.gameInfo ?? { tournament: null, venue: null, gameType: null },
-      };
-    })
-    .sort((a, b) => b.date.localeCompare(a.date));
-  _gameStatsCache.set(s, result);
-  return result;
+  return results.sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export function getTopPlayers(players: PlayerSummary[]) {
@@ -334,44 +259,46 @@ export function getTopPlayers(players: PlayerSummary[]) {
   };
 }
 
-export function getGameById(gameId: string, season?: string): GameResult | null {
-  const games = getGameStats(season);
+export async function getGameById(gameId: string, season?: string): Promise<GameResult | null> {
+  const games = await getGameStats(season);
   return games.find((g) => g.gameId === gameId) ?? null;
 }
 
-export function getAllGameIds(season?: string): string[] {
-  return getGameStats(season).map((g) => g.gameId);
+export async function getAllGameIds(season?: string): Promise<string[]> {
+  return (await getGameStats(season)).map((g) => g.gameId);
 }
 
-export function getMemberById(memberId: string, season?: string): PlayerProfile | null {
-  const roster = getRosterPlayers(season);
+// --- Member/Player lookups ---
+
+export async function getMemberById(memberId: string, season?: string): Promise<PlayerProfile | null> {
+  const roster = await getRosterPlayers(season);
   const member = roster.find((entry) => entry.memberId === memberId);
   if (!member) return null;
 
-  const summaries = getPlayerSummaries(season);
-  const games = getGameStats(season);
+  const summaries = await getPlayerSummaries(season);
+  const games = await getGameStats(season);
   const summary = member.number !== null && member.role === "player"
     ? (summaries.find((p) => p.number === member.number) ?? null)
     : null;
 
   const memberGames = member.number !== null && member.role === "player"
     ? games
-    .map((g) => {
-      const stat = g.players.find((p) => p.number === member.number);
-      return stat ? { gameId: g.gameId, opponent: g.opponent, date: g.date, stat } : null;
-    })
-    .filter((g): g is { gameId: string; opponent: string; date: string; stat: GamePlayerStat } => g !== null)
+      .map((g) => {
+        const stat = g.players.find((p) => p.number === member.number);
+        return stat ? { gameId: g.gameId, opponent: g.opponent, date: g.date, stat } : null;
+      })
+      .filter((g): g is { gameId: string; opponent: string; date: string; stat: GamePlayerStat } => g !== null)
     : [];
 
   return { player: member, summary, games: memberGames };
 }
 
-export function findMemberAcrossSeasons(memberId: string): { name: string; seasonIds: string[] } | null {
-  const seasons = getSeasonsWithData();
+export async function findMemberAcrossSeasons(memberId: string): Promise<{ name: string; seasonIds: string[] } | null> {
+  const seasons = await getSeasonsWithData();
   let name = "";
   const found: string[] = [];
   for (const s of seasons) {
-    const member = getRosterPlayers(s.id).find((m) => m.memberId === memberId);
+    const member = (await getRosterPlayers(s.id)).find((m) => m.memberId === memberId);
     if (member) {
       name = member.name;
       found.push(s.id);
@@ -380,13 +307,13 @@ export function findMemberAcrossSeasons(memberId: string): { name: string; seaso
   return found.length > 0 ? { name, seasonIds: found } : null;
 }
 
-export function findGameAcrossSeasons(gameId: string): { opponent: string; date: string; seasonIds: string[] } | null {
-  const seasons = getSeasonsWithData();
+export async function findGameAcrossSeasons(gameId: string): Promise<{ opponent: string; date: string; seasonIds: string[] } | null> {
+  const seasons = await getSeasonsWithData();
   let opponent = "";
   let date = "";
   const found: string[] = [];
   for (const s of seasons) {
-    const game = getGameById(gameId, s.id);
+    const game = await getGameById(gameId, s.id);
     if (game) {
       opponent = game.opponent;
       date = game.date;
@@ -396,23 +323,23 @@ export function findGameAcrossSeasons(gameId: string): { opponent: string; date:
   return found.length > 0 ? { opponent, date, seasonIds: found } : null;
 }
 
-export function getPlayerByNumber(number: number, season?: string): PlayerProfile | null {
-  const member = getRosterPlayers(season).find((entry) => entry.role === "player" && entry.number === number);
+export async function getPlayerByNumber(number: number, season?: string): Promise<PlayerProfile | null> {
+  const member = (await getRosterPlayers(season)).find((entry) => entry.role === "player" && entry.number === number);
   return member ? getMemberById(member.memberId, season) : null;
 }
 
-export function getAllMemberIds(season?: string): string[] {
-  return getRosterPlayers(season).map((member) => member.memberId);
+export async function getAllMemberIds(season?: string): Promise<string[]> {
+  return (await getRosterPlayers(season)).map((member) => member.memberId);
 }
 
-export function getAllPlayerNumbers(season?: string): number[] {
-  return getRosterPlayers(season)
+export async function getAllPlayerNumbers(season?: string): Promise<number[]> {
+  return (await getRosterPlayers(season))
     .filter((member) => member.role === "player" && member.number !== null)
     .map((member) => member.number as number);
 }
 
-export function getAdjacentMembers(memberId: string, season?: string): { prev: { memberId: string; number: number | null; name: string; role: MemberRole } | null; next: { memberId: string; number: number | null; name: string; role: MemberRole } | null } {
-  const members = getRosterPlayers(season);
+export async function getAdjacentMembers(memberId: string, season?: string): Promise<{ prev: { memberId: string; number: number | null; name: string; role: MemberRole } | null; next: { memberId: string; number: number | null; name: string; role: MemberRole } | null }> {
+  const members = await getRosterPlayers(season);
   const idx = members.findIndex((member) => member.memberId === memberId);
   return {
     prev: idx > 0 ? { memberId: members[idx - 1].memberId, number: members[idx - 1].number, name: members[idx - 1].name, role: members[idx - 1].role } : null,
@@ -420,8 +347,8 @@ export function getAdjacentMembers(memberId: string, season?: string): { prev: {
   };
 }
 
-export function getAdjacentPlayers(number: number, season?: string): { prev: { number: number; name: string } | null; next: { number: number; name: string } | null } {
-  const players = getRosterPlayers(season).filter((member) => member.role === "player" && member.number !== null);
+export async function getAdjacentPlayers(number: number, season?: string): Promise<{ prev: { number: number; name: string } | null; next: { number: number; name: string } | null }> {
+  const players = (await getRosterPlayers(season)).filter((member) => member.role === "player" && member.number !== null);
   const idx = players.findIndex((p) => p.number === number);
   const prevPlayer = idx > 0 ? players[idx - 1] : null;
   const nextPlayer = idx < players.length - 1 ? players[idx + 1] : null;
@@ -431,8 +358,8 @@ export function getAdjacentPlayers(number: number, season?: string): { prev: { n
   };
 }
 
-export function getAdjacentGames(gameId: string, season?: string): { prev: { gameId: string; opponent: string; date: string } | null; next: { gameId: string; opponent: string; date: string } | null } {
-  const games = getGameStats(season);
+export async function getAdjacentGames(gameId: string, season?: string): Promise<{ prev: { gameId: string; opponent: string; date: string } | null; next: { gameId: string; opponent: string; date: string } | null }> {
+  const games = await getGameStats(season);
   const idx = games.findIndex((g) => g.gameId === gameId);
   return {
     prev: idx > 0 ? { gameId: games[idx - 1].gameId, opponent: games[idx - 1].opponent, date: games[idx - 1].date } : null,
@@ -440,10 +367,14 @@ export function getAdjacentGames(gameId: string, season?: string): { prev: { gam
   };
 }
 
-export function getAllTeamSeasonStats(): TeamSeasonStats[] {
-  const seasons = [...getSeasonsWithData()].reverse();
-  return seasons.map((season) => {
-    const games = getGameStats(season.id);
+// --- Cross-season stats ---
+
+export async function getAllTeamSeasonStats(): Promise<TeamSeasonStats[]> {
+  const seasons = [...(await getSeasonsWithData())].reverse();
+  const results: TeamSeasonStats[] = [];
+
+  for (const season of seasons) {
+    const games = await getGameStats(season.id);
     const totalGames = games.length;
     const wins = games.filter((g) => g.teamPoints > g.opponentPoints).length;
     const losses = totalGames - wins;
@@ -489,7 +420,7 @@ export function getAllTeamSeasonStats(): TeamSeasonStats[] {
 
     const advanced = totalGames > 0 ? calcAdvancedStats(espoirTotals, opponentTotals) : { pace: 0, offRtg: 0, defRtg: 0, netRtg: 0 };
 
-    return {
+    results.push({
       seasonId: season.id,
       label: season.label,
       games: totalGames,
@@ -512,17 +443,19 @@ export function getAllTeamSeasonStats(): TeamSeasonStats[] {
       offRtg: advanced.offRtg,
       defRtg: advanced.defRtg,
       netRtg: advanced.netRtg,
-    };
-  });
+    });
+  }
+
+  return results;
 }
 
-export function getAllPlayerSeasonStats(): CrossSeasonMember[] {
-  const seasons = [...getSeasonsWithData()].reverse();
+export async function getAllPlayerSeasonStats(): Promise<CrossSeasonMember[]> {
+  const seasons = [...(await getSeasonsWithData())].reverse();
   const memberMap = new Map<string, CrossSeasonMember>();
 
   for (const season of seasons) {
-    const roster = getRosterPlayers(season.id);
-    const summaries = getPlayerSummaries(season.id);
+    const roster = await getRosterPlayers(season.id);
+    const summaries = await getPlayerSummaries(season.id);
     const summaryMap = new Map(summaries.map((s) => [s.number, s]));
 
     for (const member of roster) {

@@ -3,12 +3,12 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PlayerCards from "@/components/sections/PlayerCards";
 
-export default function MembersPage() {
-  const seasons = getSeasons();
-  const season = getDefaultSeason();
+export default async function MembersPage() {
+  const seasons = await getSeasons();
+  const season = await getDefaultSeason();
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
-  const members = getMemberList(season);
-  const topPlayers = getTopPlayers(getPlayerSummaries(season));
+  const members = await getMemberList(season);
+  const topPlayers = getTopPlayers(await getPlayerSummaries(season));
 
   return (
     <>

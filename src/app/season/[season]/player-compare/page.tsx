@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { getPlayerSummaries, getGameStats, getSeasons, getSeasonsWithData, getRosterPlayers } from "@/lib/data";
 import PlayerCompareClient from "@/components/sections/PlayerCompareClient";
 
-export function generateStaticParams() {
-  return getSeasonsWithData().map((s) => ({ season: s.id }));
+export async function generateStaticParams() {
+  return (await getSeasonsWithData()).map((s) => ({ season: s.id }));
 }
 
 interface PageProps {
@@ -13,13 +13,13 @@ interface PageProps {
 
 export default async function SeasonPlayerComparePage({ params }: PageProps) {
   const { season } = await params;
-  const seasons = getSeasons();
+  const seasons = await getSeasons();
   const seasonInfo = seasons.find((s) => s.id === season);
   if (!seasonInfo) notFound();
 
-  const players = getPlayerSummaries(season);
-  const games = getGameStats(season);
-  const roster = getRosterPlayers(season);
+  const players = await getPlayerSummaries(season);
+  const games = await getGameStats(season);
+  const roster = await getRosterPlayers(season);
   const basePath = `/season/${season}`;
 
   return (

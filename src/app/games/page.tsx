@@ -3,11 +3,11 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import GameList from "@/components/sections/GameList";
 
-export default function GamesPage() {
-  const seasons = getSeasons();
-  const season = getDefaultSeason();
+export default async function GamesPage() {
+  const seasons = await getSeasons();
+  const season = await getDefaultSeason();
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
-  const games = getGameStats(season);
+  const games = await getGameStats(season);
 
   return (
     <>

@@ -7,10 +7,10 @@ export const metadata: Metadata = {
   description: "シーズン横断でチーム・個人のスタッツを比較",
 };
 
-export default function ComparePage() {
-  const seasons = getSeasons();
-  const teamStats = getAllTeamSeasonStats();
-  const playerStats = getAllPlayerSeasonStats();
+export default async function ComparePage() {
+  const seasons = await getSeasons();
+  const teamStats = await getAllTeamSeasonStats();
+  const playerStats = await getAllPlayerSeasonStats();
 
   return <SeasonCompareClient seasons={seasons} teamStats={teamStats} playerStats={playerStats} />;
 }

@@ -11,8 +11,8 @@ import StatsRanking from "@/components/sections/StatsRanking";
 import LazyCharts from "@/components/sections/LazyCharts";
 import SeasonAwards from "@/components/sections/SeasonAwards";
 
-export function generateStaticParams() {
-  return getSeasonsWithData().map((s) => ({ season: s.id }));
+export async function generateStaticParams() {
+  return (await getSeasonsWithData()).map((s) => ({ season: s.id }));
 }
 
 interface PageProps {
@@ -21,16 +21,16 @@ interface PageProps {
 
 export default async function SeasonHome({ params }: PageProps) {
   const { season } = await params;
-  const seasons = getSeasons();
+  const seasons = await getSeasons();
   const seasonInfo = seasons.find((s) => s.id === season);
   if (!seasonInfo) notFound();
 
   const basePath = `/season/${season}`;
-  const players = getPlayerSummaries(season);
-  const members = getMemberList(season);
-  const games = getGameStats(season);
-  const roster = getRosterPlayers(season);
-  const crossSeasonMembers = getAllPlayerSeasonStats();
+  const players = await getPlayerSummaries(season);
+  const members = await getMemberList(season);
+  const games = await getGameStats(season);
+  const roster = await getRosterPlayers(season);
+  const crossSeasonMembers = await getAllPlayerSeasonStats();
   const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers, season);
 
   let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;

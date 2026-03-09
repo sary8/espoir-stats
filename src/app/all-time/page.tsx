@@ -7,21 +7,29 @@ export const metadata: Metadata = {
   title: "All-Time Records | ESPOIR Stats",
 };
 
-export default function AllTimePage() {
-  const seasons = getSeasons();
-  const seasonsWithData = getSeasonsWithData();
-  const crossSeasonMembers = getAllPlayerSeasonStats();
+export default async function AllTimePage() {
+  const seasons = await getSeasons();
+  const seasonsWithData = await getSeasonsWithData();
+  const crossSeasonMembers = await getAllPlayerSeasonStats();
+
+  // Pre-fetch all data needed by records functions
+  const gamesBySeason = new Map<string, Awaited<ReturnType<typeof getGameStats>>>();
+  const rosterBySeason = new Map<string, Awaited<ReturnType<typeof getRosterPlayers>>>();
+  for (const s of seasonsWithData) {
+    gamesBySeason.set(s.id, await getGameStats(s.id));
+    rosterBySeason.set(s.id, await getRosterPlayers(s.id));
+  }
 
   const careerTotals = getCareerTotals(crossSeasonMembers);
   const singleGameRecords = getAllTimeSingleGameRecords(
     seasonsWithData,
-    getGameStats,
-    getRosterPlayers,
+    (seasonId) => gamesBySeason.get(seasonId) ?? [],
+    (seasonId) => rosterBySeason.get(seasonId) ?? [],
   );
   const milestones = getAllMilestones(
     crossSeasonMembers,
     seasonsWithData,
-    getGameStats,
+    (seasonId) => gamesBySeason.get(seasonId) ?? [],
   );
 
   return (

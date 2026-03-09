@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { getAllPlayerNumbers } from "@/lib/data";
 
-export function generateStaticParams() {
-  return getAllPlayerNumbers().map((number) => ({
+export async function generateStaticParams() {
+  return (await getAllPlayerNumbers()).map((number) => ({
     number: String(number),
   }));
 }

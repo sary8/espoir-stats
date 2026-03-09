@@ -10,15 +10,15 @@ import StatsRanking from "@/components/sections/StatsRanking";
 import LazyCharts from "@/components/sections/LazyCharts";
 import SeasonAwards from "@/components/sections/SeasonAwards";
 
-export default function Home() {
-  const seasons = getSeasons();
-  const season = getDefaultSeason();
+export default async function Home() {
+  const seasons = await getSeasons();
+  const season = await getDefaultSeason();
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
-  const players = getPlayerSummaries(season);
-  const members = getMemberList(season);
-  const games = getGameStats(season);
-  const roster = getRosterPlayers(season);
-  const crossSeasonMembers = getAllPlayerSeasonStats();
+  const players = await getPlayerSummaries(season);
+  const members = await getMemberList(season);
+  const games = await getGameStats(season);
+  const roster = await getRosterPlayers(season);
+  const crossSeasonMembers = await getAllPlayerSeasonStats();
   const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers, season);
 
   let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;

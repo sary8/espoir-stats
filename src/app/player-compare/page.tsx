@@ -2,12 +2,12 @@ import { Suspense } from "react";
 import { getPlayerSummaries, getGameStats, getSeasons, getDefaultSeason, getRosterPlayers } from "@/lib/data";
 import PlayerCompareClient from "@/components/sections/PlayerCompareClient";
 
-export default function PlayerComparePage() {
-  const seasons = getSeasons();
-  const season = getDefaultSeason();
-  const players = getPlayerSummaries(season);
-  const games = getGameStats(season);
-  const roster = getRosterPlayers(season);
+export default async function PlayerComparePage() {
+  const seasons = await getSeasons();
+  const season = await getDefaultSeason();
+  const players = await getPlayerSummaries(season);
+  const games = await getGameStats(season);
+  const roster = await getRosterPlayers(season);
 
   return (
     <Suspense>

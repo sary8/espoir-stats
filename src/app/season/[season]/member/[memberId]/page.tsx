@@ -4,12 +4,12 @@ import { getSeasonAwards, getPlayerAwards } from "@/lib/awards";
 import PlayerDetailClient from "@/components/sections/PlayerDetailClient";
 import MemberNotInSeason from "@/components/sections/MemberNotInSeason";
 
-export function generateStaticParams() {
-  const seasons = getSeasonsWithData();
+export async function generateStaticParams() {
+  const seasons = await getSeasonsWithData();
   const allMemberIds = new Set<string>();
   const params: { season: string; memberId: string }[] = [];
   for (const s of seasons) {
-    for (const memberId of getAllMemberIds(s.id)) {
+    for (const memberId of await getAllMemberIds(s.id)) {
       params.push({ season: s.id, memberId });
       allMemberIds.add(memberId);
     }
@@ -30,27 +30,27 @@ interface PageProps {
 
 export default async function SeasonMemberPage({ params }: PageProps) {
   const { season, memberId } = await params;
-  const seasons = getSeasons();
+  const seasons = await getSeasons();
   const seasonInfo = seasons.find((s) => s.id === season);
   if (!seasonInfo) notFound();
 
   const basePath = `/season/${season}`;
-  const data = getMemberById(memberId, season);
+  const data = await getMemberById(memberId, season);
 
   if (!data) {
-    const cross = findMemberAcrossSeasons(memberId);
+    const cross = await findMemberAcrossSeasons(memberId);
     if (cross) {
       return <MemberNotInSeason memberName={cross.name} seasonLabel={seasonInfo.label} seasons={seasons} basePath={basePath} memberSeasonIds={cross.seasonIds} />;
     }
     notFound();
   }
 
-  const adjacent = getAdjacentMembers(memberId, season);
-  const players = getPlayerSummaries(season);
+  const adjacent = await getAdjacentMembers(memberId, season);
+  const players = await getPlayerSummaries(season);
   const badges = players.length > 0 ? getTopPlayers(players) : undefined;
-  const roster = getRosterPlayers(season);
-  const gameStats = getGameStats(season);
-  const crossSeasonMembers = getAllPlayerSeasonStats();
+  const roster = await getRosterPlayers(season);
+  const gameStats = await getGameStats(season);
+  const crossSeasonMembers = await getAllPlayerSeasonStats();
   const seasonAwards = getSeasonAwards(players, gameStats, roster, crossSeasonMembers, season);
   const awards = getPlayerAwards(memberId, seasonAwards);
   const crossSeasonData = crossSeasonMembers.find((m) => m.memberId === memberId);

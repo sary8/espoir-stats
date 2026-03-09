@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { getAllPlayerNumbers, getSeasonsWithData } from "@/lib/data";
 
-export function generateStaticParams() {
-  const seasons = getSeasonsWithData();
+export async function generateStaticParams() {
+  const seasons = await getSeasonsWithData();
   const params: { season: string; number: string }[] = [];
   for (const s of seasons) {
-    for (const num of getAllPlayerNumbers(s.id)) {
+    for (const num of await getAllPlayerNumbers(s.id)) {
       params.push({ season: s.id, number: String(num) });
     }
   }

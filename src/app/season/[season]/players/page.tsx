@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { getSeasonsWithData } from "@/lib/data";
 
-export function generateStaticParams() {
-  return getSeasonsWithData().map((s) => ({ season: s.id }));
+export async function generateStaticParams() {
+  return (await getSeasonsWithData()).map((s) => ({ season: s.id }));
 }
 
 interface PageProps {

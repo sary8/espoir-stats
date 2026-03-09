@@ -4,8 +4,8 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import GameList from "@/components/sections/GameList";
 
-export function generateStaticParams() {
-  return getSeasonsWithData().map((s) => ({ season: s.id }));
+export async function generateStaticParams() {
+  return (await getSeasonsWithData()).map((s) => ({ season: s.id }));
 }
 
 interface PageProps {
@@ -14,12 +14,12 @@ interface PageProps {
 
 export default async function SeasonGamesPage({ params }: PageProps) {
   const { season } = await params;
-  const seasons = getSeasons();
+  const seasons = await getSeasons();
   const seasonInfo = seasons.find((s) => s.id === season);
   if (!seasonInfo) notFound();
 
   const basePath = `/season/${season}`;
-  const games = getGameStats(season);
+  const games = await getGameStats(season);
 
   return (
     <>
