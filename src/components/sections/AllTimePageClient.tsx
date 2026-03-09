@@ -16,7 +16,7 @@ import type {
 
 type ViewMode = "average" | "total";
 
-type LeaderCategory = "PTS" | "REB" | "AST" | "STL" | "BLK" | "EFF";
+type LeaderCategory = "PTS" | "REB" | "AST" | "STL" | "BLK" | "TO" | "PF" | "FD" | "EFF";
 
 type SortKey =
   | "name"
@@ -27,6 +27,9 @@ type SortKey =
   | "ast"
   | "stl"
   | "blk"
+  | "to"
+  | "pf"
+  | "fd"
   | "eff";
 
 type SortDir = "asc" | "desc";
@@ -91,6 +94,9 @@ const TOTALS_COLUMNS: {
   { key: "ast", label: "AST", align: "right" },
   { key: "stl", label: "STL", align: "right" },
   { key: "blk", label: "BLK", align: "right" },
+  { key: "to", label: "TO", align: "right" },
+  { key: "pf", label: "PF", align: "right" },
+  { key: "fd", label: "FD", align: "right" },
   { key: "eff", label: "EFF", align: "right" },
 ];
 
@@ -100,6 +106,9 @@ const LEADER_TABS: { key: LeaderCategory; label: string }[] = [
   { key: "AST", label: "AST" },
   { key: "STL", label: "STL" },
   { key: "BLK", label: "BLK" },
+  { key: "TO", label: "TO" },
+  { key: "PF", label: "PF" },
+  { key: "FD", label: "FD" },
   { key: "EFF", label: "EFF" },
 ];
 
@@ -115,6 +124,12 @@ function getLeaderValue(c: CareerTotals, cat: LeaderCategory): number {
       return c.totalSteals;
     case "BLK":
       return c.totalBlocks;
+    case "TO":
+      return c.totalTurnovers;
+    case "PF":
+      return c.totalPersonalFouls;
+    case "FD":
+      return c.totalFoulsDrawn;
     case "EFF":
       return c.totalEff;
   }
@@ -143,6 +158,12 @@ function getSortValue(
       return isAvg ? c.spg : c.totalSteals;
     case "blk":
       return isAvg ? c.bpg : c.totalBlocks;
+    case "to":
+      return isAvg ? c.topg : c.totalTurnovers;
+    case "pf":
+      return isAvg ? c.pfpg : c.totalPersonalFouls;
+    case "fd":
+      return isAvg ? c.fdpg : c.totalFoulsDrawn;
     case "eff":
       return isAvg ? c.avgEff : c.totalEff;
   }
@@ -369,6 +390,15 @@ export default function AllTimePageClient({
                         </td>
                         <td className={`text-right ${td}`}>
                           {isAvg ? fmt(c.bpg) : c.totalBlocks}
+                        </td>
+                        <td className={`text-right ${td}`}>
+                          {isAvg ? fmt(c.topg) : c.totalTurnovers}
+                        </td>
+                        <td className={`text-right ${td}`}>
+                          {isAvg ? fmt(c.pfpg) : c.totalPersonalFouls}
+                        </td>
+                        <td className={`text-right ${td}`}>
+                          {isAvg ? fmt(c.fdpg) : c.totalFoulsDrawn}
                         </td>
                         <td className={`text-right ${td}`}>
                           {isAvg ? fmt(c.avgEff) : fmt(c.totalEff)}

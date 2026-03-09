@@ -153,6 +153,12 @@ export interface PlayerSeasonStats {
   spg: number;
   totalBlocks: number;
   bpg: number;
+  totalTurnovers: number;
+  topg: number;
+  totalPersonalFouls: number;
+  pfpg: number;
+  totalFoulsDrawn: number;
+  fdpg: number;
   threePointPct: number | null;
   twoPointPct: number | null;
   ftPct: number | null;
@@ -224,6 +230,12 @@ export interface CareerTotals {
   spg: number;
   totalBlocks: number;
   bpg: number;
+  totalTurnovers: number;
+  topg: number;
+  totalPersonalFouls: number;
+  pfpg: number;
+  totalFoulsDrawn: number;
+  fdpg: number;
   totalEff: number;
   avgEff: number;
 }

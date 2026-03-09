@@ -39,6 +39,9 @@ export function getCareerTotals(
       let totalAssists = 0;
       let totalSteals = 0;
       let totalBlocks = 0;
+      let totalTurnovers = 0;
+      let totalPersonalFouls = 0;
+      let totalFoulsDrawn = 0;
       let totalEff = 0;
       let seasonsPlayed = 0;
 
@@ -51,6 +54,9 @@ export function getCareerTotals(
         totalAssists += s.totalAssists;
         totalSteals += s.totalSteals;
         totalBlocks += s.totalBlocks;
+        totalTurnovers += s.totalTurnovers;
+        totalPersonalFouls += s.totalPersonalFouls;
+        totalFoulsDrawn += s.totalFoulsDrawn;
         totalEff += s.eff;
       }
 
@@ -70,6 +76,12 @@ export function getCareerTotals(
         spg: games > 0 ? totalSteals / games : 0,
         totalBlocks,
         bpg: games > 0 ? totalBlocks / games : 0,
+        totalTurnovers,
+        topg: games > 0 ? totalTurnovers / games : 0,
+        totalPersonalFouls,
+        pfpg: games > 0 ? totalPersonalFouls / games : 0,
+        totalFoulsDrawn,
+        fdpg: games > 0 ? totalFoulsDrawn / games : 0,
         totalEff,
         avgEff: games > 0 ? totalEff / games : 0,
       };
