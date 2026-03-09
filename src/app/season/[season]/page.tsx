@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getSeasonsWithData, getMemberList, getRosterPlayers, getAllPlayerSeasonStats } from "@/lib/data";
+import { getPlayerSummaries, getGameStats, getSeasons, getSeasonsWithData, getMemberList, getRosterPlayers, getAllPlayerSeasonStats } from "@/lib/data";
 import { calcAdvancedStats } from "@/lib/stats";
 import { getSeasonAwards } from "@/lib/awards";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import TeamOverview from "@/components/sections/TeamOverview";
-import PlayerCards from "@/components/sections/PlayerCards";
 import StatsRanking from "@/components/sections/StatsRanking";
 import LazyCharts from "@/components/sections/LazyCharts";
 import SeasonAwards from "@/components/sections/SeasonAwards";
@@ -67,8 +66,6 @@ export default async function SeasonHome({ params }: PageProps) {
     for (const p of g.opponentPlayers) addPlayerToTotals(seasonOpponent, p);
   }
   const seasonAdvanced = calcAdvancedStats(seasonEspoir, seasonOpponent);
-
-  const topPlayers = getTopPlayers(players);
 
   const scoringData = [...players].sort((a, b) => b.ppg - a.ppg)
     .map((p) => ({ name: p.name.split(" ").pop()!, ppg: p.ppg, number: p.number }));
@@ -130,11 +127,6 @@ export default async function SeasonHome({ params }: PageProps) {
           />
         </Suspense>
         <SeasonAwards awards={seasonAwards} basePath={basePath} />
-        <PlayerCards
-          members={members}
-          {...topPlayers}
-          basePath={basePath}
-        />
         <StatsRanking players={players} />
       </main>
       <Footer seasonLabel={seasonInfo.label} />
