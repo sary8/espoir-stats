@@ -3,14 +3,16 @@ import type { NextRequest } from "next/server";
 import { verifyToken } from "@/lib/auth";
 
 const PUBLIC_PATHS = ["/login", "/api/auth"];
+const PUBLIC_FILES = ["/robots.txt", "/sitemap.xml", "/icon.png", "/apple-icon.png", "/manifest.json"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 静的アセットと公開パスはスキップ
+  // 静的アセット・公開パス・公開ファイルはスキップ
   if (
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/favicon") ||
+    PUBLIC_FILES.includes(pathname) ||
     PUBLIC_PATHS.some((p) => pathname.startsWith(p))
   ) {
     return NextResponse.next();

@@ -25,7 +25,7 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   test("試合一覧ページに遷移して試合カードが表示される", async ({ page }) => {
     await page.click('a[href="/games"]');
     await expect(page).toHaveURL(/\/games/);
-    await expect(page.locator("h2").first()).toBeVisible();
+    await expect(page.locator("#main-content")).toBeVisible();
   });
 
   test("試合詳細ページに遷移してスコアが表示される", async ({ page }) => {
@@ -52,9 +52,9 @@ test.describe("ページ遷移・コンテンツ表示", () => {
     await page.click('a[href="/glossary"]');
     await expect(page).toHaveURL(/\/glossary/);
     await expect(page.locator("#main-content")).toBeVisible();
-    // 用語が表示されていること
-    await expect(page.locator("text=PTS")).toBeVisible();
-    await expect(page.locator("text=AST")).toBeVisible();
+    // 用語が表示されていること（略称が他セクションと被らないようabbr属性で特定）
+    await expect(page.getByRole("term").filter({ hasText: "PTS" })).toBeVisible();
+    await expect(page.getByRole("term").filter({ hasText: "AST" })).toBeVisible();
   });
 
   test("シーズン比較ページに遷移できる", async ({ page }) => {

@@ -80,6 +80,13 @@ function getPlayerRows(member: CrossSeasonMember, seasonIds: string[], mode: Vie
 function getBestIndex(values: (string | number)[], higherIsBetter: boolean): number | null {
   const nums = values.map((v) => {
     if (typeof v === "number") return v;
+    // "2W - 4L" 形式の戦績は勝率で比較
+    const wl = v.match(/^(\d+)W\s*-\s*(\d+)L$/);
+    if (wl) {
+      const w = parseInt(wl[1], 10);
+      const total = w + parseInt(wl[2], 10);
+      return total > 0 ? w / total : 0;
+    }
     const parsed = parseFloat(v);
     return isNaN(parsed) ? null : parsed;
   });

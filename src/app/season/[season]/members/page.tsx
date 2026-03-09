@@ -26,6 +26,14 @@ export default async function SeasonMembersPage({ params }: PageProps) {
     <>
       <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
+        <section className="relative gradient-mesh py-12 sm:py-20">
+          <div className="absolute inset-0 bg-[#0a0a0f]/50" />
+          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+              Team <span className="text-accent-purple">Members</span>
+            </h1>
+          </div>
+        </section>
         <PlayerCards
           members={members}
           {...topPlayers}

@@ -176,40 +176,6 @@ export function getSeasonMVP(
 export function getMilestones(
   crossSeasonMembers: CrossSeasonMember[],
 ): Award[] {
-  const milestones: {
-    title: string;
-    threshold: number;
-    getValue: (m: CrossSeasonMember) => number;
-  }[] = [
-    {
-      title: "通算100得点達成",
-      threshold: 100,
-      getValue: (m) => m.seasons.reduce((s, ss) => s + ss.totalPoints, 0),
-    },
-    {
-      title: "通算50試合出場",
-      threshold: 50,
-      getValue: (m) => m.seasons.reduce((s, ss) => s + ss.games, 0),
-    },
-    {
-      title: "3P通算50本達成",
-      threshold: 50,
-      getValue: (m) => {
-        let total = 0;
-        for (const ss of m.seasons) {
-          total += Math.round(
-            (ss.threePointPct ?? 0) > 0
-              ? ss.totalPoints * 0
-              : 0,
-          );
-        }
-        return total;
-      },
-    },
-  ];
-
-  // For 3P milestone, we need a different approach - use season stats data
-  // The CrossSeasonMember doesn't have threePointMade directly, so we'll use a simpler approach
   const awards: Award[] = [];
 
   // Points milestone

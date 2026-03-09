@@ -13,7 +13,7 @@ const MIME_TYPES: Record<string, string> = {
   ".svg": "image/svg+xml",
 };
 
-// 認証は proxy.ts（middleware）で保護済み
+// 認証は proxy.ts で保護済み
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
