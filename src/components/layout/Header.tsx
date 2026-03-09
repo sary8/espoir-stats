@@ -11,6 +11,7 @@ interface HeaderProps {
 }
 
 const SEASON_PATH_RE = /^\/season\/([^/]+)/;
+const ROOT_ONLY_PATHS = ["/compare", "/seasons", "/glossary", "/login"];
 
 function getSeasonFromPath(pathname: string): string | null {
   const match = pathname.match(SEASON_PATH_RE);
@@ -72,7 +73,9 @@ export default function Header({ seasons }: HeaderProps) {
     const subPath = currentSeasonId
       ? pathname.replace(`/season/${currentSeasonId}`, "")
       : pathname;
-    const newPath = season.default ? subPath || "/" : `/season/${season.id}${subPath}`;
+    const isRootOnly = ROOT_ONLY_PATHS.some((p) => subPath === p);
+    const safeSub = isRootOnly ? "/" : subPath;
+    const newPath = season.default ? safeSub || "/" : `/season/${season.id}${safeSub}`;
     router.push(newPath);
     setSeasonOpen(false);
   };
