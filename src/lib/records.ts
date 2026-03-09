@@ -33,20 +33,32 @@ export function getCareerTotals(
   return crossSeasonMembers
     .filter((m) => m.role === "player")
     .map((m) => {
-      const seasons = m.seasons.filter((s) => s.games > 0);
-      const games = seasons.reduce((sum, s) => sum + s.games, 0);
-      const totalPoints = seasons.reduce((sum, s) => sum + s.totalPoints, 0);
-      const totalRebounds = seasons.reduce((sum, s) => sum + s.totalRebounds, 0);
-      const totalAssists = seasons.reduce((sum, s) => sum + s.totalAssists, 0);
-      const totalSteals = seasons.reduce((sum, s) => sum + s.totalSteals, 0);
-      const totalBlocks = seasons.reduce((sum, s) => sum + s.totalBlocks, 0);
-      const totalEff = seasons.reduce((sum, s) => sum + s.eff, 0);
+      let games = 0;
+      let totalPoints = 0;
+      let totalRebounds = 0;
+      let totalAssists = 0;
+      let totalSteals = 0;
+      let totalBlocks = 0;
+      let totalEff = 0;
+      let seasonsPlayed = 0;
+
+      for (const s of m.seasons) {
+        if (s.games === 0) continue;
+        seasonsPlayed++;
+        games += s.games;
+        totalPoints += s.totalPoints;
+        totalRebounds += s.totalRebounds;
+        totalAssists += s.totalAssists;
+        totalSteals += s.totalSteals;
+        totalBlocks += s.totalBlocks;
+        totalEff += s.eff;
+      }
 
       return {
         memberId: m.memberId,
         name: m.name,
         number: m.number,
-        seasonsPlayed: seasons.length,
+        seasonsPlayed,
         games,
         totalPoints,
         ppg: games > 0 ? totalPoints / games : 0,
@@ -97,15 +109,18 @@ export function getAllTimeSingleGameRecords(
   for (const season of seasonsWithData) {
     const games = getGameStatsFn(season.id);
     const roster = getRosterPlayersFn(season.id);
+    const rosterByNumber = new Map(
+      roster
+        .filter((m) => m.role === "player" && m.number !== null)
+        .map((m) => [m.number, m]),
+    );
 
     for (const game of games) {
       for (const p of game.players) {
         for (let i = 0; i < categories.length; i++) {
           const val = categories[i].getValue(p);
           if (val > best[i].value) {
-            const member = roster.find(
-              (m) => m.role === "player" && m.number === p.number,
-            );
+            const member = rosterByNumber.get(p.number);
             best[i] = {
               value: val,
               player: p,

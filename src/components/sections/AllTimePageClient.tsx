@@ -70,13 +70,29 @@ function ModeToggle({
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ChevronDown size={12} className="text-neutral-600" />;
+  if (!active) return <ChevronDown size={12} className="text-neutral-600" aria-hidden="true" />;
   return dir === "desc" ? (
-    <ChevronDown size={12} className="text-accent-purple" />
+    <ChevronDown size={12} className="text-accent-purple" aria-hidden="true" />
   ) : (
-    <ChevronUp size={12} className="text-accent-purple" />
+    <ChevronUp size={12} className="text-accent-purple" aria-hidden="true" />
   );
 }
+
+const TOTALS_COLUMNS: {
+  key: SortKey;
+  label: string;
+  align: "left" | "center" | "right";
+}[] = [
+  { key: "name", label: "選手", align: "left" },
+  { key: "seasonsPlayed", label: "SZN", align: "center" },
+  { key: "games", label: "GP", align: "center" },
+  { key: "pts", label: "PTS", align: "right" },
+  { key: "reb", label: "REB", align: "right" },
+  { key: "ast", label: "AST", align: "right" },
+  { key: "stl", label: "STL", align: "right" },
+  { key: "blk", label: "BLK", align: "right" },
+  { key: "eff", label: "EFF", align: "right" },
+];
 
 const LEADER_TABS: { key: LeaderCategory; label: string }[] = [
   { key: "PTS", label: "PTS" },
@@ -171,6 +187,18 @@ export default function AllTimePageClient({
       setSortKey(key);
       setSortDir("desc");
     }
+  };
+
+  const handleSortKeyDown = (e: React.KeyboardEvent, key: SortKey) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleSort(key);
+    }
+  };
+
+  const getAriaSortValue = (key: SortKey): "ascending" | "descending" | "none" => {
+    if (sortKey !== key) return "none";
+    return sortDir === "asc" ? "ascending" : "descending";
   };
 
   const th =
@@ -282,123 +310,25 @@ export default function AllTimePageClient({
               <table className="w-full text-xs sm:text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-neutral-400">
-                    <th
-                      className={`text-left ${th}`}
-                      scope="col"
-                      onClick={() => handleSort("name")}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        選手
-                        <SortIcon
-                          active={sortKey === "name"}
-                          dir={sortDir}
-                        />
-                      </span>
-                    </th>
-                    <th
-                      className={`text-center ${th}`}
-                      scope="col"
-                      onClick={() => handleSort("seasonsPlayed")}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        SZN
-                        <SortIcon
-                          active={sortKey === "seasonsPlayed"}
-                          dir={sortDir}
-                        />
-                      </span>
-                    </th>
-                    <th
-                      className={`text-center ${th}`}
-                      scope="col"
-                      onClick={() => handleSort("games")}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        GP
-                        <SortIcon
-                          active={sortKey === "games"}
-                          dir={sortDir}
-                        />
-                      </span>
-                    </th>
-                    <th
-                      className={`text-right ${th}`}
-                      scope="col"
-                      onClick={() => handleSort("pts")}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        PTS
-                        <SortIcon
-                          active={sortKey === "pts"}
-                          dir={sortDir}
-                        />
-                      </span>
-                    </th>
-                    <th
-                      className={`text-right ${th}`}
-                      scope="col"
-                      onClick={() => handleSort("reb")}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        REB
-                        <SortIcon
-                          active={sortKey === "reb"}
-                          dir={sortDir}
-                        />
-                      </span>
-                    </th>
-                    <th
-                      className={`text-right ${th}`}
-                      scope="col"
-                      onClick={() => handleSort("ast")}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        AST
-                        <SortIcon
-                          active={sortKey === "ast"}
-                          dir={sortDir}
-                        />
-                      </span>
-                    </th>
-                    <th
-                      className={`text-right ${th}`}
-                      scope="col"
-                      onClick={() => handleSort("stl")}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        STL
-                        <SortIcon
-                          active={sortKey === "stl"}
-                          dir={sortDir}
-                        />
-                      </span>
-                    </th>
-                    <th
-                      className={`text-right ${th}`}
-                      scope="col"
-                      onClick={() => handleSort("blk")}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        BLK
-                        <SortIcon
-                          active={sortKey === "blk"}
-                          dir={sortDir}
-                        />
-                      </span>
-                    </th>
-                    <th
-                      className={`text-right ${th}`}
-                      scope="col"
-                      onClick={() => handleSort("eff")}
-                    >
-                      <span className="inline-flex items-center gap-1">
-                        EFF
-                        <SortIcon
-                          active={sortKey === "eff"}
-                          dir={sortDir}
-                        />
-                      </span>
-                    </th>
+                    {TOTALS_COLUMNS.map((col) => (
+                      <th
+                        key={col.key}
+                        className={`text-${col.align} ${th}`}
+                        scope="col"
+                        tabIndex={0}
+                        aria-sort={getAriaSortValue(col.key)}
+                        onClick={() => handleSort(col.key)}
+                        onKeyDown={(e) => handleSortKeyDown(e, col.key)}
+                      >
+                        <span className="inline-flex items-center gap-1">
+                          {col.label}
+                          <SortIcon
+                            active={sortKey === col.key}
+                            dir={sortDir}
+                          />
+                        </span>
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>

@@ -158,7 +158,7 @@ describe("getMilestones", () => {
         ],
       },
     ];
-    const awards = getMilestones(members);
+    const awards = getMilestones(members, "s2", []);
     const pts100 = awards.find((a) => a.title === "通算100得点達成");
     expect(pts100).toBeDefined();
     expect(pts100!.value).toBe(110);
@@ -176,7 +176,7 @@ describe("getMilestones", () => {
         ],
       },
     ];
-    const awards = getMilestones(members);
+    const awards = getMilestones(members, "s1", []);
     expect(awards.length).toBe(0);
   });
 });
