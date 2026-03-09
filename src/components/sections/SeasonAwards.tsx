@@ -147,6 +147,9 @@ export default function SeasonAwards({ awards, basePath = "" }: SeasonAwardsProp
                     <Badge variant="yellow">{award.title}</Badge>
                     <span className="text-xs text-neutral-400 tabular-nums">{award.value}</span>
                   </div>
+                  {award.detail ? (
+                    <div className="text-xs text-neutral-500 mt-0.5">{award.detail}</div>
+                  ) : null}
                 </div>
               </GlassCard>
             ))}
