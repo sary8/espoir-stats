@@ -1,8 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { GamePlayerStat } from "@/lib/types";
-
 function ChartSkeleton() {
   return <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16"><div className="h-[320px] rounded-2xl bg-white/5 animate-pulse" /></div>;
 }
@@ -12,11 +10,34 @@ const ShootingChart = dynamic(() => import("./ShootingChart"), { ssr: false, loa
 const PlayerRadar = dynamic(() => import("./PlayerRadar"), { ssr: false, loading: () => <ChartSkeleton /> });
 const GameBreakdown = dynamic(() => import("./GameBreakdown"), { ssr: false, loading: () => <ChartSkeleton /> });
 
+export interface GamePlayerStatSlim {
+  number: number;
+  name: string;
+  starter: boolean;
+  points: number;
+  threePointMade: number;
+  threePointAttempt: number;
+  twoPointMade: number;
+  twoPointAttempt: number;
+  ftMade: number;
+  ftAttempt: number;
+  offReb: number;
+  defReb: number;
+  totalReb: number;
+  assists: number;
+  steals: number;
+  blocks: number;
+  turnovers: number;
+  personalFouls: number;
+  foulsDrawn: number;
+  minutes: string;
+}
+
 export interface GameSummary {
   gameId: string;
   opponent: string;
   date: string;
-  players: GamePlayerStat[];
+  players: GamePlayerStatSlim[];
   teamPoints: number;
   youtubeUrl: string | null;
 }

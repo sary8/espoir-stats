@@ -71,7 +71,7 @@ export default function StatsRanking({ players }: StatsRankingProps) {
 
           return (
             <AnimatedSection key={cat.label} delay={ci * 0.05}>
-              <GlassCard className="h-full">
+              <GlassCard className="h-full" style={{ contentVisibility: "auto", containIntrinsicSize: "auto 280px" }}>
                 <div className="flex items-center gap-2 mb-3 text-accent-purple">
                   {cat.icon}
                   <span className="font-semibold text-sm">{cat.label}</span>

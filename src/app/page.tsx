@@ -50,27 +50,17 @@ export default function Home() {
   }
   const seasonAdvanced = calcAdvancedStats(seasonEspoir, seasonOpponent);
 
-  const sortedByPpg = [...players].sort((a, b) => b.ppg - a.ppg);
+  const scoringData = [...players].sort((a, b) => b.ppg - a.ppg)
+    .map((p) => ({ name: p.name.split(" ").pop()!, ppg: p.ppg, number: p.number }));
+
   const sortedByNumber = [...players].sort((a, b) => a.number - b.number);
-
-  const scoringData = sortedByPpg.map((p) => ({ name: p.name.split(" ").pop()!, ppg: p.ppg, number: p.number }));
-
-  const shootingData = sortedByNumber.map((p) => ({
-    name: p.name.split(" ").pop()!,
-    threePointPct: p.threePointPct ?? 0,
-    twoPointPct: p.twoPointPct ?? 0,
-    ftPct: p.ftPct ?? 0,
-  }));
-
-  const radarPlayers = sortedByNumber.map((p) => ({
-    number: p.number,
-    name: p.name,
-    ppg: p.ppg,
-    rpg: p.totalReb / p.games,
-    apg: p.assists / p.games,
-    spg: p.steals / p.games,
-    bpg: p.blocks / p.games,
-  }));
+  const shootingData: { name: string; threePointPct: number; twoPointPct: number; ftPct: number }[] = [];
+  const radarPlayers: { number: number; name: string; ppg: number; rpg: number; apg: number; spg: number; bpg: number }[] = [];
+  for (const p of sortedByNumber) {
+    const shortName = p.name.split(" ").pop()!;
+    shootingData.push({ name: shortName, threePointPct: p.threePointPct ?? 0, twoPointPct: p.twoPointPct ?? 0, ftPct: p.ftPct ?? 0 });
+    radarPlayers.push({ number: p.number, name: p.name, ppg: p.ppg, rpg: p.totalReb / p.games, apg: p.assists / p.games, spg: p.steals / p.games, bpg: p.blocks / p.games });
+  }
 
   return (
     <>
@@ -105,7 +95,15 @@ export default function Home() {
               gameId: g.gameId,
               opponent: g.opponent,
               date: g.date,
-              players: g.players,
+              players: g.players.map((p) => ({
+                number: p.number, name: p.name, starter: p.starter, points: p.points,
+                threePointMade: p.threePointMade, threePointAttempt: p.threePointAttempt,
+                twoPointMade: p.twoPointMade, twoPointAttempt: p.twoPointAttempt,
+                ftMade: p.ftMade, ftAttempt: p.ftAttempt,
+                offReb: p.offReb, defReb: p.defReb, totalReb: p.totalReb,
+                assists: p.assists, steals: p.steals, blocks: p.blocks, turnovers: p.turnovers,
+                personalFouls: p.personalFouls, foulsDrawn: p.foulsDrawn, minutes: p.minutes,
+              })),
               teamPoints: g.teamPoints,
               youtubeUrl: g.youtubeUrl,
             }))}
