@@ -88,6 +88,9 @@ const awardBadgeVariant: Record<string, "purple" | "blue" | "green" | "pink" | "
   "1試合最多リバウンド": "blue",
   "1試合最多アシスト": "green",
   "1試合最多スティール": "cyan",
+  "1試合最多ファール": "red",
+  "1試合最多ターンオーバー": "orange",
+  "1試合最多ファールドローン": "green",
   "通算100得点達成": "yellow",
   "通算50試合出場": "yellow",
 };

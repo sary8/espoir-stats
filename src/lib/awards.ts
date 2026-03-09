@@ -104,6 +104,9 @@ export function getBestGameRecords(
     { title: "1試合最多リバウンド", getValue: (p) => p.totalReb },
     { title: "1試合最多アシスト", getValue: (p) => p.assists },
     { title: "1試合最多スティール", getValue: (p) => p.steals },
+    { title: "1試合最多ファール", getValue: (p) => p.personalFouls },
+    { title: "1試合最多ターンオーバー", getValue: (p) => p.turnovers },
+    { title: "1試合最多ファールドローン", getValue: (p) => p.foulsDrawn },
   ];
 
   const awards: Award[] = [];
