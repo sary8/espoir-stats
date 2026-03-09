@@ -1,11 +1,10 @@
 import { Suspense } from "react";
-import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getDefaultSeason, getMemberList } from "@/lib/data";
+import { getPlayerSummaries, getGameStats, getSeasons, getDefaultSeason, getMemberList } from "@/lib/data";
 import { calcAdvancedStats } from "@/lib/stats";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import TeamOverview from "@/components/sections/TeamOverview";
-import PlayerCards from "@/components/sections/PlayerCards";
 import StatsRanking from "@/components/sections/StatsRanking";
 import LazyCharts from "@/components/sections/LazyCharts";
 
@@ -50,8 +49,6 @@ export default function Home() {
     for (const p of g.opponentPlayers) addPlayerToTotals(seasonOpponent, p);
   }
   const seasonAdvanced = calcAdvancedStats(seasonEspoir, seasonOpponent);
-
-  const topPlayers = getTopPlayers(players);
 
   const sortedByPpg = [...players].sort((a, b) => b.ppg - a.ppg);
   const sortedByNumber = [...players].sort((a, b) => a.number - b.number);
@@ -115,10 +112,6 @@ export default function Home() {
           />
         </Suspense>
         <StatsRanking players={players} />
-        <PlayerCards
-          members={members}
-          {...topPlayers}
-        />
       </main>
       <Footer seasonLabel={seasonLabel} />
     </>
