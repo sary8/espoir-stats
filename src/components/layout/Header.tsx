@@ -11,7 +11,7 @@ interface HeaderProps {
 }
 
 const SEASON_PATH_RE = /^\/season\/([^/]+)/;
-const ROOT_ONLY_PATHS = ["/compare", "/seasons", "/glossary", "/login"];
+const ROOT_ONLY_PATHS = ["/compare", "/seasons", "/all-time", "/glossary", "/login"];
 
 function getSeasonFromPath(pathname: string): string | null {
   const match = pathname.match(SEASON_PATH_RE);
@@ -86,6 +86,7 @@ export default function Header({ seasons }: HeaderProps) {
     { href: `${basePath}/games`, label: "Games", exact: false },
     { href: "/compare", label: "Compare", exact: true },
     { href: "/seasons", label: "Seasons", exact: true },
+    { href: "/all-time", label: "All-Time", exact: true },
     { href: `${basePath}/player-compare`, label: "Player Compare", exact: false },
     { href: "/glossary", label: "Stats Guide", exact: true },
   ];

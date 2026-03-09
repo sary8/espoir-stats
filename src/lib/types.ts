@@ -205,3 +205,36 @@ export interface SeasonAwardSet {
   bestGameRecords: Award[];
   milestones: Award[];
 }
+
+// --- All-Time Records types ---
+
+export interface CareerTotals {
+  memberId: string;
+  name: string;
+  number: number | null;
+  seasonsPlayed: number;
+  games: number;
+  totalPoints: number;
+  ppg: number;
+  totalRebounds: number;
+  rpg: number;
+  totalAssists: number;
+  apg: number;
+  totalSteals: number;
+  spg: number;
+  totalBlocks: number;
+  bpg: number;
+  totalEff: number;
+  avgEff: number;
+}
+
+export interface AllTimeSingleGameRecord {
+  title: string;
+  memberId: string;
+  playerName: string;
+  playerNumber: number | null;
+  value: number;
+  opponent: string;
+  date: string;
+  seasonLabel: string;
+}
