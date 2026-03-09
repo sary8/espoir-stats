@@ -78,14 +78,17 @@ export default function Header({ seasons }: HeaderProps) {
   };
 
   const navLinks = [
-    { href: `${basePath}/`, label: "Top" },
-    { href: `${basePath}/members`, label: "Members" },
-    { href: `${basePath}/games`, label: "Games" },
-    { href: "/compare", label: "Compare" },
-    { href: "/seasons", label: "Seasons" },
-    { href: `${basePath}/player-compare`, label: "Player Compare" },
-    { href: "/glossary", label: "Stats Guide" },
+    { href: `${basePath}/`, label: "Top", exact: true },
+    { href: `${basePath}/members`, label: "Members", exact: false },
+    { href: `${basePath}/games`, label: "Games", exact: false },
+    { href: "/compare", label: "Compare", exact: true },
+    { href: "/seasons", label: "Seasons", exact: true },
+    { href: `${basePath}/player-compare`, label: "Player Compare", exact: false },
+    { href: "/glossary", label: "Stats Guide", exact: true },
   ];
+
+  const isActive = (link: { href: string; exact: boolean }) =>
+    link.exact ? pathname === link.href : pathname.startsWith(link.href);
 
   return (
     <header
@@ -98,15 +101,19 @@ export default function Header({ seasons }: HeaderProps) {
           <span className="text-accent-purple">E</span>SPOIR
         </Link>
         <nav className="hidden sm:flex items-center gap-6 text-sm text-neutral-400" aria-label="メインナビゲーション">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isActive(link);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={`hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded ${active ? "text-white" : ""}`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           {seasons && seasons.length > 1 ? (
             <div className="relative" ref={seasonRef}>
               <button
@@ -141,7 +148,7 @@ export default function Header({ seasons }: HeaderProps) {
           ) : null}
         </nav>
         <button
-          className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
+          className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
           onClick={() => setMenuOpen((v) => !v)}
           aria-expanded={menuOpen}
           aria-label={menuOpen ? "メニューを閉じる" : "メニューを開く"}
@@ -152,16 +159,20 @@ export default function Header({ seasons }: HeaderProps) {
       {menuOpen ? (
         <nav className="sm:hidden bg-[#0a0a0f]/95 backdrop-blur-md border-t border-white/5" aria-label="モバイルナビゲーション">
           <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="text-neutral-400 hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = isActive(link);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  aria-current={active ? "page" : undefined}
+                  className={`hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded ${active ? "text-white" : "text-neutral-400"}`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             {seasons && seasons.length > 1 ? (
               <div className="border-t border-white/10 pt-4">
                 <p className="text-xs text-neutral-500 mb-2">Season</p>

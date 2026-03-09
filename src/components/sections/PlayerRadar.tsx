@@ -140,7 +140,19 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
             </button>
           ))}
         </div>
-        <p className="sr-only">選手の能力比較レーダーチャート（PPG、RPG、APG、SPG、BPG）。1試合あたりの平均値で比較。</p>
+        {selectedPlayers.length > 0 ? (
+          <table className="sr-only">
+            <caption>選手の能力比較（1試合平均）</caption>
+            <thead><tr><th>選手</th><th>PPG</th><th>RPG</th><th>APG</th><th>SPG</th><th>BPG</th></tr></thead>
+            <tbody>
+              {selectedPlayers.map((p) => (
+                <tr key={p.number}><td>{p.name}</td><td>{p.ppg.toFixed(1)}</td><td>{p.rpg.toFixed(1)}</td><td>{p.apg.toFixed(1)}</td><td>{p.spg.toFixed(1)}</td><td>{p.bpg.toFixed(1)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="sr-only">選手の能力比較レーダーチャート（PPG、RPG、APG、SPG、BPG）。選手を選択してください。</p>
+        )}
         <ResponsiveContainer width="100%" height={320}>
           <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
             <PolarGrid stroke="rgba(255,255,255,0.1)" />

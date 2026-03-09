@@ -16,7 +16,15 @@ export default function ShootingChart({ data }: ShootingChartProps) {
         Shooting <span className="text-accent-purple">Comparison</span>
       </h2>
       <GlassCard>
-        <p className="sr-only">選手別のシュート成功率を示す棒グラフ（3P%、2P%、FT%）。</p>
+        <table className="sr-only">
+          <caption>選手別のシュート成功率（3P%、2P%、FT%）</caption>
+          <thead><tr><th>選手</th><th>3P%</th><th>2P%</th><th>FT%</th></tr></thead>
+          <tbody>
+            {data.map((d) => (
+              <tr key={d.name}><td>{d.name}</td><td>{d.threePointPct.toFixed(1)}%</td><td>{d.twoPointPct.toFixed(1)}%</td><td>{d.ftPct.toFixed(1)}%</td></tr>
+            ))}
+          </tbody>
+        </table>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data} margin={{ left: 0, right: 10, top: 10, bottom: 30 }}>
             <XAxis dataKey="name" tick={{ fontSize: 11 }} angle={-35} textAnchor="end" interval={0} />

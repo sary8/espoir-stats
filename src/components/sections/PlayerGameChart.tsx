@@ -10,7 +10,15 @@ interface PlayerGameChartProps {
 export default function PlayerGameChart({ data }: PlayerGameChartProps) {
   return (
     <>
-    <p className="sr-only">試合ごとの得点・リバウンド・アシストの推移を示す折れ線グラフ。</p>
+    <table className="sr-only">
+      <caption>試合ごとの得点・リバウンド・アシスト</caption>
+      <thead><tr><th>対戦</th><th>PTS</th><th>REB</th><th>AST</th></tr></thead>
+      <tbody>
+        {data.map((d) => (
+          <tr key={d.game}><td>{d.game}</td><td>{d.PTS}</td><td>{d.REB}</td><td>{d.AST}</td></tr>
+        ))}
+      </tbody>
+    </table>
     <ResponsiveContainer width="100%" height={240}>
       <LineChart data={data} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
         <CartesianGrid stroke="rgba(255,255,255,0.06)" />

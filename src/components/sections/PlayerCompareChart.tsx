@@ -12,7 +12,15 @@ interface PlayerCompareChartProps {
 export default function PlayerCompareChart({ data, p1Name, p2Name }: PlayerCompareChartProps) {
   return (
     <>
-      <p className="sr-only">{p1Name}と{p2Name}の試合ごと得点推移を示す折れ線グラフ。</p>
+      <table className="sr-only">
+        <caption>{p1Name}と{p2Name}の試合ごと得点推移</caption>
+        <thead><tr><th>試合</th><th>{p1Name}</th><th>{p2Name}</th></tr></thead>
+        <tbody>
+          {data.map((d) => (
+            <tr key={d.game}><td>{d.game}</td><td>{d.p1Pts ?? "-"}</td><td>{d.p2Pts ?? "-"}</td></tr>
+          ))}
+        </tbody>
+      </table>
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={data} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
           <CartesianGrid stroke="rgba(255,255,255,0.06)" />

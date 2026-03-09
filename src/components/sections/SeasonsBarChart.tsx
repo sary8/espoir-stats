@@ -10,7 +10,15 @@ interface SeasonsBarChartProps {
 export default function SeasonsBarChart({ data }: SeasonsBarChartProps) {
   return (
     <>
-      <p className="sr-only">シーズンごとのチーム平均得点・リバウンド・アシストを示す棒グラフ。</p>
+      <table className="sr-only">
+        <caption>シーズンごとのチーム平均得点・リバウンド・アシスト</caption>
+        <thead><tr><th>シーズン</th><th>平均得点</th><th>リバウンド</th><th>アシスト</th></tr></thead>
+        <tbody>
+          {data.map((d) => (
+            <tr key={d.season}><td>{d.season}</td><td>{d.avgPoints}</td><td>{d.rebounds}</td><td>{d.assists}</td></tr>
+          ))}
+        </tbody>
+      </table>
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={data} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
           <CartesianGrid stroke="rgba(255,255,255,0.06)" />
