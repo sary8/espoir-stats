@@ -3,6 +3,16 @@ import type { NextRequest } from "next/server";
 import { readFile } from "fs/promises";
 import path from "path";
 
+const MIME_TYPES: Record<string, string> = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".avif": "image/avif",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+};
+
 // 認証は proxy.ts（middleware）で保護済み
 export async function GET(
   _request: NextRequest,
@@ -24,10 +34,12 @@ export async function GET(
   }
 
   try {
+    const ext = path.extname(filePath).toLowerCase();
+    const contentType = MIME_TYPES[ext] ?? "application/octet-stream";
     const buffer = await readFile(filePath);
     return new NextResponse(buffer, {
       headers: {
-        "Content-Type": "image/png",
+        "Content-Type": contentType,
         "Cache-Control": "private, max-age=3600",
       },
     });

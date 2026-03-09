@@ -29,9 +29,13 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
-  // X-Robots-Tag ヘッダー付与
+  // セキュリティヘッダー付与
   const response = NextResponse.next();
   response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   return response;
 }
 
