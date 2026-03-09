@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getMemberById, getAllMemberIds, getSeasons, getDefaultSeason, getAdjacentMembers, getSeasonsWithData, findMemberAcrossSeasons, getPlayerSummaries, getTopPlayers } from "@/lib/data";
+import { getMemberById, getAllMemberIds, getSeasons, getDefaultSeason, getAdjacentMembers, getSeasonsWithData, findMemberAcrossSeasons, getPlayerSummaries, getTopPlayers, getRosterPlayers, getGameStats, getAllPlayerSeasonStats } from "@/lib/data";
+import { getSeasonAwards, getPlayerAwards } from "@/lib/awards";
 import PlayerDetailClient from "@/components/sections/PlayerDetailClient";
 import MemberNotInSeason from "@/components/sections/MemberNotInSeason";
 
@@ -36,6 +37,11 @@ export default async function MemberPage({ params }: PageProps) {
   const adjacent = getAdjacentMembers(memberId, season);
   const players = getPlayerSummaries(season);
   const badges = players.length > 0 ? getTopPlayers(players) : undefined;
+  const roster = getRosterPlayers(season);
+  const games = getGameStats(season);
+  const crossSeasonMembers = getAllPlayerSeasonStats();
+  const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers);
+  const awards = getPlayerAwards(memberId, seasonAwards);
 
-  return <PlayerDetailClient member={data.player} summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} adjacentPlayers={adjacent} badges={badges} />;
+  return <PlayerDetailClient member={data.player} summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} adjacentPlayers={adjacent} badges={badges} playerAwards={awards} />;
 }

@@ -1,12 +1,14 @@
 import { Suspense } from "react";
-import { getPlayerSummaries, getGameStats, getSeasons, getDefaultSeason, getMemberList } from "@/lib/data";
+import { getPlayerSummaries, getGameStats, getSeasons, getDefaultSeason, getMemberList, getRosterPlayers, getAllPlayerSeasonStats } from "@/lib/data";
 import { calcAdvancedStats } from "@/lib/stats";
+import { getSeasonAwards } from "@/lib/awards";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import TeamOverview from "@/components/sections/TeamOverview";
 import StatsRanking from "@/components/sections/StatsRanking";
 import LazyCharts from "@/components/sections/LazyCharts";
+import SeasonAwards from "@/components/sections/SeasonAwards";
 
 export default function Home() {
   const seasons = getSeasons();
@@ -15,6 +17,9 @@ export default function Home() {
   const players = getPlayerSummaries(season);
   const members = getMemberList(season);
   const games = getGameStats(season);
+  const roster = getRosterPlayers(season);
+  const crossSeasonMembers = getAllPlayerSeasonStats();
+  const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers);
 
   let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;
   for (const p of players) {
@@ -109,6 +114,7 @@ export default function Home() {
             }))}
           />
         </Suspense>
+        <SeasonAwards awards={seasonAwards} />
         <StatsRanking players={players} />
       </main>
       <Footer seasonLabel={seasonLabel} />

@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getSeasonsWithData, getMemberList } from "@/lib/data";
+import { getPlayerSummaries, getGameStats, getTopPlayers, getSeasons, getSeasonsWithData, getMemberList, getRosterPlayers, getAllPlayerSeasonStats } from "@/lib/data";
 import { calcAdvancedStats } from "@/lib/stats";
+import { getSeasonAwards } from "@/lib/awards";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
@@ -9,6 +10,7 @@ import TeamOverview from "@/components/sections/TeamOverview";
 import PlayerCards from "@/components/sections/PlayerCards";
 import StatsRanking from "@/components/sections/StatsRanking";
 import LazyCharts from "@/components/sections/LazyCharts";
+import SeasonAwards from "@/components/sections/SeasonAwards";
 
 export function generateStaticParams() {
   return getSeasonsWithData().map((s) => ({ season: s.id }));
@@ -28,6 +30,9 @@ export default async function SeasonHome({ params }: PageProps) {
   const players = getPlayerSummaries(season);
   const members = getMemberList(season);
   const games = getGameStats(season);
+  const roster = getRosterPlayers(season);
+  const crossSeasonMembers = getAllPlayerSeasonStats();
+  const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers);
 
   let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;
   for (const p of players) {
@@ -124,6 +129,7 @@ export default async function SeasonHome({ params }: PageProps) {
             }))}
           />
         </Suspense>
+        <SeasonAwards awards={seasonAwards} basePath={basePath} />
         <PlayerCards
           members={members}
           {...topPlayers}

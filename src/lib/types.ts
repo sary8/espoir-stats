@@ -180,3 +180,28 @@ export interface GameResult {
   quarterScores: QuarterScore[];
   gameInfo: GameInfo;
 }
+
+// --- Award types ---
+
+export type AwardCategory =
+  | "category-leader"
+  | "best-game"
+  | "mvp"
+  | "milestone";
+
+export interface Award {
+  category: AwardCategory;
+  title: string;
+  memberId: string;
+  playerName: string;
+  playerNumber: number | null;
+  value: number;
+  detail?: string;
+}
+
+export interface SeasonAwardSet {
+  mvp: Award | null;
+  categoryLeaders: Award[];
+  bestGameRecords: Award[];
+  milestones: Award[];
+}

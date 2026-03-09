@@ -17,7 +17,7 @@ import Footer from "../layout/Footer";
 import PrevNextNav from "../ui/PrevNextNav";
 import Badge from "../ui/Badge";
 import { shootingColors } from "@/config/theme";
-import type { PlayerSummary, GamePlayerStat, SeasonInfo, RosterPlayer, MemberRole } from "@/lib/types";
+import type { PlayerSummary, GamePlayerStat, SeasonInfo, RosterPlayer, MemberRole, Award } from "@/lib/types";
 import { getRoleLabel, isStaffRole } from "@/lib/types";
 import { calcEff, parseMinutesToSeconds } from "@/lib/stats";
 
@@ -59,6 +59,7 @@ interface PlayerDetailClientProps {
   seasonId?: string;
   adjacentPlayers?: AdjacentPlayer;
   badges?: TopBadges;
+  playerAwards?: Award[];
 }
 
 function getMemberLabel(member: RosterPlayer): string {
@@ -70,7 +71,26 @@ function getMemberStatus(member: RosterPlayer, summary: PlayerSummary | null): s
   return summary ? `${summary.games} Games Played | Total ${summary.totalPoints} Points` : "Season DNP";
 }
 
-export default function PlayerDetailClient({ member, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers, badges }: PlayerDetailClientProps) {
+const awardBadgeVariant: Record<string, "purple" | "blue" | "green" | "pink" | "cyan" | "yellow" | "red" | "orange"> = {
+  "Season MVP": "yellow",
+  "得点王": "purple",
+  "3P王": "pink",
+  "リバウンド王": "blue",
+  "アシスト王": "green",
+  "スティール王": "cyan",
+  "ブロック王": "yellow",
+  "EFF王": "purple",
+  "1試合最多得点": "red",
+  "1試合最多3P": "pink",
+  "1試合最高EFF": "purple",
+  "1試合最多リバウンド": "blue",
+  "1試合最多アシスト": "green",
+  "1試合最多スティール": "cyan",
+  "通算100得点達成": "yellow",
+  "通算50試合出場": "yellow",
+};
+
+export default function PlayerDetailClient({ member, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers, badges, playerAwards }: PlayerDetailClientProps) {
   const prefersReducedMotion = useReducedMotion();
   const p = member;
 
@@ -173,7 +193,15 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
                 <p className="text-sm sm:text-base text-neutral-400 mt-2">
                   {getMemberStatus(p, summary)}
                 </p>
-                {badges && p.number !== null && (
+                {playerAwards && playerAwards.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {playerAwards.map((award) => (
+                      <Badge key={award.title} variant={awardBadgeVariant[award.title] ?? "purple"}>
+                        {award.title}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : badges && p.number !== null ? (
                   <div className="flex flex-wrap gap-1.5 mt-3">
                     {p.number === badges.topScorer ? <Badge variant="purple">Top Scorer</Badge> : null}
                     {p.number === badges.topRebounder ? <Badge variant="blue">Top Rebounder</Badge> : null}
@@ -184,7 +212,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
                     {p.number === badges.topFoul ? <Badge variant="red">Top Fouls</Badge> : null}
                     {p.number === badges.topTurnover ? <Badge variant="orange">Top Turnovers</Badge> : null}
                   </div>
-                )}
+                ) : null}
               </div>
               {seasonId && p.hasImage ? (
                 <div className="relative w-48 h-48 sm:w-60 sm:h-60 md:w-72 md:h-72 shrink-0">
