@@ -21,6 +21,7 @@ export default function StatCounter({ end, decimals = 0, suffix = "", duration =
   useEffect(() => {
     if (!isInView || prefersReducedMotion) return;
 
+    let rafId: number;
     const startTime = performance.now();
     const animate = (now: number) => {
       const elapsed = (now - startTime) / 1000;
@@ -28,9 +29,10 @@ export default function StatCounter({ end, decimals = 0, suffix = "", duration =
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = eased * end;
       setDisplay(current.toFixed(decimals));
-      if (progress < 1) requestAnimationFrame(animate);
+      if (progress < 1) rafId = requestAnimationFrame(animate);
     };
-    requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
   }, [isInView, end, decimals, duration, prefersReducedMotion]);
 
   return (

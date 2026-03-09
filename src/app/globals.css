@@ -72,6 +72,10 @@ body {
   border-radius: 4px;
 }
 
+[id] {
+  scroll-margin-top: 5rem;
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
