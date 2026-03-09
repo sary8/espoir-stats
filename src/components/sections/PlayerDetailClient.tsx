@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, GitCompareArrows } from "lucide-react";
 import GlassCard from "../ui/GlassCard";
 
 const PlayerGameChart = dynamic(() => import("./PlayerGameChart"), { ssr: false });
@@ -214,6 +214,15 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
                     {p.number === badges.topFoul ? <Badge variant="red">Top Fouls</Badge> : null}
                     {p.number === badges.topTurnover ? <Badge variant="orange">Top Turnovers</Badge> : null}
                   </div>
+                ) : null}
+                {p.role === "player" ? (
+                  <Link
+                    href={`${basePath}/player-compare?p1=${p.memberId}`}
+                    className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors"
+                  >
+                    <GitCompareArrows size={14} aria-hidden="true" />
+                    Compare
+                  </Link>
                 ) : null}
               </div>
               {seasonId && p.hasImage ? (

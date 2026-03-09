@@ -83,6 +83,7 @@ export default function Header({ seasons }: HeaderProps) {
     { href: `${basePath}/games`, label: "Games" },
     { href: "/compare", label: "Compare" },
     { href: "/seasons", label: "Seasons" },
+    { href: `${basePath}/player-compare`, label: "Player Compare" },
     { href: "/glossary", label: "Stats Guide" },
   ];
 
