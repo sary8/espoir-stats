@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
-import { getGameById, getAllGameIds, getSeasons, getDefaultSeason, getAdjacentGames } from "@/lib/data";
+import { getGameById, getAllGameIds, getSeasons, getDefaultSeason, getAdjacentGames, findGameAcrossSeasons } from "@/lib/data";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import GameDetailClient from "@/components/sections/GameDetailClient";
+import GameNotInSeason from "@/components/sections/GameNotInSeason";
 
 export function generateStaticParams() {
   return getAllGameIds().map((gameId) => ({
@@ -22,7 +23,13 @@ export default async function GameDetailPage({ params }: PageProps) {
   const decodedGameId = decodeURIComponent(gameId);
   const game = getGameById(decodedGameId, season);
 
-  if (!game) notFound();
+  if (!game) {
+    const cross = findGameAcrossSeasons(decodedGameId);
+    if (cross) {
+      return <GameNotInSeason opponent={cross.opponent} seasonLabel={seasonLabel} seasons={seasons} gameSeasonIds={cross.seasonIds} />;
+    }
+    notFound();
+  }
 
   const adjacent = getAdjacentGames(decodedGameId, season);
 

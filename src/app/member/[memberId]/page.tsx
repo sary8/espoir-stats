@@ -29,7 +29,7 @@ export default async function MemberPage({ params }: PageProps) {
   if (!data) {
     const cross = findMemberAcrossSeasons(memberId);
     if (cross) {
-      return <MemberNotInSeason memberName={cross.name} seasonLabel={seasonLabel} seasons={seasons} />;
+      return <MemberNotInSeason memberName={cross.name} seasonLabel={seasonLabel} seasons={seasons} memberSeasonIds={cross.seasonIds} />;
     }
     notFound();
   }

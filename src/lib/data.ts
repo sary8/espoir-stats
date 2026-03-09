@@ -380,6 +380,22 @@ export function findMemberAcrossSeasons(memberId: string): { name: string; seaso
   return found.length > 0 ? { name, seasonIds: found } : null;
 }
 
+export function findGameAcrossSeasons(gameId: string): { opponent: string; date: string; seasonIds: string[] } | null {
+  const seasons = getSeasonsWithData();
+  let opponent = "";
+  let date = "";
+  const found: string[] = [];
+  for (const s of seasons) {
+    const game = getGameById(gameId, s.id);
+    if (game) {
+      opponent = game.opponent;
+      date = game.date;
+      found.push(s.id);
+    }
+  }
+  return found.length > 0 ? { opponent, date, seasonIds: found } : null;
+}
+
 export function getPlayerByNumber(number: number, season?: string): PlayerProfile | null {
   const member = getRosterPlayers(season).find((entry) => entry.role === "player" && entry.number === number);
   return member ? getMemberById(member.memberId, season) : null;

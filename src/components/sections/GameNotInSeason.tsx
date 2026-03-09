@@ -7,20 +7,20 @@ import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import type { SeasonInfo } from "@/lib/types";
 
-interface MemberNotInSeasonProps {
-  memberName: string;
+interface GameNotInSeasonProps {
+  opponent: string;
   seasonLabel: string;
   seasons: SeasonInfo[];
   basePath?: string;
-  memberSeasonIds?: string[];
+  gameSeasonIds?: string[];
 }
 
-export default function MemberNotInSeason({ memberName, seasonLabel, seasons, basePath = "", memberSeasonIds }: MemberNotInSeasonProps) {
+export default function GameNotInSeason({ opponent, seasonLabel, seasons, basePath = "", gameSeasonIds }: GameNotInSeasonProps) {
   const prefersReducedMotion = useReducedMotion();
   const noMotion = { duration: 0 };
 
-  const memberSeasons = memberSeasonIds
-    ? seasons.filter((s) => memberSeasonIds.includes(s.id))
+  const gameSeasons = gameSeasonIds
+    ? seasons.filter((s) => gameSeasonIds.includes(s.id))
     : [];
 
   return (
@@ -35,21 +35,21 @@ export default function MemberNotInSeason({ memberName, seasonLabel, seasons, ba
               animate={{ opacity: 1, y: 0 }}
               transition={prefersReducedMotion ? noMotion : { duration: 0.6 }}
             >
-              <p className="text-5xl sm:text-7xl font-bold text-accent-purple/20 mb-2">{memberName}</p>
+              <p className="text-5xl sm:text-7xl font-bold text-accent-purple/20 mb-2">vs {opponent}</p>
               <p className="text-lg sm:text-xl text-neutral-300 mb-2">
-                {memberName} は <span className="text-accent-purple font-semibold">{seasonLabel}</span> シーズンには登録されていません
+                この試合は <span className="text-accent-purple font-semibold">{seasonLabel}</span> シーズンには存在しません
               </p>
               <p className="text-sm text-neutral-500 mb-8">
-                別のシーズンに切り替えるか、選手一覧から探してください
+                別のシーズンに切り替えるか、試合一覧から探してください
               </p>
-              {memberSeasons.length > 0 ? (
+              {gameSeasons.length > 0 ? (
                 <div className="mb-8">
-                  <p className="text-sm text-neutral-400 mb-3">登録シーズン:</p>
+                  <p className="text-sm text-neutral-400 mb-3">この試合があるシーズン:</p>
                   <div className="flex flex-wrap justify-center gap-2">
-                    {memberSeasons.map((s) => (
+                    {gameSeasons.map((s) => (
                       <Link
                         key={s.id}
-                        href={`/season/${s.id}/members`}
+                        href={`/season/${s.id}/games`}
                         className="px-4 py-2 rounded-full border border-accent-purple/40 text-accent-purple hover:bg-accent-purple/10 transition-colors text-sm font-medium"
                       >
                         {s.label}
@@ -59,11 +59,11 @@ export default function MemberNotInSeason({ memberName, seasonLabel, seasons, ba
                 </div>
               ) : null}
               <Link
-                href={`${basePath}/members`}
+                href={`${basePath}/games`}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-accent-purple/50 text-accent-purple hover:bg-accent-purple/10 transition-colors duration-300 font-medium"
               >
                 <ArrowLeft size={18} aria-hidden="true" />
-                選手一覧に戻る
+                試合一覧に戻る
               </Link>
             </motion.div>
           </div>

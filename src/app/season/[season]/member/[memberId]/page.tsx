@@ -40,7 +40,7 @@ export default async function SeasonMemberPage({ params }: PageProps) {
   if (!data) {
     const cross = findMemberAcrossSeasons(memberId);
     if (cross) {
-      return <MemberNotInSeason memberName={cross.name} seasonLabel={seasonInfo.label} seasons={seasons} />;
+      return <MemberNotInSeason memberName={cross.name} seasonLabel={seasonInfo.label} seasons={seasons} basePath={basePath} memberSeasonIds={cross.seasonIds} />;
     }
     notFound();
   }
