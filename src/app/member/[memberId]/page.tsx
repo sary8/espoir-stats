@@ -40,7 +40,7 @@ export default async function MemberPage({ params }: PageProps) {
   const roster = getRosterPlayers(season);
   const games = getGameStats(season);
   const crossSeasonMembers = getAllPlayerSeasonStats();
-  const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers);
+  const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers, season);
   const awards = getPlayerAwards(memberId, seasonAwards);
   const crossSeasonData = crossSeasonMembers.find((m) => m.memberId === memberId);
 

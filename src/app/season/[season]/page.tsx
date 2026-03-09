@@ -31,7 +31,7 @@ export default async function SeasonHome({ params }: PageProps) {
   const games = getGameStats(season);
   const roster = getRosterPlayers(season);
   const crossSeasonMembers = getAllPlayerSeasonStats();
-  const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers);
+  const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers, season);
 
   let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;
   for (const p of players) {

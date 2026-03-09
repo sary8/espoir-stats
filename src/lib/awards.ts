@@ -173,39 +173,92 @@ export function getSeasonMVP(
   };
 }
 
+interface MilestoneDef {
+  title: string;
+  threshold: number;
+  getSeasonTotal: (s: CrossSeasonMember["seasons"][0]) => number;
+  getGameValue: (game: GameResult, playerNumber: number) => number;
+}
+
+const MILESTONE_DEFS: MilestoneDef[] = [
+  {
+    title: "通算100得点達成",
+    threshold: 100,
+    getSeasonTotal: (s) => s.totalPoints,
+    getGameValue: (game, num) => {
+      const p = game.players.find((pl) => pl.number === num);
+      return p ? p.points : 0;
+    },
+  },
+  {
+    title: "通算50試合出場",
+    threshold: 50,
+    getSeasonTotal: (s) => s.games,
+    getGameValue: (game, num) => {
+      return game.players.some((pl) => pl.number === num) ? 1 : 0;
+    },
+  },
+];
+
 export function getMilestones(
   crossSeasonMembers: CrossSeasonMember[],
+  currentSeasonId: string,
+  games: GameResult[],
 ): Award[] {
   const awards: Award[] = [];
+  const sortedGames = [...games].sort((a, b) => a.date.localeCompare(b.date));
 
-  // Points milestone
   for (const member of crossSeasonMembers) {
-    if (member.role !== "player") continue;
-    const totalPoints = member.seasons.reduce((s, ss) => s + ss.totalPoints, 0);
-    if (totalPoints >= 100) {
+    if (member.role !== "player" || member.number === null) continue;
+
+    const sortedSeasons = [...member.seasons].sort((a, b) =>
+      a.seasonId.localeCompare(b.seasonId),
+    );
+
+    for (const def of MILESTONE_DEFS) {
+      // 前シーズンまでの累計を計算
+      let cumulativeBefore = 0;
+      let achievedBefore = false;
+      for (const ss of sortedSeasons) {
+        if (ss.seasonId === currentSeasonId) break;
+        cumulativeBefore += def.getSeasonTotal(ss);
+        if (cumulativeBefore >= def.threshold) {
+          achievedBefore = true;
+          break;
+        }
+      }
+      if (achievedBefore) continue;
+
+      // 今シーズン込みでも未達なら対象外
+      const currentSeason = sortedSeasons.find(
+        (s) => s.seasonId === currentSeasonId,
+      );
+      if (!currentSeason) continue;
+      const cumulativeAfter =
+        cumulativeBefore + def.getSeasonTotal(currentSeason);
+      if (cumulativeAfter < def.threshold) continue;
+
+      // 達成した試合を特定
+      let runningTotal = cumulativeBefore;
+      let achievedGame: GameResult | null = null;
+      for (const game of sortedGames) {
+        runningTotal += def.getGameValue(game, member.number);
+        if (runningTotal >= def.threshold) {
+          achievedGame = game;
+          break;
+        }
+      }
+
       awards.push({
         category: "milestone",
-        title: "通算100得点達成",
+        title: def.title,
         memberId: member.memberId,
         playerName: member.name,
         playerNumber: member.number,
-        value: totalPoints,
-      });
-    }
-  }
-
-  // Games milestone
-  for (const member of crossSeasonMembers) {
-    if (member.role !== "player") continue;
-    const totalGames = member.seasons.reduce((s, ss) => s + ss.games, 0);
-    if (totalGames >= 50) {
-      awards.push({
-        category: "milestone",
-        title: "通算50試合出場",
-        memberId: member.memberId,
-        playerName: member.name,
-        playerNumber: member.number,
-        value: totalGames,
+        value: cumulativeAfter,
+        detail: achievedGame
+          ? `vs ${achievedGame.opponent} (${achievedGame.date.replace(/-/g, "/")})`
+          : undefined,
       });
     }
   }
@@ -218,12 +271,13 @@ export function getSeasonAwards(
   games: GameResult[],
   roster: RosterPlayer[],
   crossSeasonMembers: CrossSeasonMember[],
+  currentSeasonId: string,
 ): SeasonAwardSet {
   return {
     mvp: getSeasonMVP(players, roster),
     categoryLeaders: getCategoryLeaders(players, roster),
     bestGameRecords: getBestGameRecords(games, roster),
-    milestones: getMilestones(crossSeasonMembers),
+    milestones: getMilestones(crossSeasonMembers, currentSeasonId, games),
   };
 }
 
