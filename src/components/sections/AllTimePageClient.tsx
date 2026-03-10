@@ -222,8 +222,9 @@ export default function AllTimePageClient({
     return sortDir === "asc" ? "ascending" : "descending";
   };
 
-  const th =
-    "py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap cursor-pointer hover:text-white transition-colors select-none";
+  const th = "py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap";
+  const thBtn =
+    "inline-flex items-center gap-1 cursor-pointer hover:text-white transition-colors select-none";
   const td = "py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap tabular-nums";
 
   return (
@@ -336,18 +337,20 @@ export default function AllTimePageClient({
                         key={col.key}
                         className={`text-${col.align} ${th}`}
                         scope="col"
-                        tabIndex={0}
                         aria-sort={getAriaSortValue(col.key)}
-                        onClick={() => handleSort(col.key)}
-                        onKeyDown={(e) => handleSortKeyDown(e, col.key)}
                       >
-                        <span className="inline-flex items-center gap-1">
+                        <button
+                          type="button"
+                          className={thBtn}
+                          onClick={() => handleSort(col.key)}
+                          onKeyDown={(e) => handleSortKeyDown(e, col.key)}
+                        >
                           {col.label}
                           <SortIcon
                             active={sortKey === col.key}
                             dir={sortDir}
                           />
-                        </span>
+                        </button>
                       </th>
                     ))}
                   </tr>

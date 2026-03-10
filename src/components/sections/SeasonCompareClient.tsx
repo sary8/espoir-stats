@@ -209,7 +209,7 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
             <select
               value={selectedMemberId}
               onChange={(e) => setSelectedMemberId(e.target.value)}
-              className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-neutral-200 focus:outline-none focus:border-accent-purple cursor-pointer min-w-[200px]"
+              className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-neutral-200 focus:outline-none focus:border-accent-purple focus-visible:ring-2 focus-visible:ring-accent-purple cursor-pointer min-w-[200px]"
               aria-label="選手を選択"
             >
               {sortedMembers.map((m) => (

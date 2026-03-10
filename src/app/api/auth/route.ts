@@ -1,26 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { createToken, TOKEN_MAX_AGE_SEC } from "@/lib/auth";
 import { clearLoginFailures, getClientKey, getLoginRateLimitStatus, recordLoginFailure } from "@/lib/loginRateLimit";
 
 function timingSafeCompare(a: string, b: string): boolean {
-  const encoder = new TextEncoder();
-  const aBuf = encoder.encode(a);
-  const bBuf = encoder.encode(b);
-  if (aBuf.length !== bBuf.length) {
-    // 長さが異なる場合も一定時間消費するためダミー比較
-    let dummy = 0;
-    for (let i = 0; i < aBuf.length; i++) {
-      dummy |= aBuf[i] ^ (bBuf[i % bBuf.length] || 0);
-    }
-    void dummy;
-    return false;
-  }
-  let result = 0;
-  for (let i = 0; i < aBuf.length; i++) {
-    result |= aBuf[i] ^ bBuf[i];
-  }
-  return result === 0;
+  const aBuf = Buffer.from(a);
+  const bBuf = Buffer.from(b);
+  if (aBuf.length !== bBuf.length) return false;
+  return timingSafeEqual(aBuf, bBuf);
 }
 
 export async function POST(request: NextRequest) {

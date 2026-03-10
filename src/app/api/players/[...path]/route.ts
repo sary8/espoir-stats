@@ -11,8 +11,8 @@ export async function GET(
 ) {
   const segments = (await params).path;
 
-  // パストラバーサル防止: ".." や絶対パスを含むセグメントを拒否
-  if (segments.some((s) => s === ".." || s.includes("/") || s.includes("\\"))) {
+  // パストラバーサル防止: 安全な文字のみ許可（英数字, ハイフン, アンダースコア, ドット）
+  if (segments.some((s) => !s || /[^a-zA-Z0-9._-]/.test(s) || s === ".." || s.startsWith("."))) {
     return NextResponse.json({ error: "Invalid path" }, { status: 400 });
   }
 
