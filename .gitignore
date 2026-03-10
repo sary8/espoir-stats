@@ -48,6 +48,7 @@ next-env.d.ts
 
 # 写真
 /original_image
+/private
 
 # Claude Code
 .claude/

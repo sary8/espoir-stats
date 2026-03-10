@@ -1,17 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { readFile } from "fs/promises";
-import path from "path";
-
-const MIME_TYPES: Record<string, string> = {
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".webp": "image/webp",
-  ".avif": "image/avif",
-  ".gif": "image/gif",
-  ".svg": "image/svg+xml",
-};
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { r2Client, R2_BUCKET } from "@/lib/r2";
 
 // 認証は proxy.ts で保護済み
 export async function GET(
@@ -25,22 +16,21 @@ export async function GET(
     return NextResponse.json({ error: "Invalid path" }, { status: 400 });
   }
 
-  const filePath = path.join(process.cwd(), "private", "players", ...segments);
-
-  // private/players 配下であることを再確認
-  const allowedDir = path.join(process.cwd(), "private", "players");
-  if (!filePath.startsWith(allowedDir)) {
-    return NextResponse.json({ error: "Invalid path" }, { status: 400 });
-  }
+  const key = `players/${segments.join("/")}`;
 
   try {
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext] ?? "application/octet-stream";
-    const buffer = await readFile(filePath);
-    return new NextResponse(buffer, {
+    const command = new GetObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: key,
+    });
+    const signedUrl = await getSignedUrl(r2Client, command, {
+      expiresIn: 3600,
+    });
+
+    return NextResponse.redirect(signedUrl, {
+      status: 302,
       headers: {
-        "Content-Type": contentType,
-        "Cache-Control": "private, max-age=3600",
+        "Cache-Control": "private, max-age=3000",
       },
     });
   } catch {
