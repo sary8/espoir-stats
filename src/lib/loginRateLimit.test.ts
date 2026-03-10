@@ -5,11 +5,11 @@ describe("loginRateLimit", () => {
   const origNodeEnv = process.env.NODE_ENV;
 
   beforeAll(() => {
-    process.env.NODE_ENV = "production";
+    (process.env as Record<string, string | undefined>).NODE_ENV = "production";
   });
 
   afterAll(() => {
-    process.env.NODE_ENV = origNodeEnv;
+    (process.env as Record<string, string | undefined>).NODE_ENV = origNodeEnv;
   });
 
   afterEach(() => {
