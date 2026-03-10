@@ -24,12 +24,17 @@ export default async function SeasonPlayerComparePage({ params }: PageProps) {
   ]);
   const basePath = `/season/${season}`;
 
+  const gamePoints = games.map((g) => ({
+    opponent: g.opponent,
+    players: g.players.map((p) => ({ number: p.number, points: p.points })),
+  }));
+
   return (
     <Suspense>
       <PlayerCompareClient
         seasons={seasons}
         players={players}
-        games={games}
+        gamePoints={gamePoints}
         roster={roster}
         basePath={basePath}
       />

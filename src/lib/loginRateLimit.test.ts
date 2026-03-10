@@ -43,5 +43,25 @@ describe("loginRateLimit", () => {
     };
     expect(getClientKey(headers)).toBe("1.2.3.4");
   });
+
+  it("cf-connecting-ip にフォールバックする", () => {
+    const headers = {
+      get(name: string) {
+        if (name === "cf-connecting-ip") return "10.0.0.1";
+        return null;
+      },
+    };
+    expect(getClientKey(headers)).toBe("10.0.0.1");
+  });
+
+  it("ヘッダーが無い場合 fallbackIp を使う", () => {
+    const headers = { get() { return null; } };
+    expect(getClientKey(headers, "::1")).toBe("::1");
+  });
+
+  it("全て無い場合 unknown を返す", () => {
+    const headers = { get() { return null; } };
+    expect(getClientKey(headers)).toBe("unknown");
+  });
 });
 

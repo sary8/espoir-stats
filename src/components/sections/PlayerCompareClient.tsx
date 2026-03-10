@@ -9,15 +9,20 @@ import ProgressRing from "../ui/ProgressRing";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import { shootingColors } from "@/config/theme";
-import type { PlayerSummary, GameResult, SeasonInfo, RosterPlayer } from "@/lib/types";
+import type { PlayerSummary, SeasonInfo, RosterPlayer } from "@/lib/types";
 import { calcEff } from "@/lib/stats";
 
 const PlayerCompareChart = dynamic(() => import("./PlayerCompareChart"), { ssr: false });
 
+export interface GamePointsSlim {
+  opponent: string;
+  players: { number: number; points: number }[];
+}
+
 interface PlayerCompareClientProps {
   seasons: SeasonInfo[];
   players: PlayerSummary[];
-  games: GameResult[];
+  gamePoints: GamePointsSlim[];
   roster: RosterPlayer[];
   basePath?: string;
 }
@@ -86,7 +91,7 @@ function calcPlayerEff(p: PlayerSummary): number {
   });
 }
 
-export default function PlayerCompareClient({ seasons, players, games, roster, basePath = "" }: PlayerCompareClientProps) {
+export default function PlayerCompareClient({ seasons, players, gamePoints, roster, basePath = "" }: PlayerCompareClientProps) {
   const searchParams = useSearchParams();
   const initialP1 = searchParams.get("p1") ?? "";
   const initialP2 = searchParams.get("p2") ?? "";
@@ -127,7 +132,7 @@ export default function PlayerCompareClient({ seasons, players, games, roster, b
     const p1Num = p1Member.number;
     const p2Num = p2Member.number;
 
-    return [...games].reverse().map((g) => {
+    return [...gamePoints].reverse().map((g) => {
       const p1Stat = p1Num !== null ? g.players.find((p) => p.number === p1Num) : null;
       const p2Stat = p2Num !== null ? g.players.find((p) => p.number === p2Num) : null;
       return {
@@ -136,7 +141,7 @@ export default function PlayerCompareClient({ seasons, players, games, roster, b
         p2Pts: p2Stat?.points ?? null,
       };
     }).filter((d) => d.p1Pts !== null || d.p2Pts !== null);
-  }, [games, p1Member, p2Member]);
+  }, [gamePoints, p1Member, p2Member]);
 
   const th = "text-center py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap";
   const td = "text-center py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap tabular-nums";

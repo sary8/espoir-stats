@@ -91,8 +91,12 @@ export default function Header({ seasons }: HeaderProps) {
     { href: "/glossary", label: "Stats Guide", exact: true },
   ];
 
-  const isActive = (link: { href: string; exact: boolean }) =>
-    link.exact ? pathname === link.href : pathname.startsWith(link.href);
+  const isActive = (link: { href: string; exact: boolean }) => {
+    const norm = (s: string) => (s.length > 1 && s.endsWith("/") ? s.slice(0, -1) : s);
+    return link.exact
+      ? norm(pathname) === norm(link.href)
+      : pathname.startsWith(link.href);
+  };
 
   return (
     <header

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { r2Client, R2_BUCKET } from "@/lib/r2";
 
 // 認証は proxy.ts で保護済み
@@ -23,13 +22,20 @@ export async function GET(
       Bucket: R2_BUCKET,
       Key: key,
     });
-    const signedUrl = await getSignedUrl(r2Client, command, {
-      expiresIn: 3600,
-    });
+    const response = await r2Client.send(command);
 
-    return NextResponse.redirect(signedUrl, {
-      status: 302,
+    if (!response.Body) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    const contentType = response.ContentType ?? "image/png";
+    // ReadableStream に変換してストリーム配信
+    const stream = response.Body.transformToWebStream();
+
+    return new NextResponse(stream, {
+      status: 200,
       headers: {
+        "Content-Type": contentType,
         "Cache-Control": "private, max-age=3000",
       },
     });

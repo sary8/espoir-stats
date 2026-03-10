@@ -38,8 +38,6 @@ export interface GameSummary {
   opponent: string;
   date: string;
   players: GamePlayerStatSlim[];
-  teamPoints: number;
-  youtubeUrl: string | null;
 }
 
 interface LazyChartsProps {

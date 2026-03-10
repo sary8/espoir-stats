@@ -123,8 +123,6 @@ export default async function SeasonHome({ params }: PageProps) {
                 assists: p.assists, steals: p.steals, blocks: p.blocks, turnovers: p.turnovers,
                 personalFouls: p.personalFouls, foulsDrawn: p.foulsDrawn, minutes: p.minutes,
               })),
-              teamPoints: g.teamPoints,
-              youtubeUrl: g.youtubeUrl,
             }))}
           />
         </Suspense>

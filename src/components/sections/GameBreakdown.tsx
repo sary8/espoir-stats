@@ -57,8 +57,9 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
   children: React.ReactNode;
 }) {
   const isActive = sortKey === k;
+  const ariaSortValue: "ascending" | "descending" | "none" = isActive ? (sortAsc ? "ascending" : "descending") : "none";
   return (
-    <th className="text-center py-0 px-0 whitespace-nowrap" scope="col">
+    <th className="text-center py-0 px-0 whitespace-nowrap" scope="col" aria-sort={ariaSortValue}>
       <button type="button" className="w-full py-2 px-1.5 sm:py-3 sm:px-2 cursor-pointer select-none hover:text-white transition-colors" onClick={() => onSort(k)} aria-label={`${typeof children === 'string' ? children : k}でソート`}>
         <span className="inline-flex items-center gap-0.5">
           {children}

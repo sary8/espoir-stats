@@ -63,7 +63,7 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   });
 
   test("ヘッダーナビゲーションが全ページリンクを含む", async ({ page }) => {
-    const nav = page.locator("nav");
+    const nav = page.locator('nav[aria-label="メインナビゲーション"]');
     await expect(nav.locator('a[href="/members"]')).toBeVisible();
     await expect(nav.locator('a[href="/games"]')).toBeVisible();
     await expect(nav.locator('a[href="/compare"]')).toBeVisible();

@@ -1,8 +1,11 @@
 // 注意: プロセス内Mapのため、Vercelの複数インスタンスやコールドスタートで状態は共有されない。
 // 完全な総当たり防止にはKV等の外部ストアが必要だが、単一パスワード認証で
 // タイミングセーフ比較済みのため、現状のリスクは許容範囲と判断。
+// Vercelでは x-forwarded-for が常に設定されるためIP識別は機能する。
+// ローカル開発では転送ヘッダーが無く全クライアントが同一バケットになるため、
+// ウィンドウを短縮して開発・テストへの影響を軽減する。
 const MAX_ATTEMPTS = 5;
-const WINDOW_MS = 15 * 60 * 1000;
+const WINDOW_MS = process.env.NODE_ENV === "production" ? 15 * 60 * 1000 : 60 * 1000;
 
 interface AttemptEntry {
   count: number;
@@ -32,10 +35,11 @@ function pruneExpired(now: number): void {
   }
 }
 
-export function getClientKey(headers: HeaderReader): string {
+export function getClientKey(headers: HeaderReader, fallbackIp?: string | null): string {
   const forwarded = headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   const realIp = headers.get("x-real-ip")?.trim();
-  return forwarded || realIp || "unknown";
+  const cfIp = headers.get("cf-connecting-ip")?.trim();
+  return forwarded || realIp || cfIp || fallbackIp || "unknown";
 }
 
 export function getLoginRateLimitStatus(clientKey: string, now = Date.now()): RateLimitResult {
