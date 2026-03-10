@@ -1,6 +1,9 @@
+import { config } from "dotenv";
 import { readdir, readFile } from "fs/promises";
 import path from "path";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+config({ path: ".env.local" });
 
 const endpoint = process.env.R2_ENDPOINT;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
