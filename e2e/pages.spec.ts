@@ -1,13 +1,8 @@
 import { test, expect } from "@playwright/test";
 
-const sitePassword = process.env.SITE_PASSWORD;
-
 test.describe("ページ遷移・コンテンツ表示", () => {
   test.beforeEach(async ({ page }) => {
-    test.skip(!sitePassword, "SITE_PASSWORD が必要");
-    await page.goto("/login");
-    await page.fill("#password", sitePassword!);
-    await page.click('button[type="submit"]');
+    await page.goto("/");
     await expect(page).toHaveURL(/\/$/);
   });
 

@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 
+test.use({ storageState: { cookies: [], origins: [] } });
+
 test.describe("ページ表示", () => {
   test("存在しないページはログインにリダイレクトされる", async ({ page }) => {
     await page.goto("/nonexistent-page");

@@ -1,7 +1,17 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { clearLoginFailures, getClientKey, getLoginRateLimitStatus, recordLoginFailure, resetLoginRateLimitForTests } from "./loginRateLimit";
 
 describe("loginRateLimit", () => {
+  const origNodeEnv = process.env.NODE_ENV;
+
+  beforeAll(() => {
+    process.env.NODE_ENV = "production";
+  });
+
+  afterAll(() => {
+    process.env.NODE_ENV = origNodeEnv;
+  });
+
   afterEach(() => {
     resetLoginRateLimitForTests();
   });

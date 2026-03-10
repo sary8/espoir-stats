@@ -2,10 +2,13 @@
 // 完全な総当たり防止にはKV等の外部ストアが必要だが、単一パスワード認証で
 // タイミングセーフ比較済みのため、現状のリスクは許容範囲と判断。
 // Vercelでは x-forwarded-for が常に設定されるためIP識別は機能する。
-// ローカル開発では転送ヘッダーが無く全クライアントが同一バケットになるため、
-// ウィンドウを短縮して開発・テストへの影響を軽減する。
+// 開発・テスト環境ではプロセス内Mapの防御効果が限定的なため無効化する。
 const MAX_ATTEMPTS = 5;
-const WINDOW_MS = process.env.NODE_ENV === "production" ? 15 * 60 * 1000 : 60 * 1000;
+const WINDOW_MS = 15 * 60 * 1000;
+
+function isEnabled(): boolean {
+  return process.env.NODE_ENV === "production";
+}
 
 interface AttemptEntry {
   count: number;
@@ -43,6 +46,10 @@ export function getClientKey(headers: HeaderReader, fallbackIp?: string | null):
 }
 
 export function getLoginRateLimitStatus(clientKey: string, now = Date.now()): RateLimitResult {
+  if (!isEnabled()) {
+    return { allowed: true, retryAfterSec: 0 };
+  }
+
   pruneExpired(now);
   const entry = attempts.get(clientKey);
   if (!entry) {
@@ -60,6 +67,10 @@ export function getLoginRateLimitStatus(clientKey: string, now = Date.now()): Ra
 }
 
 export function recordLoginFailure(clientKey: string, now = Date.now()): RateLimitResult {
+  if (!isEnabled()) {
+    return { allowed: true, retryAfterSec: 0 };
+  }
+
   pruneExpired(now);
   const entry = attempts.get(clientKey);
 
@@ -82,6 +93,7 @@ export function recordLoginFailure(clientKey: string, now = Date.now()): RateLim
 }
 
 export function clearLoginFailures(clientKey: string): void {
+  if (!isEnabled()) return;
   attempts.delete(clientKey);
 }
 
