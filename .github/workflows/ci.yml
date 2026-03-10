@@ -41,6 +41,7 @@ jobs:
       - run: npm test
     env:
       AUTH_SECRET: ci-test-secret
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
   build:
     runs-on: ubuntu-latest
@@ -57,3 +58,5 @@ jobs:
           key: nextjs-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**', 'stats-csv/**') }}
           restore-keys: nextjs-${{ hashFiles('package-lock.json') }}-
       - run: npm run build
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
