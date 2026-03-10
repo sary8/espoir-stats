@@ -105,16 +105,17 @@ export async function getDefaultSeason(): Promise<string> {
 
 export async function getSeasonsWithData(): Promise<SeasonInfo[]> {
   const seasons = await getSeasons();
-  const result: SeasonInfo[] = [];
-  for (const s of seasons) {
-    const [row] = await db
-      .select({ id: schema.playerSummaries.id })
-      .from(schema.playerSummaries)
-      .where(eq(schema.playerSummaries.seasonId, s.id))
-      .limit(1);
-    if (row) result.push(s);
-  }
-  return result;
+  const checks = await Promise.all(
+    seasons.map(async (s) => {
+      const [row] = await db
+        .select({ id: schema.playerSummaries.id })
+        .from(schema.playerSummaries)
+        .where(eq(schema.playerSummaries.seasonId, s.id))
+        .limit(1);
+      return row ? s : null;
+    }),
+  );
+  return checks.filter((s): s is SeasonInfo => s !== null);
 }
 
 // --- Roster ---
@@ -172,8 +173,11 @@ export async function getPlayerSummaries(season?: string): Promise<PlayerSummary
 }
 
 export async function getMemberList(season?: string): Promise<PlayerListEntry[]> {
-  const roster = await getRosterPlayers(season);
-  const summaries = await getPlayerSummaries(season);
+  const s = season ?? await getDefaultSeason();
+  const [roster, summaries] = await Promise.all([
+    getRosterPlayers(s),
+    getPlayerSummaries(s),
+  ]);
   const summaryMap = new Map(summaries.map((summary) => [summary.number, summary]));
   return roster.map((member) => ({
     ...member,
@@ -194,54 +198,55 @@ export async function getGameStats(season?: string): Promise<GameResult[]> {
     .from(schema.games)
     .where(eq(schema.games.seasonId, s));
 
-  const results: GameResult[] = [];
-  for (const g of gameRows) {
-    const [playerStats, oppStats, quarters] = await Promise.all([
-      db
-        .select()
-        .from(schema.gamePlayerStats)
-        .where(and(eq(schema.gamePlayerStats.gamePk, g.id), eq(schema.gamePlayerStats.isOpponent, false))),
-      db
-        .select()
-        .from(schema.gamePlayerStats)
-        .where(and(eq(schema.gamePlayerStats.gamePk, g.id), eq(schema.gamePlayerStats.isOpponent, true))),
-      db
-        .select()
-        .from(schema.quarterScores)
-        .where(eq(schema.quarterScores.gamePk, g.id)),
-    ]);
+  const results = await Promise.all(
+    gameRows.map(async (g) => {
+      const [playerStats, oppStats, quarters] = await Promise.all([
+        db
+          .select()
+          .from(schema.gamePlayerStats)
+          .where(and(eq(schema.gamePlayerStats.gamePk, g.id), eq(schema.gamePlayerStats.isOpponent, false))),
+        db
+          .select()
+          .from(schema.gamePlayerStats)
+          .where(and(eq(schema.gamePlayerStats.gamePk, g.id), eq(schema.gamePlayerStats.isOpponent, true))),
+        db
+          .select()
+          .from(schema.quarterScores)
+          .where(eq(schema.quarterScores.gamePk, g.id)),
+      ]);
 
-    const players = playerStats
-      .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
-      .sort((a, b) => a.number - b.number);
-    const opponentPlayers = oppStats
-      .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
-      .sort((a, b) => a.number - b.number);
-    const quarterScores: QuarterScore[] = quarters.map((q) => ({
-      quarter: q.quarter,
-      espoir: q.espoir,
-      opponent: q.opponent,
-    }));
+      const players = playerStats
+        .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
+        .sort((a, b) => a.number - b.number);
+      const opponentPlayers = oppStats
+        .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
+        .sort((a, b) => a.number - b.number);
+      const quarterScores: QuarterScore[] = quarters.map((q) => ({
+        quarter: q.quarter,
+        espoir: q.espoir,
+        opponent: q.opponent,
+      }));
 
-    const gameInfo: GameInfo = {
-      tournament: g.tournament,
-      venue: g.venue,
-      gameType: g.gameType,
-    };
+      const gameInfo: GameInfo = {
+        tournament: g.tournament,
+        venue: g.venue,
+        gameType: g.gameType,
+      };
 
-    results.push({
-      gameId: g.gameId,
-      opponent: g.opponent,
-      date: g.date,
-      players,
-      teamPoints: g.teamPoints,
-      opponentPlayers,
-      opponentPoints: g.opponentPoints,
-      youtubeUrl: g.youtubeUrl,
-      quarterScores,
-      gameInfo,
-    });
-  }
+      return {
+        gameId: g.gameId,
+        opponent: g.opponent,
+        date: g.date,
+        players,
+        teamPoints: g.teamPoints,
+        opponentPlayers,
+        opponentPoints: g.opponentPoints,
+        youtubeUrl: g.youtubeUrl,
+        quarterScores,
+        gameInfo,
+      } as GameResult;
+    }),
+  );
 
   return results.sort((a, b) => b.date.localeCompare(a.date));
 }
@@ -271,12 +276,15 @@ export async function getAllGameIds(season?: string): Promise<string[]> {
 // --- Member/Player lookups ---
 
 export async function getMemberById(memberId: string, season?: string): Promise<PlayerProfile | null> {
-  const roster = await getRosterPlayers(season);
+  const s = season ?? await getDefaultSeason();
+  const roster = await getRosterPlayers(s);
   const member = roster.find((entry) => entry.memberId === memberId);
   if (!member) return null;
 
-  const summaries = await getPlayerSummaries(season);
-  const games = await getGameStats(season);
+  const [summaries, games] = await Promise.all([
+    getPlayerSummaries(s),
+    getGameStats(s),
+  ]);
   const summary = member.number !== null && member.role === "player"
     ? (summaries.find((p) => p.number === member.number) ?? null)
     : null;
@@ -295,32 +303,26 @@ export async function getMemberById(memberId: string, season?: string): Promise<
 
 export async function findMemberAcrossSeasons(memberId: string): Promise<{ name: string; seasonIds: string[] } | null> {
   const seasons = await getSeasonsWithData();
-  let name = "";
-  const found: string[] = [];
-  for (const s of seasons) {
-    const member = (await getRosterPlayers(s.id)).find((m) => m.memberId === memberId);
-    if (member) {
-      name = member.name;
-      found.push(s.id);
-    }
-  }
-  return found.length > 0 ? { name, seasonIds: found } : null;
+  const results = await Promise.all(
+    seasons.map(async (s) => {
+      const member = (await getRosterPlayers(s.id)).find((m) => m.memberId === memberId);
+      return member ? { seasonId: s.id, name: member.name } : null;
+    }),
+  );
+  const found = results.filter((r): r is { seasonId: string; name: string } => r !== null);
+  return found.length > 0 ? { name: found[found.length - 1].name, seasonIds: found.map((f) => f.seasonId) } : null;
 }
 
 export async function findGameAcrossSeasons(gameId: string): Promise<{ opponent: string; date: string; seasonIds: string[] } | null> {
   const seasons = await getSeasonsWithData();
-  let opponent = "";
-  let date = "";
-  const found: string[] = [];
-  for (const s of seasons) {
-    const game = await getGameById(gameId, s.id);
-    if (game) {
-      opponent = game.opponent;
-      date = game.date;
-      found.push(s.id);
-    }
-  }
-  return found.length > 0 ? { opponent, date, seasonIds: found } : null;
+  const results = await Promise.all(
+    seasons.map(async (s) => {
+      const game = await getGameById(gameId, s.id);
+      return game ? { seasonId: s.id, opponent: game.opponent, date: game.date } : null;
+    }),
+  );
+  const found = results.filter((r): r is { seasonId: string; opponent: string; date: string } => r !== null);
+  return found.length > 0 ? { opponent: found[found.length - 1].opponent, date: found[found.length - 1].date, seasonIds: found.map((f) => f.seasonId) } : null;
 }
 
 export async function getPlayerByNumber(number: number, season?: string): Promise<PlayerProfile | null> {
@@ -371,10 +373,12 @@ export async function getAdjacentGames(gameId: string, season?: string): Promise
 
 export async function getAllTeamSeasonStats(): Promise<TeamSeasonStats[]> {
   const seasons = [...(await getSeasonsWithData())].reverse();
+  const allGames = await Promise.all(seasons.map((s) => getGameStats(s.id)));
   const results: TeamSeasonStats[] = [];
 
-  for (const season of seasons) {
-    const games = await getGameStats(season.id);
+  for (let i = 0; i < seasons.length; i++) {
+    const season = seasons[i];
+    const games = allGames[i];
     const totalGames = games.length;
     const wins = games.filter((g) => g.teamPoints > g.opponentPoints).length;
     const losses = totalGames - wins;
@@ -451,11 +455,18 @@ export async function getAllTeamSeasonStats(): Promise<TeamSeasonStats[]> {
 
 export async function getAllPlayerSeasonStats(): Promise<CrossSeasonMember[]> {
   const seasons = [...(await getSeasonsWithData())].reverse();
+  const seasonData = await Promise.all(
+    seasons.map(async (s) => {
+      const [roster, summaries] = await Promise.all([
+        getRosterPlayers(s.id),
+        getPlayerSummaries(s.id),
+      ]);
+      return { season: s, roster, summaries };
+    }),
+  );
   const memberMap = new Map<string, CrossSeasonMember>();
 
-  for (const season of seasons) {
-    const roster = await getRosterPlayers(season.id);
-    const summaries = await getPlayerSummaries(season.id);
+  for (const { season, roster, summaries } of seasonData) {
     const summaryMap = new Map(summaries.map((s) => [s.number, s]));
 
     for (const member of roster) {

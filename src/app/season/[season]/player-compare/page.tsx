@@ -17,9 +17,11 @@ export default async function SeasonPlayerComparePage({ params }: PageProps) {
   const seasonInfo = seasons.find((s) => s.id === season);
   if (!seasonInfo) notFound();
 
-  const players = await getPlayerSummaries(season);
-  const games = await getGameStats(season);
-  const roster = await getRosterPlayers(season);
+  const [players, games, roster] = await Promise.all([
+    getPlayerSummaries(season),
+    getGameStats(season),
+    getRosterPlayers(season),
+  ]);
   const basePath = `/season/${season}`;
 
   return (

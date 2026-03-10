@@ -5,9 +5,11 @@ import PlayerCompareClient from "@/components/sections/PlayerCompareClient";
 export default async function PlayerComparePage() {
   const seasons = await getSeasons();
   const season = await getDefaultSeason();
-  const players = await getPlayerSummaries(season);
-  const games = await getGameStats(season);
-  const roster = await getRosterPlayers(season);
+  const [players, games, roster] = await Promise.all([
+    getPlayerSummaries(season),
+    getGameStats(season),
+    getRosterPlayers(season),
+  ]);
 
   return (
     <Suspense>

@@ -14,11 +14,13 @@ export default async function Home() {
   const seasons = await getSeasons();
   const season = await getDefaultSeason();
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
-  const players = await getPlayerSummaries(season);
-  const members = await getMemberList(season);
-  const games = await getGameStats(season);
-  const roster = await getRosterPlayers(season);
-  const crossSeasonMembers = await getAllPlayerSeasonStats();
+  const [players, members, games, roster, crossSeasonMembers] = await Promise.all([
+    getPlayerSummaries(season),
+    getMemberList(season),
+    getGameStats(season),
+    getRosterPlayers(season),
+    getAllPlayerSeasonStats(),
+  ]);
   const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers, season);
 
   let totalPoints = 0, total3PM = 0, total3PA = 0, totalRebounds = 0, totalAssists = 0, totalSteals = 0, totalBlocks = 0, totalTurnovers = 0;
@@ -91,7 +93,7 @@ export default async function Home() {
           defRtg={seasonAdvanced.defRtg}
           netRtg={seasonAdvanced.netRtg}
         />
-        <Suspense>
+        <Suspense fallback={null}>
           <LazyCharts
             scoringData={scoringData}
             shootingData={shootingData}

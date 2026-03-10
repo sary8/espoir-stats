@@ -3,10 +3,11 @@ import { getAllPlayerNumbers, getSeasonsWithData } from "@/lib/data";
 
 export async function generateStaticParams() {
   const seasons = await getSeasonsWithData();
+  const allNums = await Promise.all(seasons.map((s) => getAllPlayerNumbers(s.id)));
   const params: { season: string; number: string }[] = [];
-  for (const s of seasons) {
-    for (const num of await getAllPlayerNumbers(s.id)) {
-      params.push({ season: s.id, number: String(num) });
+  for (let i = 0; i < seasons.length; i++) {
+    for (const num of allNums[i]) {
+      params.push({ season: seasons[i].id, number: String(num) });
     }
   }
   return params;

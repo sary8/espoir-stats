@@ -6,12 +6,8 @@ import MemberNotInSeason from "@/components/sections/MemberNotInSeason";
 
 export async function generateStaticParams() {
   const seasons = await getSeasonsWithData();
-  const allMemberIds = new Set<string>();
-  for (const s of seasons) {
-    for (const id of await getAllMemberIds(s.id)) {
-      allMemberIds.add(id);
-    }
-  }
+  const allIds = await Promise.all(seasons.map((s) => getAllMemberIds(s.id)));
+  const allMemberIds = new Set(allIds.flat());
   return Array.from(allMemberIds).map((memberId) => ({ memberId }));
 }
 
@@ -34,12 +30,14 @@ export default async function MemberPage({ params }: PageProps) {
     notFound();
   }
 
-  const adjacent = await getAdjacentMembers(memberId, season);
-  const players = await getPlayerSummaries(season);
+  const [adjacent, players, roster, games, crossSeasonMembers] = await Promise.all([
+    getAdjacentMembers(memberId, season),
+    getPlayerSummaries(season),
+    getRosterPlayers(season),
+    getGameStats(season),
+    getAllPlayerSeasonStats(),
+  ]);
   const badges = players.length > 0 ? getTopPlayers(players) : undefined;
-  const roster = await getRosterPlayers(season);
-  const games = await getGameStats(season);
-  const crossSeasonMembers = await getAllPlayerSeasonStats();
   const seasonAwards = getSeasonAwards(players, games, roster, crossSeasonMembers, season);
   const awards = getPlayerAwards(memberId, seasonAwards);
   const crossSeasonData = crossSeasonMembers.find((m) => m.memberId === memberId);

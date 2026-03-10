@@ -7,8 +7,11 @@ export default async function MembersPage() {
   const seasons = await getSeasons();
   const season = await getDefaultSeason();
   const seasonLabel = seasons.find((s) => s.id === season)?.label ?? season;
-  const members = await getMemberList(season);
-  const topPlayers = getTopPlayers(await getPlayerSummaries(season));
+  const [members, summaries] = await Promise.all([
+    getMemberList(season),
+    getPlayerSummaries(season),
+  ]);
+  const topPlayers = getTopPlayers(summaries);
 
   return (
     <>

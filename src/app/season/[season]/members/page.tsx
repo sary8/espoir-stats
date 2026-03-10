@@ -19,8 +19,11 @@ export default async function SeasonMembersPage({ params }: PageProps) {
   if (!seasonInfo) notFound();
 
   const basePath = `/season/${season}`;
-  const members = await getMemberList(season);
-  const topPlayers = getTopPlayers(await getPlayerSummaries(season));
+  const [members, summaries] = await Promise.all([
+    getMemberList(season),
+    getPlayerSummaries(season),
+  ]);
+  const topPlayers = getTopPlayers(summaries);
 
   return (
     <>
