@@ -12,7 +12,7 @@ test.describe("認証フロー", () => {
     await page.goto("/login");
     await page.fill("#password", "wrong-password");
     await page.click('button[type="submit"]');
-    await expect(page.locator('[role="alert"]')).toBeVisible();
+    await expect(page.locator('#auth-error')).toBeVisible();
   });
 
   test("ログインページが正しく表示される", async ({ page }) => {
