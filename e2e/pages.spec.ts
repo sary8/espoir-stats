@@ -12,7 +12,7 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   });
 
   test("メンバーページに遷移して選手一覧が表示される", async ({ page }) => {
-    const link = page.locator('nav a[href="/members"]');
+    const link = page.locator('nav[aria-label="メインナビゲーション"] a[href="/members"]');
     await link.waitFor();
     await link.click();
     await page.waitForURL(/\/members/);
@@ -20,7 +20,7 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   });
 
   test("試合一覧ページに遷移して試合カードが表示される", async ({ page }) => {
-    const link = page.locator('nav a[href="/games"]');
+    const link = page.locator('nav[aria-label="メインナビゲーション"] a[href="/games"]');
     await link.waitFor();
     await link.click();
     await page.waitForURL(/\/games/);
@@ -28,7 +28,7 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   });
 
   test("試合詳細ページに遷移してスコアが表示される", async ({ page }) => {
-    const gamesLink = page.locator('nav a[href="/games"]');
+    const gamesLink = page.locator('nav[aria-label="メインナビゲーション"] a[href="/games"]');
     await gamesLink.waitFor();
     await gamesLink.click();
     await page.waitForURL(/\/games/);
@@ -41,7 +41,7 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   });
 
   test("選手詳細ページに遷移してプロフィールが表示される", async ({ page }) => {
-    const membersLink = page.locator('nav a[href="/members"]');
+    const membersLink = page.locator('nav[aria-label="メインナビゲーション"] a[href="/members"]');
     await membersLink.waitFor();
     await membersLink.click();
     await page.waitForURL(/\/members/);
@@ -54,7 +54,7 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   });
 
   test("用語集ページに遷移して内容が表示される", async ({ page }) => {
-    const link = page.locator('nav a[href="/glossary"]');
+    const link = page.locator('nav[aria-label="メインナビゲーション"] a[href="/glossary"]');
     await link.waitFor();
     await link.click();
     await page.waitForURL(/\/glossary/);
@@ -65,7 +65,7 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   });
 
   test("シーズン比較ページに遷移できる", async ({ page }) => {
-    const link = page.locator('nav a[href="/compare"]');
+    const link = page.locator('nav[aria-label="メインナビゲーション"] a[href="/compare"]');
     await link.waitFor();
     await link.click();
     await page.waitForURL(/\/compare/);
