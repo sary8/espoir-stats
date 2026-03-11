@@ -12,40 +12,52 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   });
 
   test("メンバーページに遷移して選手一覧が表示される", async ({ page }) => {
-    await page.click('a[href="/members"]');
-    await expect(page).toHaveURL(/\/members/);
+    const link = page.locator('nav a[href="/members"]');
+    await link.waitFor();
+    await link.click();
+    await page.waitForURL(/\/members/);
     await expect(page.locator("h2").first()).toBeVisible();
   });
 
   test("試合一覧ページに遷移して試合カードが表示される", async ({ page }) => {
-    await page.click('a[href="/games"]');
-    await expect(page).toHaveURL(/\/games/);
+    const link = page.locator('nav a[href="/games"]');
+    await link.waitFor();
+    await link.click();
+    await page.waitForURL(/\/games/);
     await expect(page.locator("#main-content")).toBeVisible();
   });
 
   test("試合詳細ページに遷移してスコアが表示される", async ({ page }) => {
-    await page.click('a[href="/games"]');
-    await expect(page).toHaveURL(/\/games/);
+    const gamesLink = page.locator('nav a[href="/games"]');
+    await gamesLink.waitFor();
+    await gamesLink.click();
+    await page.waitForURL(/\/games/);
     // 最初の試合リンクをクリック
     const firstGameLink = page.locator('a[href*="/games/"]').first();
+    await firstGameLink.waitFor();
     await firstGameLink.click();
-    await expect(page).toHaveURL(/\/games\/.+/);
+    await page.waitForURL(/\/games\/.+/);
     await expect(page.locator("#main-content")).toBeVisible();
   });
 
   test("選手詳細ページに遷移してプロフィールが表示される", async ({ page }) => {
-    await page.click('a[href="/members"]');
-    await expect(page).toHaveURL(/\/members/);
+    const membersLink = page.locator('nav a[href="/members"]');
+    await membersLink.waitFor();
+    await membersLink.click();
+    await page.waitForURL(/\/members/);
     // 最初の選手リンクをクリック
     const firstMemberLink = page.locator('a[href*="/member/"]').first();
+    await firstMemberLink.waitFor();
     await firstMemberLink.click();
-    await expect(page).toHaveURL(/\/member\/.+/);
+    await page.waitForURL(/\/member\/.+/);
     await expect(page.locator("#main-content")).toBeVisible();
   });
 
   test("用語集ページに遷移して内容が表示される", async ({ page }) => {
-    await page.click('a[href="/glossary"]');
-    await expect(page).toHaveURL(/\/glossary/);
+    const link = page.locator('nav a[href="/glossary"]');
+    await link.waitFor();
+    await link.click();
+    await page.waitForURL(/\/glossary/);
     await expect(page.locator("#main-content")).toBeVisible();
     // 用語が表示されていること（略称が他セクションと被らないようabbr属性で特定）
     await expect(page.getByRole("term").filter({ hasText: "PTS" })).toBeVisible();
@@ -53,8 +65,10 @@ test.describe("ページ遷移・コンテンツ表示", () => {
   });
 
   test("シーズン比較ページに遷移できる", async ({ page }) => {
-    await page.click('a[href="/compare"]');
-    await expect(page).toHaveURL(/\/compare/);
+    const link = page.locator('nav a[href="/compare"]');
+    await link.waitFor();
+    await link.click();
+    await page.waitForURL(/\/compare/);
   });
 
   test("ヘッダーナビゲーションが全ページリンクを含む", async ({ page }) => {
