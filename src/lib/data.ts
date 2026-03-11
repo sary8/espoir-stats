@@ -89,7 +89,7 @@ function mapGamePlayerStat(
 // --- Season management ---
 
 export async function getSeasons(): Promise<SeasonInfo[]> {
-  const rows = await db.select().from(schema.seasons);
+  const rows = await db.select().from(schema.seasons).orderBy(asc(schema.seasons.id));
   return rows.map((r) => ({
     id: r.id,
     label: r.label,
