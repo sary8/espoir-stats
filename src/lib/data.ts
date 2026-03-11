@@ -1,4 +1,5 @@
 import { eq, and, asc, desc } from "drizzle-orm";
+import { cache } from "react";
 import { db } from "./db";
 import * as schema from "./db/schema";
 import type {
@@ -88,20 +89,20 @@ function mapGamePlayerStat(
 
 // --- Season management ---
 
-export async function getSeasons(): Promise<SeasonInfo[]> {
+export const getSeasons = cache(async function getSeasons(): Promise<SeasonInfo[]> {
   const rows = await db.select().from(schema.seasons).orderBy(asc(schema.seasons.id));
   return rows.map((r) => ({
     id: r.id,
     label: r.label,
     default: r.isDefault || undefined,
   }));
-}
+});
 
-export async function getDefaultSeason(): Promise<string> {
+export const getDefaultSeason = cache(async function getDefaultSeason(): Promise<string> {
   const seasons = await getSeasons();
   const def = seasons.find((s) => s.default);
   return def ? def.id : seasons[0].id;
-}
+});
 
 export async function getSeasonsWithData(): Promise<SeasonInfo[]> {
   const seasons = await getSeasons();
