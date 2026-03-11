@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getSeasons, getAllTeamSeasonStats, getAllPlayerSeasonStats } from "@/lib/data";
 import SeasonsPageClient from "@/components/sections/SeasonsPageClient";
 
@@ -7,10 +8,12 @@ export default async function SeasonsPage() {
   const playerStats = await getAllPlayerSeasonStats();
 
   return (
-    <SeasonsPageClient
-      seasons={seasons}
-      teamStats={teamStats}
-      playerStats={playerStats}
-    />
+    <Suspense>
+      <SeasonsPageClient
+        seasons={seasons}
+        teamStats={teamStats}
+        playerStats={playerStats}
+      />
+    </Suspense>
   );
 }

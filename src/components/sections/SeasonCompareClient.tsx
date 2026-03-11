@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
 import Header from "../layout/Header";
@@ -153,6 +154,16 @@ function CompareTable({ rows, columnHeaders, columnKeys }: { rows: Row[]; column
 }
 
 export default function SeasonCompareClient({ seasons, teamStats, playerStats }: SeasonCompareClientProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const updateUrl = useCallback((updates: Record<string, string>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [k, v] of Object.entries(updates)) params.set(k, v);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [searchParams, router, pathname]);
+
   const sortedMembers = useMemo(() => {
     return playerStats.filter((m) => m.role === "player").sort((a, b) => {
       const aNum = a.number ?? 999;
@@ -161,9 +172,16 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
     });
   }, [playerStats]);
 
-  const [selectedMemberId, setSelectedMemberId] = useState<string>(() => sortedMembers[0]?.memberId ?? "");
-  const [teamMode, setTeamMode] = useState<ViewMode>("average");
-  const [playerMode, setPlayerMode] = useState<ViewMode>("average");
+  const initialMember = searchParams.get("member") ?? "";
+  const initialTeamMode = (searchParams.get("teamMode") as ViewMode) ?? "average";
+  const initialPlayerMode = (searchParams.get("playerMode") as ViewMode) ?? "average";
+
+  const [selectedMemberId, setSelectedMemberId] = useState<string>(() => {
+    if (initialMember && sortedMembers.find((m) => m.memberId === initialMember)) return initialMember;
+    return sortedMembers[0]?.memberId ?? "";
+  });
+  const [teamMode, setTeamMode] = useState<ViewMode>(initialTeamMode === "total" ? "total" : "average");
+  const [playerMode, setPlayerMode] = useState<ViewMode>(initialPlayerMode === "total" ? "total" : "average");
 
   const selectedMember = useMemo(() => sortedMembers.find((m) => m.memberId === selectedMemberId) ?? null, [sortedMembers, selectedMemberId]);
 
@@ -193,7 +211,7 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
             Team <span className="text-accent-purple">Comparison</span>
           </h2>
           <div className="flex justify-center mb-4">
-            <ModeToggle mode={teamMode} onChange={setTeamMode} />
+            <ModeToggle mode={teamMode} onChange={(m) => { setTeamMode(m); updateUrl({ teamMode: m }); }} />
           </div>
           <GlassCard>
             <CompareTable rows={teamRows} columnHeaders={seasonHeaders} columnKeys={seasonIds} />
@@ -208,7 +226,7 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
           <div className="mb-4 flex flex-col sm:flex-row items-center justify-center gap-3">
             <select
               value={selectedMemberId}
-              onChange={(e) => setSelectedMemberId(e.target.value)}
+              onChange={(e) => { setSelectedMemberId(e.target.value); updateUrl({ member: e.target.value }); }}
               className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-neutral-200 focus:outline-none focus:border-accent-purple focus-visible:ring-2 focus-visible:ring-accent-purple cursor-pointer min-w-[200px]"
               aria-label="選手を選択"
             >
@@ -218,7 +236,7 @@ export default function SeasonCompareClient({ seasons, teamStats, playerStats }:
                 </option>
               ))}
             </select>
-            <ModeToggle mode={playerMode} onChange={setPlayerMode} />
+            <ModeToggle mode={playerMode} onChange={(m) => { setPlayerMode(m); updateUrl({ playerMode: m }); }} />
           </div>
           {selectedMember ? (
             <GlassCard>

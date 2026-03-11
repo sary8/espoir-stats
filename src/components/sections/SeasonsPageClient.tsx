@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import AnimatedSection from "../ui/AnimatedSection";
@@ -171,6 +172,16 @@ function GrowthIcon({ diff, higherIsBetter }: { diff: number; higherIsBetter: bo
 }
 
 export default function SeasonsPageClient({ seasons, teamStats, playerStats }: SeasonsPageClientProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const updateUrl = useCallback((updates: Record<string, string>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [k, v] of Object.entries(updates)) params.set(k, v);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [searchParams, router, pathname]);
+
   const sortedMembers = useMemo(() => {
     return playerStats
       .filter((m) => m.role === "player" && m.seasons.length >= 2)
@@ -181,8 +192,14 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
       });
   }, [playerStats]);
 
-  const [selectedMemberId, setSelectedMemberId] = useState<string>(() => sortedMembers[0]?.memberId ?? "");
-  const [teamMode, setTeamMode] = useState<ViewMode>("average");
+  const initialMember = searchParams.get("member") ?? "";
+  const initialTeamMode = (searchParams.get("teamMode") as ViewMode) ?? "average";
+
+  const [selectedMemberId, setSelectedMemberId] = useState<string>(() => {
+    if (initialMember && sortedMembers.find((m) => m.memberId === initialMember)) return initialMember;
+    return sortedMembers[0]?.memberId ?? "";
+  });
+  const [teamMode, setTeamMode] = useState<ViewMode>(initialTeamMode === "total" ? "total" : "average");
 
   const selectedMember = useMemo(() => sortedMembers.find((m) => m.memberId === selectedMemberId) ?? null, [sortedMembers, selectedMemberId]);
 
@@ -232,7 +249,7 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
             Team <span className="text-accent-purple">Comparison</span>
           </h2>
           <div className="flex justify-center mb-4">
-            <ModeToggle mode={teamMode} onChange={setTeamMode} />
+            <ModeToggle mode={teamMode} onChange={(m) => { setTeamMode(m); updateUrl({ teamMode: m }); }} />
           </div>
           <GlassCard>
             <CompareTable rows={teamRows} columnHeaders={seasonHeaders} columnKeys={seasonIds} />
@@ -260,7 +277,7 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
             <div className="mb-6 flex justify-center">
               <select
                 value={selectedMemberId}
-                onChange={(e) => setSelectedMemberId(e.target.value)}
+                onChange={(e) => { setSelectedMemberId(e.target.value); updateUrl({ member: e.target.value }); }}
                 className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-neutral-200 focus:outline-none focus:border-accent-purple focus-visible:ring-2 focus-visible:ring-accent-purple cursor-pointer min-w-[200px]"
                 aria-label="選手を選択"
               >

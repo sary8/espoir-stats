@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useMemo, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import AnimatedSection from "../ui/AnimatedSection";
 import GlassCard from "../ui/GlassCard";
@@ -113,8 +113,27 @@ export default function PlayerCompareClient({ seasons, players, gamePoints, rost
   const defaultP1 = initialP1 && findMemberByMemberId(initialP1) ? initialP1 : (rosterPlayers[0]?.memberId ?? "");
   const defaultP2 = initialP2 && findMemberByMemberId(initialP2) ? initialP2 : (rosterPlayers[1]?.memberId ?? rosterPlayers[0]?.memberId ?? "");
 
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const updateUrl = useCallback((updates: Record<string, string>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [k, v] of Object.entries(updates)) params.set(k, v);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [searchParams, router, pathname]);
+
   const [p1Id, setP1Id] = useState(defaultP1);
   const [p2Id, setP2Id] = useState(defaultP2);
+
+  const handleP1Change = useCallback((id: string) => {
+    setP1Id(id);
+    updateUrl({ p1: id, p2: p2Id });
+  }, [updateUrl, p2Id]);
+
+  const handleP2Change = useCallback((id: string) => {
+    setP2Id(id);
+    updateUrl({ p1: p1Id, p2: id });
+  }, [updateUrl, p1Id]);
 
   const p1Member = useMemo(() => rosterPlayers.find((m) => m.memberId === p1Id), [rosterPlayers, p1Id]);
   const p2Member = useMemo(() => rosterPlayers.find((m) => m.memberId === p2Id), [rosterPlayers, p2Id]);
@@ -165,7 +184,7 @@ export default function PlayerCompareClient({ seasons, players, gamePoints, rost
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <select
               value={p1Id}
-              onChange={(e) => setP1Id(e.target.value)}
+              onChange={(e) => handleP1Change(e.target.value)}
               className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-neutral-200 focus:outline-none focus:border-accent-purple focus-visible:ring-2 focus-visible:ring-accent-purple cursor-pointer min-w-[200px]"
               aria-label="選手1を選択"
             >
@@ -178,7 +197,7 @@ export default function PlayerCompareClient({ seasons, players, gamePoints, rost
             <span className="text-neutral-400 font-bold text-lg">VS</span>
             <select
               value={p2Id}
-              onChange={(e) => setP2Id(e.target.value)}
+              onChange={(e) => handleP2Change(e.target.value)}
               className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-neutral-200 focus:outline-none focus:border-accent-purple focus-visible:ring-2 focus-visible:ring-accent-purple cursor-pointer min-w-[200px]"
               aria-label="選手2を選択"
             >

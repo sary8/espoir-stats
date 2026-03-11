@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getSeasons, getAllTeamSeasonStats, getAllPlayerSeasonStats } from "@/lib/data";
 import SeasonCompareClient from "@/components/sections/SeasonCompareClient";
@@ -12,5 +13,9 @@ export default async function ComparePage() {
   const teamStats = await getAllTeamSeasonStats();
   const playerStats = await getAllPlayerSeasonStats();
 
-  return <SeasonCompareClient seasons={seasons} teamStats={teamStats} playerStats={playerStats} />;
+  return (
+    <Suspense>
+      <SeasonCompareClient seasons={seasons} teamStats={teamStats} playerStats={playerStats} />
+    </Suspense>
+  );
 }
