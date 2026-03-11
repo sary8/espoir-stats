@@ -7,11 +7,10 @@ import MemberNotInSeason from "@/components/sections/MemberNotInSeason";
 export async function generateStaticParams() {
   const seasons = await getSeasonsWithData();
   const allIds = await Promise.all(seasons.map((s) => getAllMemberIds(s.id)));
-  const allMemberIds = new Set(allIds.flat());
   const params: { season: string; memberId: string }[] = [];
-  for (const s of seasons) {
-    for (const memberId of allMemberIds) {
-      params.push({ season: s.id, memberId });
+  for (let i = 0; i < seasons.length; i++) {
+    for (const memberId of allIds[i]) {
+      params.push({ season: seasons[i].id, memberId });
     }
   }
   return params;

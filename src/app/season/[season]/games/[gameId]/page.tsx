@@ -8,11 +8,10 @@ import GameNotInSeason from "@/components/sections/GameNotInSeason";
 export async function generateStaticParams() {
   const seasons = await getSeasonsWithData();
   const allIds = await Promise.all(seasons.map((s) => getAllGameIds(s.id)));
-  const allGameIds = new Set(allIds.flat());
   const params: { season: string; gameId: string }[] = [];
-  for (const s of seasons) {
-    for (const gameId of allGameIds) {
-      params.push({ season: s.id, gameId });
+  for (let i = 0; i < seasons.length; i++) {
+    for (const gameId of allIds[i]) {
+      params.push({ season: seasons[i].id, gameId });
     }
   }
   return params;
