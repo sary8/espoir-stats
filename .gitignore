@@ -51,7 +51,7 @@ next-env.d.ts
 /original_image
 /private
 
-# Claude Code
+# ローカル設定
 .claude/
 CLAUDE.md
 AGENTS.md
