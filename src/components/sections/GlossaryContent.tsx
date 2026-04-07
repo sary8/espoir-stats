@@ -66,12 +66,12 @@ const advancedStats: Term[] = [
 ];
 
 const categories = [
-  { title: "基本スタッツ", terms: basicStats },
-  { title: "シュート", terms: shootingStats },
-  { title: "リバウンド", terms: reboundStats },
-  { title: "プレー", terms: playStats },
-  { title: "ファール", terms: foulStats },
-  { title: "アドバンスドスタッツ", terms: advancedStats },
+  { title: "Basic Stats", terms: basicStats },
+  { title: "Shooting", terms: shootingStats },
+  { title: "Rebounds", terms: reboundStats },
+  { title: "Playmaking", terms: playStats },
+  { title: "Fouls", terms: foulStats },
+  { title: "Advanced Stats", terms: advancedStats },
 ];
 
 export default function GlossaryContent() {
