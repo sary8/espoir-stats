@@ -154,7 +154,7 @@ export function getSeasonMVP(
     .filter((p) => p.games > 0)
     .map((p) => ({
       player: p,
-      avgEff: calcPlayerEff(p) / p.games,
+      avgEff: p.games > 0 ? calcPlayerEff(p) / p.games : 0,
     }))
     .sort((a, b) => b.avgEff - a.avgEff);
 

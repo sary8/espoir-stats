@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
-import { getAllPlayerNumbers } from "@/lib/data";
+import { redirect, notFound } from "next/navigation";
+import { getAllPlayerNumbers, getMemberIdByNumber } from "@/lib/data";
 
 export async function generateStaticParams() {
   return (await getAllPlayerNumbers()).map((number) => ({
@@ -13,5 +13,9 @@ interface PageProps {
 
 export default async function PlayerPage({ params }: PageProps) {
   const { number } = await params;
-  redirect(`/member/${number}`);
+  const num = parseInt(number, 10);
+  if (isNaN(num)) notFound();
+  const memberId = await getMemberIdByNumber(num);
+  if (!memberId) notFound();
+  redirect(`/member/${memberId}`);
 }

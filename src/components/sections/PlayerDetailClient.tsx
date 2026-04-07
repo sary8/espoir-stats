@@ -117,11 +117,11 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
     if (!summary) return [];
     return [
       { label: "PPG", value: summary.ppg, decimals: 1 },
-      { label: "RPG", value: summary.totalReb / summary.games, decimals: 1 },
-      { label: "APG", value: summary.assists / summary.games, decimals: 1 },
-      { label: "SPG", value: summary.steals / summary.games, decimals: 1 },
-      { label: "BPG", value: summary.blocks / summary.games, decimals: 1 },
-      { label: "EFF", value: seasonEff / summary.games, decimals: 1 },
+      { label: "RPG", value: summary.totalReb / (summary.games || 1), decimals: 1 },
+      { label: "APG", value: summary.assists / (summary.games || 1), decimals: 1 },
+      { label: "SPG", value: summary.steals / (summary.games || 1), decimals: 1 },
+      { label: "BPG", value: summary.blocks / (summary.games || 1), decimals: 1 },
+      { label: "EFF", value: seasonEff / (summary.games || 1), decimals: 1 },
     ];
   }, [summary, seasonEff]);
 

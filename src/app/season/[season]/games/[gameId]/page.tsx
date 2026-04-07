@@ -5,6 +5,8 @@ import Footer from "@/components/layout/Footer";
 import GameDetailClient from "@/components/sections/GameDetailClient";
 import GameNotInSeason from "@/components/sections/GameNotInSeason";
 
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   const seasons = await getSeasonsWithData();
   const allIds = await Promise.all(seasons.map((s) => getAllGameIds(s.id)));

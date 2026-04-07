@@ -68,7 +68,8 @@ export default async function Home() {
   for (const p of sortedByNumber) {
     const shortName = p.name.split(" ").pop()!;
     shootingData.push({ name: shortName, threePointPct: p.threePointPct ?? 0, twoPointPct: p.twoPointPct ?? 0, ftPct: p.ftPct ?? 0 });
-    radarPlayers.push({ number: p.number, name: p.name, ppg: p.ppg, rpg: p.totalReb / p.games, apg: p.assists / p.games, spg: p.steals / p.games, bpg: p.blocks / p.games });
+    const g = p.games || 1;
+    radarPlayers.push({ number: p.number, name: p.name, ppg: p.ppg, rpg: p.totalReb / g, apg: p.assists / g, spg: p.steals / g, bpg: p.blocks / g });
   }
 
   return (
@@ -83,7 +84,7 @@ export default async function Home() {
         />
         <TeamOverview
           totalPoints={totalPoints}
-          avgPoints={totalPoints / totalGames}
+          avgPoints={totalGames > 0 ? totalPoints / totalGames : 0}
           team3pPct={team3pPct}
           totalRebounds={totalRebounds}
           totalAssists={totalAssists}

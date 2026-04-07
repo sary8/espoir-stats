@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getSeasonsWithData } from "@/lib/data";
 
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   return (await getSeasonsWithData()).map((s) => ({ season: s.id }));
 }

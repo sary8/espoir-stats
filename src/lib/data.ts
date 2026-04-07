@@ -263,15 +263,17 @@ export async function getGameStats(season?: string): Promise<GameResult[]> {
 }
 
 export function getTopPlayers(players: PlayerSummary[]) {
+  const top = (key: keyof PlayerSummary) =>
+    players.length > 0 ? [...players].sort((a, b) => (b[key] as number) - (a[key] as number))[0].number : -1;
   return {
-    topScorer: [...players].sort((a, b) => b.ppg - a.ppg)[0].number,
-    topRebounder: [...players].sort((a, b) => b.totalReb - a.totalReb)[0].number,
-    topAssister: [...players].sort((a, b) => b.assists - a.assists)[0].number,
-    top3P: [...players].sort((a, b) => b.threePointMade - a.threePointMade)[0].number,
-    topStealer: [...players].sort((a, b) => b.steals - a.steals)[0].number,
-    topBlocker: [...players].sort((a, b) => b.blocks - a.blocks)[0].number,
-    topFoul: [...players].sort((a, b) => b.personalFouls - a.personalFouls)[0].number,
-    topTurnover: [...players].sort((a, b) => b.turnovers - a.turnovers)[0].number,
+    topScorer: players.length > 0 ? [...players].sort((a, b) => b.ppg - a.ppg)[0].number : -1,
+    topRebounder: top("totalReb"),
+    topAssister: top("assists"),
+    top3P: top("threePointMade"),
+    topStealer: top("steals"),
+    topBlocker: top("blocks"),
+    topFoul: top("personalFouls"),
+    topTurnover: top("turnovers"),
   };
 }
 
@@ -343,6 +345,11 @@ export async function getPlayerByNumber(number: number, season?: string): Promis
 
 export async function getAllMemberIds(season?: string): Promise<string[]> {
   return (await getRosterPlayers(season)).map((member) => member.memberId);
+}
+
+export async function getMemberIdByNumber(number: number, season?: string): Promise<string | null> {
+  const member = (await getRosterPlayers(season)).find((entry) => entry.role === "player" && entry.number === number);
+  return member?.memberId ?? null;
 }
 
 export async function getAllPlayerNumbers(season?: string): Promise<number[]> {

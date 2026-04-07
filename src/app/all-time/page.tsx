@@ -3,6 +3,8 @@ import { getSeasons, getSeasonsWithData, getAllPlayerSeasonStats, getGameStats, 
 import { getCareerTotals, getAllTimeSingleGameRecords, getAllMilestones } from "@/lib/records";
 import AllTimePageClient from "@/components/sections/AllTimePageClient";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "All-Time Records | ESPOIR Stats",
 };

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getPlayerSummaries, getGameStats, getSeasons, getSeasonsWithData, getRosterPlayers } from "@/lib/data";
 import PlayerCompareClient from "@/components/sections/PlayerCompareClient";
 
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   return (await getSeasonsWithData()).map((s) => ({ season: s.id }));
 }

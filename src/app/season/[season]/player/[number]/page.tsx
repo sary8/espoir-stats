@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
-import { getAllPlayerNumbers, getSeasonsWithData } from "@/lib/data";
+import { redirect, notFound } from "next/navigation";
+import { getAllPlayerNumbers, getSeasonsWithData, getMemberIdByNumber } from "@/lib/data";
 
 export async function generateStaticParams() {
   const seasons = await getSeasonsWithData();
@@ -19,5 +19,9 @@ interface PageProps {
 
 export default async function SeasonPlayerPage({ params }: PageProps) {
   const { season, number } = await params;
-  redirect(`/season/${season}/member/${number}`);
+  const num = parseInt(number, 10);
+  if (isNaN(num)) notFound();
+  const memberId = await getMemberIdByNumber(num, season);
+  if (!memberId) notFound();
+  redirect(`/season/${season}/member/${memberId}`);
 }

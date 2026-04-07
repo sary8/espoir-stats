@@ -13,10 +13,12 @@ function displayName(name: string, number: number): string {
   return name && name.trim() ? name : `#${number}`;
 }
 
+const YOUTUBE_HOSTS = new Set(["www.youtube.com", "youtube.com", "m.youtube.com", "youtu.be"]);
+
 function isSafeYoutubeUrl(url: string): boolean {
   try {
     const u = new URL(url);
-    return u.protocol === "https:" && (u.hostname.endsWith("youtube.com") || u.hostname.endsWith("youtu.be"));
+    return u.protocol === "https:" && YOUTUBE_HOSTS.has(u.hostname);
   } catch {
     return false;
   }

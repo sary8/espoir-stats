@@ -3,6 +3,8 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import GameList from "@/components/sections/GameList";
 
+export const revalidate = 3600;
+
 export default async function GamesPage() {
   const seasons = await getSeasons();
   const season = await getDefaultSeason();

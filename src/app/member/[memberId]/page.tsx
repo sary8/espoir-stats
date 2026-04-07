@@ -4,6 +4,8 @@ import { getSeasonAwards, getPlayerAwards } from "@/lib/awards";
 import PlayerDetailClient from "@/components/sections/PlayerDetailClient";
 import MemberNotInSeason from "@/components/sections/MemberNotInSeason";
 
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   const seasons = await getSeasonsWithData();
   const allIds = await Promise.all(seasons.map((s) => getAllMemberIds(s.id)));

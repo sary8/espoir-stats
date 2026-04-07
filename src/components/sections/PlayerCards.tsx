@@ -80,11 +80,11 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
                         <div className="text-[10px] sm:text-xs text-neutral-600 font-display uppercase tracking-wider">PPG</div>
                       </div>
                       <div>
-                        <div className="stat-number text-base sm:text-xl">{(p.summary.totalReb / p.summary.games).toFixed(1)}</div>
+                        <div className="stat-number text-base sm:text-xl">{(p.summary.totalReb / (p.summary.games || 1)).toFixed(1)}</div>
                         <div className="text-[10px] sm:text-xs text-neutral-600 font-display uppercase tracking-wider">RPG</div>
                       </div>
                       <div>
-                        <div className="stat-number text-base sm:text-xl">{(p.summary.assists / p.summary.games).toFixed(1)}</div>
+                        <div className="stat-number text-base sm:text-xl">{(p.summary.assists / (p.summary.games || 1)).toFixed(1)}</div>
                         <div className="text-[10px] sm:text-xs text-neutral-600 font-display uppercase tracking-wider">APG</div>
                       </div>
                     </div>
