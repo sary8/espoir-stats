@@ -58,3 +58,6 @@ AGENTS.md
 
 # CSV (DB移行済み、ローカル専用)
 /stats-csv/
+
+# drizzle introspect生成ファイル
+/drizzle/
