@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { getMemberById, getAllMemberIds, getSeasons, getDefaultSeason, getAdjacentMembers, getSeasonsWithData, findMemberAcrossSeasons, getPlayerSummaries, getTopPlayers, getRosterPlayers, getGameStats, getAllPlayerSeasonStats } from "@/lib/data";
 import { getSeasonAwards, getPlayerAwards } from "@/lib/awards";
-import { playerBlurDataURL } from "@/lib/blur";
 import PlayerDetailClient from "@/components/sections/PlayerDetailClient";
 import MemberNotInSeason from "@/components/sections/MemberNotInSeason";
 
@@ -43,5 +42,5 @@ export default async function MemberPage({ params }: PageProps) {
   const awards = getPlayerAwards(memberId, seasonAwards);
   const crossSeasonData = crossSeasonMembers.find((m) => m.memberId === memberId);
 
-  return <PlayerDetailClient member={data.player} summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} adjacentPlayers={adjacent} badges={badges} playerAwards={awards} crossSeasonData={crossSeasonData} blurDataURL={data.player.hasImage ? playerBlurDataURL : undefined} />;
+  return <PlayerDetailClient member={data.player} summary={data.summary} games={data.games} seasons={seasons} seasonLabel={seasonLabel} seasonId={season} adjacentPlayers={adjacent} badges={badges} playerAwards={awards} crossSeasonData={crossSeasonData} />;
 }

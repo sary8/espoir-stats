@@ -62,7 +62,6 @@ interface PlayerDetailClientProps {
   badges?: TopBadges;
   playerAwards?: Award[];
   crossSeasonData?: CrossSeasonMember;
-  blurDataURL?: string;
 }
 
 function getMemberLabel(member: RosterPlayer): string {
@@ -96,7 +95,7 @@ const awardBadgeVariant: Record<string, "purple" | "blue" | "green" | "pink" | "
   "通算50試合出場": "yellow",
 };
 
-export default function PlayerDetailClient({ member, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers, badges, playerAwards, crossSeasonData, blurDataURL }: PlayerDetailClientProps) {
+export default function PlayerDetailClient({ member, summary, games, basePath = "", seasons, seasonLabel, seasonId, adjacentPlayers, badges, playerAwards, crossSeasonData }: PlayerDetailClientProps) {
   const prefersReducedMotion = useReducedMotion();
   const p = member;
 
@@ -237,8 +236,6 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
                     fill
                     unoptimized
                     priority
-                    placeholder={blurDataURL ? "blur" : "empty"}
-                    blurDataURL={blurDataURL}
                     className="object-contain drop-shadow-[0_0_20px_rgba(168,85,247,0.15)]"
                     sizes="(max-width: 640px) 192px, (max-width: 768px) 240px, 288px"
                   />
