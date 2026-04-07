@@ -23,8 +23,8 @@ export function pctColor(pct: number | null): string {
 }
 
 export const CHART_COLORS = [
-  "#A855F7", "#60A5FA", "#34D399", "#F472B6",
-  "#F87171", "#22D3EE", "#FBBF24", "#818CF8", "#2DD4BF",
+  "#A855F7", "#FBBF24", "#22D3EE", "#FB7185",
+  "#60A5FA", "#34D399", "#FB923C", "#818CF8", "#2DD4BF",
 ];
 
 export function getPlayerColor(index: number): string {

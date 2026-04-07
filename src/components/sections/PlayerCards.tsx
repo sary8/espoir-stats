@@ -35,26 +35,27 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
 
   return (
     <AnimatedSection id="members" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
         Team <span className="text-accent-purple">Members</span>
       </h2>
+      <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />
       {seasons && currentSeason ? (
         <SeasonSwitcher seasons={seasons} currentSeason={currentSeason} pageType="members" />
       ) : null}
 
       {/* Players */}
-      <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center text-neutral-300">
+      <h3 className="font-[family-name:var(--font-barlow-condensed)] text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center uppercase tracking-wider text-neutral-400">
         <span className="text-accent-purple">Players</span>
       </h3>
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
         {players.map((p, i) => (
-          <AnimatedSection key={p.memberId} delay={i * 0.05}>
-            <Link href={`${basePath}/member/${p.memberId}`} className="block h-full rounded-2xl">
+          <AnimatedSection key={p.memberId} delay={i * 0.04}>
+            <Link href={`${basePath}/member/${p.memberId}`} className="block h-full rounded-lg">
               <GlassCard hover className="cursor-pointer h-full flex flex-col">
                 <div>
-                  <div className="text-2xl sm:text-4xl font-bold text-accent-purple/80">{getMemberKey(p)}</div>
+                  <div className="stat-number text-2xl sm:text-4xl text-accent-purple/30">{getMemberKey(p)}</div>
                   <div className="text-sm sm:text-lg font-semibold mt-0.5 sm:mt-1">{p.name}</div>
-                  <div className="text-[10px] sm:text-xs text-neutral-400">
+                  <div className="text-[10px] sm:text-xs text-neutral-600">
                     {p.summary ? `${p.summary.games} games played` : "Season DNP"}
                   </div>
                   {p.summary && p.number !== null && (p.number === topScorer || p.number === topRebounder || p.number === topAssister || p.number === top3P || p.number === topStealer || p.number === topBlocker || p.number === topFoul || p.number === topTurnover) ? (
@@ -75,16 +76,16 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
                   <>
                     <div className="grid grid-cols-3 gap-1 sm:gap-2 mb-2 sm:mb-4 text-center mt-auto pt-2 sm:pt-4">
                       <div>
-                        <div className="text-base sm:text-xl font-bold">{p.summary.ppg}</div>
-                        <div className="text-[10px] sm:text-xs text-neutral-400">PPG</div>
+                        <div className="stat-number text-base sm:text-xl text-accent-purple">{p.summary.ppg}</div>
+                        <div className="text-[10px] sm:text-xs text-neutral-600 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">PPG</div>
                       </div>
                       <div>
-                        <div className="text-base sm:text-xl font-bold">{(p.summary.totalReb / p.summary.games).toFixed(1)}</div>
-                        <div className="text-[10px] sm:text-xs text-neutral-400">RPG</div>
+                        <div className="stat-number text-base sm:text-xl">{(p.summary.totalReb / p.summary.games).toFixed(1)}</div>
+                        <div className="text-[10px] sm:text-xs text-neutral-600 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">RPG</div>
                       </div>
                       <div>
-                        <div className="text-base sm:text-xl font-bold">{(p.summary.assists / p.summary.games).toFixed(1)}</div>
-                        <div className="text-[10px] sm:text-xs text-neutral-400">APG</div>
+                        <div className="stat-number text-base sm:text-xl">{(p.summary.assists / p.summary.games).toFixed(1)}</div>
+                        <div className="text-[10px] sm:text-xs text-neutral-600 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">APG</div>
                       </div>
                     </div>
 
@@ -95,7 +96,7 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
                     </div>
                   </>
                 ) : (
-                  <div className="mt-auto pt-6 text-center text-xs sm:text-sm text-neutral-500">
+                  <div className="mt-auto pt-6 text-center text-xs sm:text-sm text-neutral-700">
                     Season DNP
                   </div>
                 )}
@@ -108,19 +109,19 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
       {/* Staff */}
       {staff.length > 0 ? (
         <>
-          <h3 className="text-lg sm:text-xl font-bold mt-10 sm:mt-14 mb-4 sm:mb-6 text-center text-neutral-300">
+          <h3 className="font-[family-name:var(--font-barlow-condensed)] text-lg sm:text-xl font-bold mt-10 sm:mt-14 mb-4 sm:mb-6 text-center uppercase tracking-wider text-neutral-400">
             Coaching <span className="text-accent-purple">Staff</span>
           </h3>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
             {staff.map((p, i) => (
-              <AnimatedSection key={p.memberId} delay={i * 0.05}>
-                <Link href={`${basePath}/member/${p.memberId}`} className="block h-full rounded-2xl">
+              <AnimatedSection key={p.memberId} delay={i * 0.04}>
+                <Link href={`${basePath}/member/${p.memberId}`} className="block h-full rounded-lg">
                   <GlassCard hover className="cursor-pointer h-full flex flex-col">
                     <div>
-                      <div className="text-base sm:text-2xl font-bold text-accent-purple/80">{getRoleLabel(p.role)}</div>
+                      <div className="stat-number text-base sm:text-2xl text-accent-purple/30">{getRoleLabel(p.role)}</div>
                       <div className="text-sm sm:text-lg font-semibold mt-0.5 sm:mt-1">{p.name}</div>
                     </div>
-                    <div className="mt-auto pt-6 text-center text-xs sm:text-sm text-neutral-500">
+                    <div className="mt-auto pt-6 text-center text-xs sm:text-sm text-neutral-700">
                       {getRoleLabel(p.role)}
                     </div>
                   </GlassCard>

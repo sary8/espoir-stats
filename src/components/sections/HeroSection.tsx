@@ -15,50 +15,52 @@ export default function HeroSection({ seasonLabel, totalPoints, totalGames, tota
   const noMotion = { duration: 0 };
 
   return (
-    <section className="relative min-h-[50vh] sm:min-h-[70vh] flex items-center justify-center gradient-mesh overflow-hidden pt-16">
-      <div className="absolute inset-0 bg-[#0a0a0f]/40" />
+    <section className="relative min-h-[50vh] sm:min-h-[70vh] flex items-center justify-center gradient-mesh court-pattern overflow-hidden pt-16">
+      <div className="absolute inset-0 bg-[#06060c]/50" />
+
+      {/* Decorative court line */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+        <div className="w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] rounded-full border border-accent-purple/[0.04]" />
+      </div>
+
       <div className="relative z-10 text-center px-4">
         <motion.div
           initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={prefersReducedMotion ? noMotion : { duration: 0.8 }}
         >
-          <p className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-accent-purple/30 bg-[#0f1020]/70 text-[11px] sm:text-xs font-semibold tracking-[0.28em] text-accent-purple uppercase mb-5">
-            <span className="inline-block h-2 w-2 rounded-full bg-accent-purple" aria-hidden="true" />
+          <p className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-accent-purple/15 bg-accent-purple/5 text-[10px] sm:text-xs font-bold tracking-[0.3em] text-accent-purple uppercase mb-6 font-[family-name:var(--font-barlow-condensed)]">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-purple" aria-hidden="true" />
             <span>{seasonLabel} Season</span>
           </p>
-          <h1 className="text-5xl sm:text-7xl md:text-9xl font-bold tracking-wider mb-4 [text-wrap:balance]">
-            <span className="text-accent-purple">E</span>SPOIR
+          <h1 className="font-[family-name:var(--font-barlow-condensed)] text-6xl sm:text-8xl md:text-[10rem] font-bold tracking-[0.1em] uppercase mb-3 leading-none">
+            <span className="text-accent-purple neon-purple">E</span><span className="text-foreground">SPOIR</span>
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-neutral-400 mb-8 sm:mb-12 tracking-wide">
-            BASKETBALL TEAM STATS
+          <p className="font-[family-name:var(--font-barlow-condensed)] text-sm sm:text-base md:text-lg text-neutral-500 tracking-[0.35em] uppercase mb-10 sm:mb-14">
+            Basketball Stats
           </p>
         </motion.div>
 
         <motion.div
-          className="flex flex-wrap justify-center gap-6 sm:gap-16"
+          className="flex flex-wrap justify-center gap-10 sm:gap-20"
           initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={prefersReducedMotion ? noMotion : { duration: 0.8, delay: 0.3 }}
         >
-          <div className="text-center">
-            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent-purple">
-              <StatCounter end={totalPoints} />
+          {[
+            { value: totalPoints, label: "TOTAL PTS", accent: true },
+            { value: totalGames, label: "GAMES", accent: false },
+            { value: totalMembers, label: "MEMBERS", accent: false },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <div className={`font-[family-name:var(--font-barlow-condensed)] text-4xl sm:text-5xl md:text-6xl font-bold ${stat.accent ? "text-accent-purple neon-purple" : "text-foreground"}`}>
+                <StatCounter end={stat.value} />
+              </div>
+              <div className="font-[family-name:var(--font-barlow-condensed)] text-[10px] sm:text-xs text-neutral-600 mt-2 tracking-[0.25em] uppercase">
+                {stat.label}
+              </div>
             </div>
-            <div className="text-xs sm:text-sm text-neutral-400 mt-1">TOTAL PTS</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent-purple-light">
-              <StatCounter end={totalGames} />
-            </div>
-            <div className="text-xs sm:text-sm text-neutral-400 mt-1">GAMES</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-              <StatCounter end={totalMembers} />
-            </div>
-            <div className="text-xs sm:text-sm text-neutral-400 mt-1">MEMBERS</div>
-          </div>
+          ))}
         </motion.div>
       </div>
     </section>

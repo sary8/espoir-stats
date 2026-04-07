@@ -14,9 +14,10 @@ interface ScoringLeadersProps {
 export default function ScoringLeaders({ data }: ScoringLeadersProps) {
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
         Scoring <span className="text-accent-purple">Leaders</span>
       </h2>
+      <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />
       <GlassCard>
         <p className="sr-only">選手別の平均得点を示す横棒グラフ。{data.map((d) => `${d.name}: ${d.ppg} PPG`).join("、")}。</p>
         <ResponsiveContainer width="100%" height={280}>
@@ -28,9 +29,9 @@ export default function ScoringLeaders({ data }: ScoringLeadersProps) {
               labelStyle={tooltipLabelStyle}
               itemStyle={tooltipItemStyle}
               formatter={(value) => [`${value} PPG`, "平均得点"]}
-              cursor={{ fill: "rgba(168, 85, 247, 0.08)" }}
+              cursor={{ fill: "rgba(168, 85, 247, 0.06)" }}
             />
-            <Bar dataKey="ppg" radius={[0, 6, 6, 0]} barSize={20}>
+            <Bar dataKey="ppg" radius={[0, 4, 4, 0]} barSize={18}>
               {data.map((_, i) => (
                 <Cell key={i} fill={chartColors.purple} fillOpacity={1 - i * 0.08} />
               ))}

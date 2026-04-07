@@ -28,7 +28,7 @@ export default function GameNotInSeason({ opponent, seasonLabel, seasons, basePa
       <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
         <section className="min-h-[calc(100vh-8rem)] flex items-center justify-center gradient-mesh">
-          <div className="absolute inset-0 bg-[#0a0a0f]/40" />
+          <div className="absolute inset-0 bg-[#06060c]/40" />
           <div className="relative z-10 text-center px-4">
             <motion.div
               initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}

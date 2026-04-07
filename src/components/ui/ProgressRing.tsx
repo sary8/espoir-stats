@@ -36,7 +36,7 @@ export default memo(function ProgressRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="rgba(255,255,255,0.1)"
+          stroke="rgba(168, 85, 247, 0.08)"
           strokeWidth={strokeWidth}
         />
         <motion.circle
@@ -53,10 +53,10 @@ export default memo(function ProgressRing({
           transition={prefersReducedMotion ? { duration: 0 } : { duration: 1.2, ease: "easeOut" }}
         />
       </svg>
-      <span className="text-sm font-semibold" style={{ color }}>
+      <span className="stat-number text-sm" style={{ color }}>
         {displayValue}
       </span>
-      {label ? <span className="text-xs text-neutral-400">{label}</span> : null}
+      {label ? <span className="text-xs text-neutral-500">{label}</span> : null}
     </div>
   );
 });

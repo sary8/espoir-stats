@@ -11,7 +11,7 @@ interface SeasonSwitcherProps {
 
 export default function SeasonSwitcher({ seasons, currentSeason, pageType }: SeasonSwitcherProps) {
   return (
-    <div className="flex justify-center gap-3 mb-6">
+    <div className="flex justify-center gap-2 mb-6">
       {seasons.map((s) => {
         const isActive = s.id === currentSeason;
         const href = `/season/${s.id}/${pageType}`;
@@ -20,10 +20,10 @@ export default function SeasonSwitcher({ seasons, currentSeason, pageType }: Sea
             key={s.id}
             href={href}
             aria-current={isActive ? "page" : undefined}
-            className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple ${
+            className={`px-4 py-2 rounded-md text-sm font-semibold font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple ${
               isActive
-                ? "bg-accent-purple text-white"
-                : "bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-neutral-200"
+                ? "bg-accent-purple text-black"
+                : "bg-white/5 text-neutral-500 hover:bg-white/8 hover:text-neutral-300"
             }`}
           >
             {s.label}

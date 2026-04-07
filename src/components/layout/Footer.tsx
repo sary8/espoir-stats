@@ -21,23 +21,27 @@ export default function Footer({ seasonLabel }: FooterProps) {
   const isHome = pathname === "/" || pathname === basePath || pathname === `${basePath}/`;
 
   return (
-    <footer className="border-t border-white/5 py-8 text-center text-sm text-neutral-400">
+    <footer className="border-t border-accent-purple/5 py-8 text-center text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {isHome ? (
-          <nav className="flex justify-center gap-6 mb-4" aria-label="フッターナビゲーション">
-            <a href="#overview" className="hover:text-white transition-colors rounded">Overview</a>
-            <Link href={`${basePath}/members`} className="hover:text-white transition-colors rounded">Members</Link>
-            <Link href={`${basePath}/games`} className="hover:text-white transition-colors rounded">Games</Link>
+          <nav className="flex justify-center gap-6 mb-4 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider text-xs font-semibold" aria-label="フッターナビゲーション">
+            <a href="#overview" className="text-neutral-600 hover:text-accent-purple transition-colors rounded">Overview</a>
+            <Link href={`${basePath}/members`} className="text-neutral-600 hover:text-accent-purple transition-colors rounded">Members</Link>
+            <Link href={`${basePath}/games`} className="text-neutral-600 hover:text-accent-purple transition-colors rounded">Games</Link>
           </nav>
         ) : (
           <div className="mb-4">
-            <Link href={`${basePath}/`} className="inline-flex items-center gap-2 hover:text-white transition-colors rounded">
-              <ArrowLeft size={16} aria-hidden="true" /> Back to Top
+            <Link href={`${basePath}/`} className="inline-flex items-center gap-2 text-neutral-600 hover:text-accent-purple transition-colors rounded text-sm">
+              <ArrowLeft size={14} aria-hidden="true" /> Back to Top
             </Link>
           </div>
         )}
-        <p className="text-xs sm:text-sm"><span className="text-accent-purple font-semibold">ESPOIR</span> Stats Dashboard</p>
-        {seasonLabel ? <p className="mt-1 text-xs sm:text-sm">Season {seasonLabel}</p> : null}
+        <p className="text-xs text-neutral-600">
+          <span className="font-[family-name:var(--font-barlow-condensed)] font-bold tracking-wider uppercase text-accent-purple/60">ESPOIR</span>
+          <span className="mx-2 text-neutral-700">|</span>
+          Stats Dashboard
+        </p>
+        {seasonLabel ? <p className="mt-1 text-xs text-neutral-700">Season {seasonLabel}</p> : null}
       </div>
     </footer>
   );
