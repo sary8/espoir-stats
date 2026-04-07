@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut } from "lucide-react";
 import type { SeasonInfo } from "@/lib/types";
 
 interface HeaderProps {
@@ -27,6 +27,11 @@ export default function Header({ seasons }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [seasonOpen, setSeasonOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth", { method: "DELETE" });
+    window.location.href = "/login";
+  };
   const scrolledRef = useRef(false);
   const seasonRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -102,13 +107,13 @@ export default function Header({ seasons }: HeaderProps) {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled || menuOpen
-          ? "bg-[#06060c]/95 backdrop-blur-sm border-b border-accent-purple/5"
+          ? "bg-background/95 backdrop-blur-sm border-b border-accent-purple/5"
           : ""
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link href={`${basePath}/`} className="flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-          <span className="font-[family-name:var(--font-barlow-condensed)] text-2xl font-bold tracking-[0.15em] uppercase gradient-text">
+          <span className="font-display text-2xl font-bold tracking-[0.15em] uppercase gradient-text">
             ESPOIR
           </span>
         </Link>
@@ -120,7 +125,7 @@ export default function Header({ seasons }: HeaderProps) {
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={`px-3 py-1.5 rounded-md font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple ${
+                className={`px-3 py-1.5 rounded-md font-display uppercase tracking-wider text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple ${
                   active
                     ? "text-accent-purple bg-accent-purple/8"
                     : "text-neutral-500 hover:text-neutral-200 hover:bg-white/5"
@@ -135,7 +140,7 @@ export default function Header({ seasons }: HeaderProps) {
               <button
                 type="button"
                 onClick={() => setSeasonOpen((v) => !v)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-accent-purple/10 border border-accent-purple/15 hover:bg-accent-purple/15 transition-colors text-xs font-semibold font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider text-accent-purple cursor-pointer"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-accent-purple/10 border border-accent-purple/15 hover:bg-accent-purple/15 transition-colors text-xs font-semibold font-display uppercase tracking-wider text-accent-purple cursor-pointer"
                 aria-expanded={seasonOpen}
                 aria-label="シーズン切替"
               >
@@ -149,7 +154,7 @@ export default function Header({ seasons }: HeaderProps) {
                       key={s.id}
                       type="button"
                       onClick={() => handleSeasonChange(s)}
-                      className={`w-full text-left px-4 py-2.5 text-xs font-semibold font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider transition-colors cursor-pointer ${
+                      className={`w-full text-left px-4 py-2.5 text-xs font-semibold font-display uppercase tracking-wider transition-colors cursor-pointer ${
                         currentSeason?.id === s.id
                           ? "bg-accent-purple/15 text-accent-purple"
                           : "text-neutral-400 hover:bg-white/5 hover:text-neutral-200"
@@ -162,6 +167,14 @@ export default function Header({ seasons }: HeaderProps) {
               ) : null}
             </div>
           ) : null}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="ml-2 p-1.5 rounded-md text-neutral-500 hover:text-red-400 hover:bg-red-400/10 transition-colors cursor-pointer"
+            aria-label="ログアウト"
+          >
+            <LogOut size={14} aria-hidden="true" />
+          </button>
         </nav>
         <button
           className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-accent-purple transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
@@ -173,7 +186,7 @@ export default function Header({ seasons }: HeaderProps) {
         </button>
       </div>
       {menuOpen ? (
-        <nav className="sm:hidden bg-[#06060c]/98 backdrop-blur-sm border-t border-accent-purple/5" aria-label="モバイルナビゲーション">
+        <nav className="sm:hidden bg-background/98 backdrop-blur-sm border-t border-accent-purple/5" aria-label="モバイルナビゲーション">
           <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-1">
             {navLinks.map((link) => {
               const active = isActive(link);
@@ -183,7 +196,7 @@ export default function Header({ seasons }: HeaderProps) {
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
                   aria-current={active ? "page" : undefined}
-                  className={`px-3 py-2.5 rounded-md text-sm font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple ${
+                  className={`px-3 py-2.5 rounded-md text-sm font-display uppercase tracking-wider font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple ${
                     active
                       ? "text-accent-purple bg-accent-purple/8"
                       : "text-neutral-500 hover:text-neutral-200"
@@ -195,7 +208,7 @@ export default function Header({ seasons }: HeaderProps) {
             })}
             {seasons && seasons.length > 1 ? (
               <div className="border-t border-accent-purple/5 pt-3 mt-2">
-                <p className="text-[10px] text-neutral-600 mb-2 px-3 uppercase tracking-widest font-[family-name:var(--font-barlow-condensed)]">Season</p>
+                <p className="text-[10px] text-neutral-600 mb-2 px-3 uppercase tracking-widest font-display">Season</p>
                 <div className="flex flex-col gap-1">
                   {seasons.map((s) => (
                     <button
@@ -205,7 +218,7 @@ export default function Header({ seasons }: HeaderProps) {
                         handleSeasonChange(s);
                         setMenuOpen(false);
                       }}
-                      className={`text-left py-2 px-3 rounded-md text-sm font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider font-semibold cursor-pointer ${
+                      className={`text-left py-2 px-3 rounded-md text-sm font-display uppercase tracking-wider font-semibold cursor-pointer ${
                         currentSeason?.id === s.id
                           ? "bg-accent-purple/15 text-accent-purple"
                           : "text-neutral-500 hover:bg-white/5"
@@ -217,6 +230,16 @@ export default function Header({ seasons }: HeaderProps) {
                 </div>
               </div>
             ) : null}
+            <div className="border-t border-accent-purple/5 pt-3 mt-2">
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex items-center gap-2 py-2 px-3 rounded-md text-sm text-red-400 hover:bg-red-400/10 transition-colors cursor-pointer w-full"
+              >
+                <LogOut size={14} aria-hidden="true" />
+                ログアウト
+              </button>
+            </div>
           </div>
         </nav>
       ) : null}

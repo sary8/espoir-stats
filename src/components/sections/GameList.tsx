@@ -56,7 +56,7 @@ const resultConfig = {
 export default function GameList({ games, basePath = "", seasons, currentSeason }: GameListProps) {
   return (
     <AnimatedSection className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h1 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-8 sm:mb-10 text-center uppercase tracking-wider">
+      <h1 className="font-display text-2xl sm:text-4xl font-bold mb-8 sm:mb-10 text-center uppercase tracking-wider">
         Game <span className="text-accent-purple">Results</span>
       </h1>
       <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />
@@ -77,12 +77,12 @@ export default function GameList({ games, basePath = "", seasons, currentSeason 
                 >
                   <div className="grid grid-cols-[1fr_20px_1fr] items-center">
                     <div className="flex items-center">
-                      <span className={`text-[10px] font-bold font-[family-name:var(--font-barlow-condensed)] tracking-wider px-2 py-0.5 rounded shrink-0 ${config.badgeClass}`}>
+                      <span className={`text-[10px] font-bold font-display tracking-wider px-2 py-0.5 rounded shrink-0 ${config.badgeClass}`}>
                         {config.badge}
                       </span>
                       <p className="text-[10px] text-neutral-600 tabular-nums hidden sm:block shrink-0 ml-2.5">{formatDate(game.date)}</p>
                       <div className="flex items-center ml-auto">
-                        <span className="text-xs sm:text-sm font-[family-name:var(--font-barlow-condensed)] font-semibold uppercase tracking-wider text-neutral-400 whitespace-nowrap">Espoir</span>
+                        <span className="text-xs sm:text-sm font-display font-semibold uppercase tracking-wider text-neutral-400 whitespace-nowrap">Espoir</span>
                         <span className={`w-10 sm:w-12 text-right stat-number text-2xl sm:text-3xl shrink-0 ${config.scoreClass}`}>
                           {game.teamPoints}
                         </span>
@@ -93,7 +93,7 @@ export default function GameList({ games, basePath = "", seasons, currentSeason 
                       <span className="w-10 sm:w-12 text-left stat-number text-2xl sm:text-3xl text-neutral-400 shrink-0">
                         {game.opponentPoints}
                       </span>
-                      <span className="text-xs sm:text-sm font-[family-name:var(--font-barlow-condensed)] font-semibold uppercase tracking-wider text-neutral-400 whitespace-nowrap">{game.opponent}</span>
+                      <span className="text-xs sm:text-sm font-display font-semibold uppercase tracking-wider text-neutral-400 whitespace-nowrap">{game.opponent}</span>
                     </div>
                   </div>
                   <p className="text-[10px] text-neutral-700 text-center mt-1 tabular-nums sm:hidden">{formatDate(game.date)}</p>

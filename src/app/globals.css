@@ -12,7 +12,7 @@
   --card-bg: linear-gradient(135deg, rgba(168, 85, 247, 0.06) 0%, rgba(14, 14, 24, 0.95) 40%, rgba(14, 14, 24, 0.98) 100%);
   --card-bg-solid: #0e0e18;
   --card-border: rgba(168, 85, 247, 0.12);
-  --muted: #6b6b80;
+  --muted: #8a8a9e;
 }
 
 @theme inline {
@@ -65,7 +65,12 @@ body {
   position: relative;
 }
 .glass-card-hover {
-  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .glass-card-hover {
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  }
 }
 .glass-card-hover:hover {
   border-color: rgba(251, 191, 36, 0.25);
@@ -73,7 +78,11 @@ body {
     0 0 20px rgba(168, 85, 247, 0.08),
     0 0 40px rgba(251, 191, 36, 0.04),
     inset 0 1px 0 rgba(251, 191, 36, 0.06);
-  transform: translateY(-3px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .glass-card-hover:hover {
+    transform: translateY(-3px);
+  }
 }
 
 /* Court dot pattern texture */
@@ -115,12 +124,17 @@ body {
 }
 
 .gold-shimmer {
-  background: linear-gradient(90deg, #fbbf24 0%, #fde68a 25%, #fbbf24 50%, #f59e0b 75%, #fbbf24 100%);
-  background-size: 200% 100%;
+  background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer 3s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gold-shimmer {
+    background: linear-gradient(90deg, #fbbf24 0%, #fde68a 25%, #fbbf24 50%, #f59e0b 75%, #fbbf24 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
 }
 
 /* Display font for scoreboard-style numbers */

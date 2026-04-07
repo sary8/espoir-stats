@@ -170,9 +170,9 @@ export default function PlayerCompareClient({ seasons, players, gamePoints, rost
       <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
         <section className="relative gradient-mesh py-12 sm:py-20">
-          <div className="absolute inset-0 bg-[#06060c]/50" />
+          <div className="absolute inset-0 bg-background/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
+            <h1 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
               Player <span className="text-accent-purple">Compare</span>
             </h1>
             <p className="text-neutral-400 mt-2 text-sm sm:text-base">2人の選手のスタッツを直接比較</p>
@@ -257,7 +257,7 @@ export default function PlayerCompareClient({ seasons, players, gamePoints, rost
         {/* Shooting Comparison */}
         {p1Summary && p2Summary ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 text-center">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 text-center">
               Shooting <span className="text-accent-purple">Comparison</span>
             </h2>
             <div className="grid grid-cols-2 gap-6 sm:gap-8">
@@ -290,7 +290,7 @@ export default function PlayerCompareClient({ seasons, players, gamePoints, rost
         {/* Game-by-Game Line Chart */}
         {chartData.length > 1 && p1Member && p2Member ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 text-center">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 text-center">
               Scoring <span className="text-accent-purple">Trends</span>
             </h2>
             <GlassCard>

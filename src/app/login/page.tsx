@@ -37,9 +37,9 @@ export default function LoginPage() {
 
   return (
     <main id="main-content" className="min-h-screen flex items-center justify-center px-4 court-pattern gradient-mesh">
-      <div className="absolute inset-0 bg-[#06060c]/60" />
+      <div className="absolute inset-0 bg-background/60" />
       <div className="royal-card p-8 w-full max-w-sm relative z-10">
-        <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl font-bold text-center mb-6 uppercase tracking-wider">
+        <h1 className="font-display text-3xl font-bold text-center mb-6 uppercase tracking-wider">
           <span className="gradient-text">Espoir</span> <span className="text-neutral-500">Stats</span>
         </h1>
 
@@ -71,7 +71,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !password}
-            className="w-full py-3 rounded-lg bg-accent-purple text-black font-bold font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider hover:bg-accent-purple-light transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-full py-3 rounded-lg bg-accent-purple text-black font-bold font-display uppercase tracking-wider hover:bg-accent-purple-light transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {loading ? "認証中…" : "ログイン"}
           </button>

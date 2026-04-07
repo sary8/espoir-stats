@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { getPlayerSummaries, getGameStats, getSeasons, getDefaultSeason, getMemberList, getRosterPlayers, getAllPlayerSeasonStats } from "@/lib/data";
+
+export const revalidate = 3600;
 import { calcAdvancedStats } from "@/lib/stats";
 import { getSeasonAwards } from "@/lib/awards";
 import Header from "@/components/layout/Header";

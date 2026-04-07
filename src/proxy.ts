@@ -31,13 +31,9 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
-  // セキュリティヘッダー付与
+  // X-Robots-Tag のみミドルウェアで付与（他のセキュリティヘッダーは next.config.ts で一括設定）
   const response = NextResponse.next();
   response.headers.set("X-Robots-Tag", "noindex, nofollow");
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   return response;
 }
 

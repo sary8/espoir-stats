@@ -234,9 +234,9 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
       <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
         <section className="relative gradient-mesh py-12 sm:py-20">
-          <div className="absolute inset-0 bg-[#06060c]/50" />
+          <div className="absolute inset-0 bg-background/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
+            <h1 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
               Season <span className="text-accent-purple">Growth</span>
             </h1>
             <p className="text-neutral-400 mt-2 text-sm sm:text-base">シーズン横断でチーム・個人の成長を可視化</p>
@@ -245,7 +245,7 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
 
         {/* Team Comparison */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-          <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
+          <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
             Team <span className="text-accent-purple">Comparison</span>
           </h2>
           <div className="flex justify-center mb-4">
@@ -259,7 +259,7 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
         {/* Team Bar Chart */}
         {barChartData.length > 1 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
               Team <span className="text-accent-purple">Trends</span>
             </h2>
             <GlassCard>
@@ -271,7 +271,7 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
         {/* Player Growth */}
         {sortedMembers.length > 0 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
               Player <span className="text-accent-purple">Growth</span>
             </h2>
             <div className="mb-6 flex justify-center">

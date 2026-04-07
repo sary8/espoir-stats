@@ -30,3 +30,23 @@ export const CHART_COLORS = [
 export function getPlayerColor(index: number): string {
   return CHART_COLORS[index % CHART_COLORS.length];
 }
+
+/** made/attempt からパーセンテージ文字列を返す (重複排除用の共通関数) */
+export function fmtMadeAttemptPct(made: number, attempt: number): string {
+  if (attempt === 0) return "-";
+  return `${((made / attempt) * 100).toFixed(1)}%`;
+}
+
+/** 秒数を "M:SS" 形式に変換 */
+export function formatMinutesFromSeconds(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+/** "M:SS" 形式を秒数に変換 */
+export function parseMinutesToSeconds(min: string): number {
+  if (!min) return 0;
+  const parts = min.split(":");
+  return parseInt(parts[0], 10) * 60 + parseInt(parts[1] || "0", 10);
+}

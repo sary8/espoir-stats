@@ -77,7 +77,7 @@ const categories = [
 export default function GlossaryContent() {
   return (
     <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h1 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-2 text-center">
+      <h1 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-2 text-center">
         Stats <span className="text-accent-purple">Glossary</span>
       </h1>
       <p className="text-sm text-neutral-400 text-center mb-8">
@@ -87,7 +87,7 @@ export default function GlossaryContent() {
       <div className="space-y-6">
         {categories.map((cat) => (
           <GlassCard key={cat.title}>
-            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-base sm:text-lg font-bold uppercase tracking-wider text-accent-purple mb-4">{cat.title}</h2>
+            <h2 className="font-display text-base sm:text-lg font-bold uppercase tracking-wider text-accent-purple mb-4">{cat.title}</h2>
             <dl className="space-y-3">
               {cat.terms.map((term) => (
                 <div key={term.abbr} className="flex flex-col sm:flex-row sm:gap-4">

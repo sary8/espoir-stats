@@ -233,9 +233,9 @@ export default function AllTimePageClient({
       <main id="main-content" className="pt-16">
         {/* Hero */}
         <section className="relative gradient-mesh py-12 sm:py-20">
-          <div className="absolute inset-0 bg-[#06060c]/50" />
+          <div className="absolute inset-0 bg-background/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
+            <h1 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
               All-Time <span className="text-accent-purple">Records</span>
             </h1>
             <p className="text-neutral-400 mt-2 text-sm sm:text-base">
@@ -246,7 +246,7 @@ export default function AllTimePageClient({
 
         {/* Career Leaders */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-          <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
+          <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
             Career <span className="text-accent-purple">Leaders</span>
           </h2>
           <div className="flex justify-center gap-2 mb-6 flex-wrap">
@@ -321,7 +321,7 @@ export default function AllTimePageClient({
 
         {/* Career Totals Table */}
         <AnimatedSection className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-          <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
+          <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
             Career <span className="text-accent-purple">Totals</span>
           </h2>
           <div className="flex justify-center mb-4">
@@ -418,7 +418,7 @@ export default function AllTimePageClient({
         {/* All-Time Single-Game Records */}
         {singleGameRecords.length > 0 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
               Single-Game{" "}
               <span className="text-accent-purple">Records</span>
             </h2>
@@ -499,7 +499,7 @@ export default function AllTimePageClient({
         {/* Milestones */}
         {milestones.length > 0 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
+            <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
               <span className="text-accent-purple">Milestones</span>
             </h2>
             <GlassCard>

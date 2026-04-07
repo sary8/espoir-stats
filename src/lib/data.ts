@@ -1,4 +1,4 @@
-import { eq, and, asc, desc } from "drizzle-orm";
+import { eq, and, asc, desc, inArray } from "drizzle-orm";
 import { cache } from "react";
 import { db } from "./db";
 import * as schema from "./db/schema";
@@ -101,7 +101,7 @@ export const getSeasons = cache(async function getSeasons(): Promise<SeasonInfo[
 export const getDefaultSeason = cache(async function getDefaultSeason(): Promise<string> {
   const seasons = await getSeasons();
   const def = seasons.find((s) => s.default);
-  return def ? def.id : seasons[0].id;
+  return def?.id ?? seasons[0]?.id ?? "2025-2026";
 });
 
 export async function getSeasonsWithData(): Promise<SeasonInfo[]> {
@@ -199,55 +199,65 @@ export async function getGameStats(season?: string): Promise<GameResult[]> {
     .from(schema.games)
     .where(eq(schema.games.seasonId, s));
 
-  const results = await Promise.all(
-    gameRows.map(async (g) => {
-      const [playerStats, oppStats, quarters] = await Promise.all([
-        db
-          .select()
-          .from(schema.gamePlayerStats)
-          .where(and(eq(schema.gamePlayerStats.gamePk, g.id), eq(schema.gamePlayerStats.isOpponent, false))),
-        db
-          .select()
-          .from(schema.gamePlayerStats)
-          .where(and(eq(schema.gamePlayerStats.gamePk, g.id), eq(schema.gamePlayerStats.isOpponent, true))),
-        db
-          .select()
-          .from(schema.quarterScores)
-          .where(eq(schema.quarterScores.gamePk, g.id)),
-      ]);
+  if (gameRows.length === 0) return [];
 
-      const players = playerStats
-        .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
-        .sort((a, b) => a.number - b.number);
-      const opponentPlayers = oppStats
-        .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
-        .sort((a, b) => a.number - b.number);
-      const quarterScores: QuarterScore[] = quarters.map((q) => ({
-        quarter: q.quarter,
-        espoir: q.espoir,
-        opponent: q.opponent,
-      }));
+  const gamePks = gameRows.map((g) => g.id);
 
-      const gameInfo: GameInfo = {
-        tournament: g.tournament,
-        venue: g.venue,
-        gameType: g.gameType,
-      };
+  // N+3クエリを2クエリに最適化: 全playerStats + 全quarterScoresを一括取得
+  const [allPlayerStats, allQuarterScores] = await Promise.all([
+    db.select().from(schema.gamePlayerStats).where(inArray(schema.gamePlayerStats.gamePk, gamePks)),
+    db.select().from(schema.quarterScores).where(inArray(schema.quarterScores.gamePk, gamePks)),
+  ]);
 
-      return {
-        gameId: g.gameId,
-        opponent: g.opponent,
-        date: g.date,
-        players,
-        teamPoints: g.teamPoints,
-        opponentPlayers,
-        opponentPoints: g.opponentPoints,
-        youtubeUrl: g.youtubeUrl,
-        quarterScores,
-        gameInfo,
-      } as GameResult;
-    }),
-  );
+  // gamePkでグルーピング
+  const statsByGame = new Map<number, (typeof allPlayerStats)[number][]>();
+  for (const s of allPlayerStats) {
+    const arr = statsByGame.get(s.gamePk) ?? [];
+    arr.push(s);
+    statsByGame.set(s.gamePk, arr);
+  }
+  const quartersByGame = new Map<number, (typeof allQuarterScores)[number][]>();
+  for (const q of allQuarterScores) {
+    const arr = quartersByGame.get(q.gamePk) ?? [];
+    arr.push(q);
+    quartersByGame.set(q.gamePk, arr);
+  }
+
+  const results = gameRows.map((g) => {
+    const stats = statsByGame.get(g.id) ?? [];
+    const quarters = quartersByGame.get(g.id) ?? [];
+
+    const players = stats.filter((p) => !p.isOpponent)
+      .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
+      .sort((a, b) => a.number - b.number);
+    const opponentPlayers = stats.filter((p) => p.isOpponent)
+      .map((p) => mapGamePlayerStat(p, g.gameId, g.opponent))
+      .sort((a, b) => a.number - b.number);
+    const quarterScores: QuarterScore[] = quarters.map((q) => ({
+      quarter: q.quarter,
+      espoir: q.espoir,
+      opponent: q.opponent,
+    }));
+
+    const gameInfo: GameInfo = {
+      tournament: g.tournament,
+      venue: g.venue,
+      gameType: g.gameType,
+    };
+
+    return {
+      gameId: g.gameId,
+      opponent: g.opponent,
+      date: g.date,
+      players,
+      teamPoints: g.teamPoints,
+      opponentPlayers,
+      opponentPoints: g.opponentPoints,
+      youtubeUrl: g.youtubeUrl,
+      quarterScores,
+      gameInfo,
+    } as GameResult;
+  });
 
   return results.sort((a, b) => b.date.localeCompare(a.date));
 }

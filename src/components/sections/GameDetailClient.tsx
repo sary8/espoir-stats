@@ -13,6 +13,15 @@ function displayName(name: string, number: number): string {
   return name && name.trim() ? name : `#${number}`;
 }
 
+function isSafeYoutubeUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" && (u.hostname.endsWith("youtube.com") || u.hostname.endsWith("youtu.be"));
+  } catch {
+    return false;
+  }
+}
+
 function fmtPct(made: number, attempt: number): string {
   if (attempt === 0) return "-";
   return `${((made / attempt) * 100).toFixed(1)}%`;
@@ -310,7 +319,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
         </div>
       </div>
       <div className="flex justify-end mb-6">
-        {game.youtubeUrl ? (
+        {game.youtubeUrl && isSafeYoutubeUrl(game.youtubeUrl) ? (
           <a
             href={game.youtubeUrl}
             target="_blank"
@@ -540,7 +549,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
               <thead>
                 <tr className="border-b border-accent-purple/10 text-neutral-400">
                   <th
-                    className="text-left py-0 px-0 whitespace-nowrap sticky left-0 bg-[#06060c] z-10 border-r border-accent-purple/10"
+                    className="text-left py-0 px-0 whitespace-nowrap sticky left-0 bg-background z-10 border-r border-accent-purple/10"
                     scope="col"
                   >
                     <button type="button" className="w-full text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 cursor-pointer select-none hover:text-foreground transition-colors" onClick={() => handleSort("number")} aria-label="選手番号でソート">
@@ -576,7 +585,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
                   const isTC = p.name === "Team/Coaches";
                   return (
                   <tr key={isTC ? "tc" : p.number} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${isTC ? "text-neutral-500 italic" : ""}`}>
-                    <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#06060c] z-10 border-r border-accent-purple/10">
+                    <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-background z-10 border-r border-accent-purple/10">
                       {isTC ? (
                         <span className="text-neutral-500">Team/Coaches</span>
                       ) : (
@@ -612,7 +621,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
               </tbody>
               <tfoot>
                 <tr className="border-t border-accent-purple/10 font-semibold">
-                  <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-[#06060c] z-10 border-r border-accent-purple/10">TEAM</td>
+                  <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-background z-10 border-r border-accent-purple/10">TEAM</td>
                   <td className={`${td} text-accent-purple`}>{teamTotals.points}</td>
                   <td className={td}>{teamTotals.threePointMade}/{teamTotals.threePointAttempt}</td>
                   <td className={`${td} text-neutral-400`}>{fmtPct(teamTotals.threePointMade, teamTotals.threePointAttempt)}</td>

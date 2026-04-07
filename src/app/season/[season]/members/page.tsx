@@ -30,9 +30,9 @@ export default async function SeasonMembersPage({ params }: PageProps) {
       <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
         <section className="relative gradient-mesh py-12 sm:py-20">
-          <div className="absolute inset-0 bg-[#06060c]/50" />
+          <div className="absolute inset-0 bg-background/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
+            <h1 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
               Team <span className="text-accent-purple">Members</span>
             </h1>
           </div>

@@ -48,7 +48,7 @@ export default function PlayerGrowthSection({ crossSeasonData }: PlayerGrowthSec
 
   return (
     <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6">Season Growth</h2>
+      <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6">Season Growth</h2>
       <GlassCard>
         <div className="text-center text-sm text-neutral-400 mb-4">
           {growthData.prevLabel} → {growthData.currentLabel}

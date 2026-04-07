@@ -120,7 +120,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
 
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
+      <h2 className="font-display text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
         Player <span className="text-accent-purple">Comparison</span>
       </h2>
       <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />

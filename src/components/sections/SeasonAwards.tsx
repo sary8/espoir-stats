@@ -49,7 +49,7 @@ export default function SeasonAwards({ awards, basePath = "" }: SeasonAwardsProp
 
   return (
     <AnimatedSection className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16" id="season-awards">
-      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-8 sm:mb-10 text-center uppercase tracking-wider">
+      <h2 className="font-display text-2xl sm:text-4xl font-bold mb-8 sm:mb-10 text-center uppercase tracking-wider">
         Season <span className="text-accent-purple">Awards</span>
       </h2>
       <div className="court-divider mb-8 sm:mb-10" aria-hidden="true" />
@@ -65,7 +65,7 @@ export default function SeasonAwards({ awards, basePath = "" }: SeasonAwardsProp
                 <Trophy size={28} className="text-accent-gold" aria-hidden="true" />
               </div>
               <div>
-                <div className="font-[family-name:var(--font-barlow-condensed)] text-[10px] gold-shimmer font-bold tracking-[0.3em] uppercase mb-1">Season MVP</div>
+                <div className="font-display text-[10px] gold-shimmer font-bold tracking-[0.3em] uppercase mb-1">Season MVP</div>
                 <div className="stat-number text-2xl sm:text-3xl">
                   <AwardPlayerLink award={awards.mvp} basePath={basePath} />
                 </div>
@@ -81,14 +81,14 @@ export default function SeasonAwards({ awards, basePath = "" }: SeasonAwardsProp
       {/* Category Leaders Grid */}
       {awards.categoryLeaders.length > 0 ? (
         <div className="mb-8 sm:mb-10">
-          <h3 className="font-[family-name:var(--font-barlow-condensed)] text-sm font-bold mb-4 uppercase tracking-[0.2em] text-neutral-500">Category Leaders</h3>
+          <h3 className="font-display text-sm font-bold mb-4 uppercase tracking-[0.2em] text-neutral-500">Category Leaders</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
             {awards.categoryLeaders.map((award) => (
               <GlassCard key={award.title} className="text-center">
                 <div className="flex justify-center mb-2 text-accent-purple">
                   {categoryIcons[award.title] ?? <Trophy size={16} aria-hidden="true" />}
                 </div>
-                <div className="text-[10px] text-neutral-500 mb-1 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">{award.title}</div>
+                <div className="text-[10px] text-neutral-500 mb-1 font-display uppercase tracking-wider">{award.title}</div>
                 <div className="stat-number text-lg text-accent-purple tabular-nums">{award.value}</div>
                 <div className="text-sm mt-1">
                   <AwardPlayerLink award={award} basePath={basePath} />
@@ -102,17 +102,17 @@ export default function SeasonAwards({ awards, basePath = "" }: SeasonAwardsProp
       {/* Best Game Records */}
       {awards.bestGameRecords.length > 0 ? (
         <div className="mb-8 sm:mb-10">
-          <h3 className="font-[family-name:var(--font-barlow-condensed)] text-sm font-bold mb-4 uppercase tracking-[0.2em] text-neutral-500">Best Game Records</h3>
+          <h3 className="font-display text-sm font-bold mb-4 uppercase tracking-[0.2em] text-neutral-500">Best Game Records</h3>
           <GlassCard>
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
               <table className="w-full text-xs sm:text-sm" aria-label="ベストゲーム記録">
                 <caption className="sr-only">シーズンベストゲーム記録</caption>
                 <thead>
                   <tr className="border-b border-accent-purple/10 text-neutral-500">
-                    <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider text-[10px]" scope="col">記録</th>
-                    <th className="text-center py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider text-[10px]" scope="col">値</th>
-                    <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider text-[10px]" scope="col">選手</th>
-                    <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap hidden sm:table-cell font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider text-[10px]" scope="col">試合</th>
+                    <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap font-display uppercase tracking-wider text-[10px]" scope="col">記録</th>
+                    <th className="text-center py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap font-display uppercase tracking-wider text-[10px]" scope="col">値</th>
+                    <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap font-display uppercase tracking-wider text-[10px]" scope="col">選手</th>
+                    <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap hidden sm:table-cell font-display uppercase tracking-wider text-[10px]" scope="col">試合</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -136,7 +136,7 @@ export default function SeasonAwards({ awards, basePath = "" }: SeasonAwardsProp
       {/* Milestones */}
       {awards.milestones.length > 0 ? (
         <div>
-          <h3 className="font-[family-name:var(--font-barlow-condensed)] text-sm font-bold mb-4 uppercase tracking-[0.2em] text-neutral-500">Milestones</h3>
+          <h3 className="font-display text-sm font-bold mb-4 uppercase tracking-[0.2em] text-neutral-500">Milestones</h3>
           <div className="flex flex-wrap gap-2">
             {awards.milestones.map((award) => (
               <GlassCard key={`${award.title}-${award.memberId}`} className="inline-flex items-center gap-3">

@@ -58,7 +58,7 @@ export default function TeamOverview(props: TeamOverviewProps) {
 
   return (
     <AnimatedSection id="overview" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
+      <h2 className="font-display text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
         Team <span className="gradient-text">Overview</span>
       </h2>
 
@@ -73,7 +73,7 @@ export default function TeamOverview(props: TeamOverviewProps) {
               <div className={`stat-number text-xl sm:text-2xl md:text-3xl ${stat.accent ? "text-accent-purple" : "text-foreground"}`}>
                 <StatCounter end={values[stat.key]} decimals={stat.decimals ?? 0} suffix={stat.suffix ?? ""} />
               </div>
-              <div className="text-[10px] text-neutral-500 mt-1 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">{stat.label}</div>
+              <div className="text-[10px] text-neutral-500 mt-1 font-display uppercase tracking-wider">{stat.label}</div>
             </GlassCard>
           </AnimatedSection>
         ))}
@@ -88,7 +88,7 @@ export default function TeamOverview(props: TeamOverviewProps) {
                 <div className={`stat-number text-xl sm:text-2xl md:text-3xl ${color}`}>
                   <StatCounter end={values[stat.key]} decimals={stat.decimals ?? 0} suffix={stat.suffix ?? ""} />
                 </div>
-                <div className="text-[10px] text-neutral-500 mt-1 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">{stat.label}</div>
+                <div className="text-[10px] text-neutral-500 mt-1 font-display uppercase tracking-wider">{stat.label}</div>
               </GlassCard>
             </AnimatedSection>
           );

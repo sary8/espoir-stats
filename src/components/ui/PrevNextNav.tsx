@@ -24,7 +24,7 @@ export default function PrevNextNav({ prev, next }: PrevNextNavProps) {
         >
           <ChevronLeft size={16} className="text-neutral-500 group-hover:text-accent-purple transition-colors shrink-0" aria-hidden="true" />
           <div className="min-w-0">
-            <p className="text-[10px] text-neutral-600 uppercase tracking-wider font-[family-name:var(--font-barlow-condensed)]">Prev</p>
+            <p className="text-[10px] text-neutral-600 uppercase tracking-wider font-display">Prev</p>
             <p className="text-sm font-bold truncate">{prev.label}</p>
             {prev.sublabel && <p className="text-xs text-neutral-500 truncate">{prev.sublabel}</p>}
           </div>
@@ -36,7 +36,7 @@ export default function PrevNextNav({ prev, next }: PrevNextNavProps) {
           className="group flex items-center gap-2 px-4 py-3 rounded-lg bg-surface border border-card-border hover:border-accent-purple/20 transition-all min-w-0 max-w-[48%] ml-auto text-right"
         >
           <div className="min-w-0">
-            <p className="text-[10px] text-neutral-600 uppercase tracking-wider font-[family-name:var(--font-barlow-condensed)]">Next</p>
+            <p className="text-[10px] text-neutral-600 uppercase tracking-wider font-display">Next</p>
             <p className="text-sm font-bold truncate">{next.label}</p>
             {next.sublabel && <p className="text-xs text-neutral-500 truncate">{next.sublabel}</p>}
           </div>

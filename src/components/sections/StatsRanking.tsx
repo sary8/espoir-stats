@@ -61,7 +61,7 @@ export default function StatsRanking({ players }: StatsRankingProps) {
 
   return (
     <AnimatedSection id="ranking" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
+      <h2 className="font-display text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
         Stats <span className="text-accent-purple">Ranking</span>
       </h2>
       <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />
@@ -75,7 +75,7 @@ export default function StatsRanking({ players }: StatsRankingProps) {
               <GlassCard className="h-full" style={{ contentVisibility: "auto", containIntrinsicSize: "auto 280px" }}>
                 <div className="flex items-center gap-2 mb-3 text-accent-purple">
                   {cat.icon}
-                  <span className="font-[family-name:var(--font-barlow-condensed)] font-bold text-sm uppercase tracking-wider">{cat.label}</span>
+                  <span className="font-display font-bold text-sm uppercase tracking-wider">{cat.label}</span>
                 </div>
                 <ol className="space-y-1.5">
                   {sorted.map((p, rank) => {

@@ -35,7 +35,7 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
 
   return (
     <AnimatedSection id="members" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
+      <h2 className="font-display text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
         Team <span className="text-accent-purple">Members</span>
       </h2>
       <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />
@@ -44,7 +44,7 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
       ) : null}
 
       {/* Players */}
-      <h3 className="font-[family-name:var(--font-barlow-condensed)] text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center uppercase tracking-wider text-neutral-400">
+      <h3 className="font-display text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center uppercase tracking-wider text-neutral-400">
         <span className="text-accent-purple">Players</span>
       </h3>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
@@ -77,15 +77,15 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
                     <div className="grid grid-cols-3 gap-1 sm:gap-2 mb-2 sm:mb-4 text-center mt-auto pt-2 sm:pt-4">
                       <div>
                         <div className="stat-number text-base sm:text-xl text-accent-purple">{p.summary.ppg}</div>
-                        <div className="text-[10px] sm:text-xs text-neutral-600 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">PPG</div>
+                        <div className="text-[10px] sm:text-xs text-neutral-600 font-display uppercase tracking-wider">PPG</div>
                       </div>
                       <div>
                         <div className="stat-number text-base sm:text-xl">{(p.summary.totalReb / p.summary.games).toFixed(1)}</div>
-                        <div className="text-[10px] sm:text-xs text-neutral-600 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">RPG</div>
+                        <div className="text-[10px] sm:text-xs text-neutral-600 font-display uppercase tracking-wider">RPG</div>
                       </div>
                       <div>
                         <div className="stat-number text-base sm:text-xl">{(p.summary.assists / p.summary.games).toFixed(1)}</div>
-                        <div className="text-[10px] sm:text-xs text-neutral-600 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">APG</div>
+                        <div className="text-[10px] sm:text-xs text-neutral-600 font-display uppercase tracking-wider">APG</div>
                       </div>
                     </div>
 
@@ -109,7 +109,7 @@ export default function PlayerCards({ members, topScorer, topRebounder, topAssis
       {/* Staff */}
       {staff.length > 0 ? (
         <>
-          <h3 className="font-[family-name:var(--font-barlow-condensed)] text-lg sm:text-xl font-bold mt-10 sm:mt-14 mb-4 sm:mb-6 text-center uppercase tracking-wider text-neutral-400">
+          <h3 className="font-display text-lg sm:text-xl font-bold mt-10 sm:mt-14 mb-4 sm:mb-6 text-center uppercase tracking-wider text-neutral-400">
             Coaching <span className="text-accent-purple">Staff</span>
           </h3>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
