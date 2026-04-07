@@ -166,7 +166,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
       <main id="main-content" className="pt-16">
         {/* Hero */}
         <section className="relative gradient-mesh py-12 sm:py-20">
-          <div className="absolute inset-0 bg-[#0a0a0f]/50" />
+          <div className="absolute inset-0 bg-[#06060c]/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-between mb-6 sm:mb-8">
               <Link href={`${basePath}/members`} className="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors rounded">
@@ -193,8 +193,8 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
             </div>
             <motion.div initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.6 }} className="flex items-end justify-between gap-4">
               <div>
-                <div className="text-5xl sm:text-7xl md:text-8xl font-bold text-accent-purple/20">{getMemberLabel(p)}</div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6">{p.name}</h1>
+                <div className="stat-number text-5xl sm:text-7xl md:text-8xl text-accent-purple/15">{getMemberLabel(p)}</div>
+                <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl sm:text-4xl md:text-5xl font-bold -mt-4 sm:-mt-6 uppercase tracking-wider">{p.name}</h1>
                 <p className="text-sm sm:text-base text-neutral-400 mt-2">
                   {getMemberStatus(p, summary)}
                 </p>
@@ -236,7 +236,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
                     fill
                     unoptimized
                     priority
-                    className="object-contain drop-shadow-[0_0_20px_rgba(139,92,246,0.15)]"
+                    className="object-contain drop-shadow-[0_0_20px_rgba(168,85,247,0.15)]"
                     sizes="(max-width: 640px) 192px, (max-width: 768px) 240px, 288px"
                   />
                 </div>
@@ -256,7 +256,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
           <>
         {/* Season Summary */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-          <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Season Summary</h2>
+          <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-3xl font-bold mb-6 uppercase tracking-wider">Season Summary</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
             {mainStats.map((s) => (
               <GlassCard key={s.label} className="text-center">
@@ -277,7 +277,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
 
         {/* Season Totals */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-          <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Season Totals</h2>
+          <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-3xl font-bold mb-6 uppercase tracking-wider">Season Totals</h2>
           <GlassCard>
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
               <table className="w-full text-xs sm:text-sm min-w-[800px]" aria-label={`${p.name} シーズン合計`}>
@@ -336,7 +336,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
         {/* Scoring Trend */}
         {games.length > 1 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-            <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Game-by-Game</h2>
+            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-3xl font-bold mb-6 uppercase tracking-wider">Game-by-Game</h2>
             <GlassCard>
               <p className="sr-only">試合ごとの得点・リバウンド・アシストの推移を示すラインチャート。</p>
               <PlayerGameChart data={lineData} />
@@ -346,14 +346,14 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
 
         {/* Game Log */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-          <h2 className="text-2xl font-bold mb-6 [text-wrap:balance]">Game Log</h2>
+          <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-3xl font-bold mb-6 uppercase tracking-wider">Game Log</h2>
           <GlassCard className="!p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-xs sm:text-sm min-w-[900px]" aria-label={`${p.name} ゲームログ`}>
                 <caption className="sr-only">{p.name}の各試合スタッツ</caption>
                 <thead>
                   <tr className="border-b border-white/10 text-neutral-400">
-                    <th className="text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10" scope="col">対戦</th>
+                    <th className="text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 whitespace-nowrap sticky left-0 bg-[#06060c] z-10 border-r border-white/10" scope="col">対戦</th>
                     <th className={th} scope="col">GS</th>
                     <th className={th} scope="col">PTS</th>
                     <th className={th} scope="col">3P</th>
@@ -378,7 +378,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
                 <tbody>
                   {games.map((g) => (
                     <tr key={g.gameId} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
+                      <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#06060c] z-10 border-r border-white/10">
                         <span className="text-neutral-400 mr-2 text-xs">{(g.date ?? "").replace(/-/g, "/")}</span>vs {g.opponent}
                       </td>
                       <td className={td}>{g.stat.starter ? <span aria-label="スターター">●</span> : null}</td>
@@ -405,7 +405,7 @@ export default function PlayerDetailClient({ member, summary, games, basePath = 
                 </tbody>
                 <tfoot>
                   <tr className="border-t border-white/10 font-semibold">
-                    <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">TOTAL</td>
+                    <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-[#06060c] z-10 border-r border-white/10">TOTAL</td>
                     <td className={td}></td>
                     <td className={`${td} text-accent-purple`}>{totals.points}</td>
                     <td className={td}>{totals.threePointMade}/{totals.threePointAttempt}</td>

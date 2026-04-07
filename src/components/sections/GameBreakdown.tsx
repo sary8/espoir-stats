@@ -237,17 +237,18 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
 
   return (
     <AnimatedSection id="games" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
         Game <span className="text-accent-purple">Breakdown</span>
       </h2>
+      <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />
       <div className="flex flex-wrap gap-2 mb-4">
         <button
           onClick={() => { setActiveGame(games.length); setSortKey("number"); setSortAsc(true); }}
           aria-pressed={isAllGames}
           className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-[background-color,color] cursor-pointer ${
             isAllGames
-              ? "bg-accent-purple text-white"
-              : "bg-white/5 text-neutral-400 hover:bg-white/10"
+              ? "bg-accent-purple text-black font-semibold"
+              : "bg-white/5 text-neutral-500 hover:bg-white/8"
           }`}
         >
           ALL
@@ -259,8 +260,8 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
               aria-pressed={i === activeGame}
               className={`px-3 py-2 sm:px-4 sm:py-2.5 min-h-[44px] rounded-lg text-xs sm:text-sm font-medium transition-[background-color,color] cursor-pointer ${
                 i === activeGame && !isAllGames
-                  ? "bg-accent-purple text-white"
-                  : "bg-white/5 text-neutral-400 hover:bg-white/10"
+                  ? "bg-accent-purple text-black font-semibold"
+                  : "bg-white/5 text-neutral-500 hover:bg-white/8"
               }`}
             >
               {(g.date ?? "").slice(0, 10).replace(/-/g, "/")} vs {g.opponent}
@@ -276,7 +277,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
             <thead>
               <tr className="border-b border-white/10 text-neutral-400">
                 <th
-                  className="text-left py-0 px-0 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10"
+                  className="text-left py-0 px-0 whitespace-nowrap sticky left-0 bg-[#06060c] z-10 border-r border-white/10"
                   scope="col"
                 >
                   <button type="button" className="w-full text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 cursor-pointer select-none hover:text-white transition-colors" onClick={() => handleSort("number")} aria-label="選手番号でソート">
@@ -312,7 +313,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
                 const isTC = p.name === "Team/Coaches";
                 return (
                 <tr key={isTC ? "team-coaches" : p.number} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${isTC ? "italic text-neutral-500" : ""}`}>
-                  <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
+                  <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#06060c] z-10 border-r border-white/10">
                     {isTC ? (
                       <span className="text-neutral-500">Team/Coaches</span>
                     ) : (
@@ -344,7 +345,7 @@ export default function GameBreakdown({ games }: GameBreakdownProps) {
             </tbody>
             <tfoot>
               <tr className="border-t border-white/10 font-semibold">
-                <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">TEAM</td>
+                <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-[#06060c] z-10 border-r border-white/10">TEAM</td>
                 {isAllGames && <td className={td}></td>}
                 <td className={`${td} text-accent-purple`}>{teamTotals.points}</td>
                 <td className={td}>{teamTotals.threePointMade}/{teamTotals.threePointAttempt}</td>

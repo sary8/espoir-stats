@@ -66,18 +66,18 @@ const advancedStats: Term[] = [
 ];
 
 const categories = [
-  { title: "基本スタッツ", terms: basicStats },
-  { title: "シュート", terms: shootingStats },
-  { title: "リバウンド", terms: reboundStats },
-  { title: "プレー", terms: playStats },
-  { title: "ファール", terms: foulStats },
-  { title: "アドバンスドスタッツ", terms: advancedStats },
+  { title: "Basic Stats", terms: basicStats },
+  { title: "Shooting", terms: shootingStats },
+  { title: "Rebounds", terms: reboundStats },
+  { title: "Playmaking", terms: playStats },
+  { title: "Fouls", terms: foulStats },
+  { title: "Advanced Stats", terms: advancedStats },
 ];
 
 export default function GlossaryContent() {
   return (
     <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center [text-wrap:balance]">
+      <h1 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-2 text-center">
         Stats <span className="text-accent-purple">Glossary</span>
       </h1>
       <p className="text-sm text-neutral-400 text-center mb-8">
@@ -87,12 +87,12 @@ export default function GlossaryContent() {
       <div className="space-y-6">
         {categories.map((cat) => (
           <GlassCard key={cat.title}>
-            <h2 className="text-base sm:text-lg font-bold text-accent-purple mb-4">{cat.title}</h2>
+            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-base sm:text-lg font-bold uppercase tracking-wider text-accent-purple mb-4">{cat.title}</h2>
             <dl className="space-y-3">
               {cat.terms.map((term) => (
                 <div key={term.abbr} className="flex flex-col sm:flex-row sm:gap-4">
                   <dt className="flex items-center gap-2 shrink-0 sm:w-48">
-                    <span className="font-mono font-bold text-white text-sm">{term.abbr}</span>
+                    <span className="font-mono font-bold text-foreground text-sm">{term.abbr}</span>
                     <span className="text-xs text-neutral-500">{term.name}</span>
                   </dt>
                   <dd className="text-sm text-neutral-300 mt-0.5 sm:mt-0">{term.desc}</dd>

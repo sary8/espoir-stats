@@ -11,25 +11,25 @@ interface StatDef {
   decimals?: number;
   suffix?: string;
   icon: React.ReactNode;
-  color: string;
+  accent?: boolean;
 }
 
 const STAT_DEFS: StatDef[] = [
-  { label: "合計得点", key: "totalPoints", icon: <Trophy size={20} aria-hidden="true" />, color: "text-accent-purple" },
-  { label: "平均得点", key: "avgPoints", decimals: 1, icon: <Target size={20} aria-hidden="true" />, color: "text-accent-purple-light" },
-  { label: "チーム3P%", key: "team3pPct", decimals: 1, suffix: "%", icon: <Percent size={20} aria-hidden="true" />, color: "text-neutral-300" },
-  { label: "リバウンド", key: "totalRebounds", icon: <ArrowDownUp size={20} aria-hidden="true" />, color: "text-neutral-300" },
-  { label: "アシスト", key: "totalAssists", icon: <HandHelping size={20} aria-hidden="true" />, color: "text-neutral-300" },
-  { label: "スティール", key: "totalSteals", icon: <ShieldAlert size={20} aria-hidden="true" />, color: "text-neutral-300" },
-  { label: "ブロック", key: "totalBlocks", icon: <Shield size={20} aria-hidden="true" />, color: "text-neutral-300" },
-  { label: "ターンオーバー", key: "totalTurnovers", icon: <AlertTriangle size={20} aria-hidden="true" />, color: "text-neutral-300" },
+  { label: "合計得点", key: "totalPoints", icon: <Trophy size={18} aria-hidden="true" />, accent: true },
+  { label: "平均得点", key: "avgPoints", decimals: 1, icon: <Target size={18} aria-hidden="true" />, accent: true },
+  { label: "チーム3P%", key: "team3pPct", decimals: 1, suffix: "%", icon: <Percent size={18} aria-hidden="true" /> },
+  { label: "リバウンド", key: "totalRebounds", icon: <ArrowDownUp size={18} aria-hidden="true" /> },
+  { label: "アシスト", key: "totalAssists", icon: <HandHelping size={18} aria-hidden="true" /> },
+  { label: "スティール", key: "totalSteals", icon: <ShieldAlert size={18} aria-hidden="true" /> },
+  { label: "ブロック", key: "totalBlocks", icon: <Shield size={18} aria-hidden="true" /> },
+  { label: "ターンオーバー", key: "totalTurnovers", icon: <AlertTriangle size={18} aria-hidden="true" /> },
 ];
 
-const ADVANCED_DEFS: Omit<StatDef, "color">[] = [
-  { label: "PACE", key: "pace", decimals: 1, icon: <Gauge size={20} aria-hidden="true" /> },
-  { label: "OFFRTG", key: "offRtg", decimals: 1, icon: <Swords size={20} aria-hidden="true" /> },
-  { label: "DEFRTG", key: "defRtg", decimals: 1, icon: <ShieldCheck size={20} aria-hidden="true" /> },
-  { label: "NETRTG", key: "netRtg", decimals: 1, icon: <TrendingUp size={20} aria-hidden="true" /> },
+const ADVANCED_DEFS: (Omit<StatDef, "accent"> & { colorKey?: string })[] = [
+  { label: "PACE", key: "pace", decimals: 1, icon: <Gauge size={18} aria-hidden="true" />, colorKey: "pace" },
+  { label: "OFFRTG", key: "offRtg", decimals: 1, icon: <Swords size={18} aria-hidden="true" />, colorKey: "offRtg" },
+  { label: "DEFRTG", key: "defRtg", decimals: 1, icon: <ShieldCheck size={18} aria-hidden="true" />, colorKey: "defRtg" },
+  { label: "NETRTG", key: "netRtg", decimals: 1, icon: <TrendingUp size={18} aria-hidden="true" />, colorKey: "netRtg" },
 ];
 
 const ADVANCED_COLORS: Record<string, string> = {
@@ -58,33 +58,37 @@ export default function TeamOverview(props: TeamOverviewProps) {
 
   return (
     <AnimatedSection id="overview" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
-        Team <span className="text-accent-purple">Overview</span>
+      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
+        Team <span className="gradient-text">Overview</span>
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-4">
+
+      {/* Court-line divider */}
+      <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
         {STAT_DEFS.map((stat, i) => (
-          <AnimatedSection key={stat.label} delay={i * 0.1}>
+          <AnimatedSection key={stat.label} delay={i * 0.08}>
             <GlassCard className="text-center">
-              <div className={`mb-1 sm:mb-2 flex justify-center ${stat.color}`}>{stat.icon}</div>
-              <div className="text-lg sm:text-2xl md:text-3xl font-bold">
+              <div className={`mb-1.5 flex justify-center ${stat.accent ? "text-accent-purple" : "text-neutral-500"}`}>{stat.icon}</div>
+              <div className={`stat-number text-xl sm:text-2xl md:text-3xl ${stat.accent ? "text-accent-purple" : "text-foreground"}`}>
                 <StatCounter end={values[stat.key]} decimals={stat.decimals ?? 0} suffix={stat.suffix ?? ""} />
               </div>
-              <div className="text-xs text-neutral-300 mt-1">{stat.label}</div>
+              <div className="text-[10px] text-neutral-500 mt-1 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">{stat.label}</div>
             </GlassCard>
           </AnimatedSection>
         ))}
       </div>
-      <div className="grid grid-cols-4 gap-2 sm:gap-4 mt-3 sm:mt-4">
+      <div className="grid grid-cols-4 gap-2 sm:gap-3 mt-2 sm:mt-3">
         {ADVANCED_DEFS.map((stat, i) => {
-          const color = ADVANCED_COLORS[stat.key] ?? (values[stat.key] >= 0 ? "text-green-400" : "text-red-400");
+          const color = (stat.colorKey && ADVANCED_COLORS[stat.colorKey]) ?? (values[stat.key] >= 0 ? "text-emerald-400" : "text-red-400");
           return (
-            <AnimatedSection key={stat.label} delay={(STAT_DEFS.length + i) * 0.1}>
+            <AnimatedSection key={stat.label} delay={(STAT_DEFS.length + i) * 0.08}>
               <GlassCard className="text-center">
-                <div className={`mb-1 sm:mb-2 flex justify-center ${color}`}>{stat.icon}</div>
-                <div className="text-lg sm:text-2xl md:text-3xl font-bold">
+                <div className={`mb-1.5 flex justify-center ${color}`}>{stat.icon}</div>
+                <div className={`stat-number text-xl sm:text-2xl md:text-3xl ${color}`}>
                   <StatCounter end={values[stat.key]} decimals={stat.decimals ?? 0} suffix={stat.suffix ?? ""} />
                 </div>
-                <div className="text-xs text-neutral-300 mt-1">{stat.label}</div>
+                <div className="text-[10px] text-neutral-500 mt-1 font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider">{stat.label}</div>
               </GlassCard>
             </AnimatedSection>
           );

@@ -66,7 +66,7 @@ function SortTh({ k, sortKey, sortAsc, onSort, children }: {
   const ariaSortValue: "ascending" | "descending" | "none" = isActive ? (sortAsc ? "ascending" : "descending") : "none";
   return (
     <th className="text-center py-0 px-0 whitespace-nowrap" scope="col" aria-sort={ariaSortValue}>
-      <button type="button" className="w-full py-2 px-1.5 sm:py-3 sm:px-2 cursor-pointer select-none hover:text-white transition-colors" onClick={() => onSort(k)} aria-label={`${typeof children === 'string' ? children : k}でソート`}>
+      <button type="button" className="w-full py-2 px-1.5 sm:py-3 sm:px-2 cursor-pointer select-none hover:text-foreground transition-colors" onClick={() => onSort(k)} aria-label={`${typeof children === 'string' ? children : k}でソート`}>
         <span className="inline-flex items-center gap-0.5">
           {children}
           {isActive
@@ -114,7 +114,7 @@ function ComparisonBar({ label, espoirVal, opponentVal, format = "number", oppon
       <div className="flex justify-between text-[10px] sm:text-xs text-neutral-400 mb-1">
         <span className={espoirWins ? "text-accent-purple font-bold" : ""}>{fmt(espoirVal)}</span>
         <span className="font-medium text-neutral-300">{label}</span>
-        <span className={opponentWins ? "text-white font-bold" : ""}>{fmt(opponentVal)}</span>
+        <span className={opponentWins ? "text-foreground font-bold" : ""}>{fmt(opponentVal)}</span>
       </div>
       <div className="flex gap-1 h-2">
         <div className="flex-1 flex justify-end">
@@ -153,7 +153,7 @@ function LeaderCard({ category, players, espoirTeam, formatValue }: {
             <span className={`font-bold truncate ${espoirTeam[i] ? "text-accent-purple" : "text-neutral-300"}`}>{p.name && p.name.trim() ? p.name : `#${p.number}`}</span>
             <span className="text-[10px] text-neutral-500 ml-1 hidden sm:inline">{p.team}</span>
           </span>
-          <span className={`text-xs sm:text-sm font-bold shrink-0 ml-1 ${espoirTeam[i] ? "text-accent-purple" : "text-white"}`}>{fmt(p.value)}</span>
+          <span className={`text-xs sm:text-sm font-bold shrink-0 ml-1 ${espoirTeam[i] ? "text-accent-purple" : "text-foreground"}`}>{fmt(p.value)}</span>
         </div>
       ))}
     </div>
@@ -287,21 +287,21 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
       <div className="flex items-center justify-between mb-4">
         <Link
           href={`${basePath}/games`}
-          className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white transition-colors rounded"
+          className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-foreground transition-colors rounded"
         >
           <ArrowLeft size={16} aria-hidden="true" />
           Games
         </Link>
         <div className="flex items-center gap-2">
           {adjacentGames?.prev ? (
-            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.prev.gameId)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.prev.gameId)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-foreground transition-colors">
               <ChevronLeft size={14} aria-hidden="true" />
               <span className="hidden sm:inline">{adjacentGames.prev.opponent}</span>
               <span className="sm:hidden">Prev</span>
             </Link>
           ) : null}
           {adjacentGames?.next ? (
-            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.next.gameId)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-white transition-colors">
+            <Link href={`${basePath}/games/${encodeURIComponent(adjacentGames.next.gameId)}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-neutral-400 hover:text-foreground transition-colors">
               <span className="hidden sm:inline">{adjacentGames.next.opponent}</span>
               <span className="sm:hidden">Next</span>
               <ChevronRight size={14} aria-hidden="true" />
@@ -341,7 +341,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <table className="w-full text-sm sm:text-base" aria-label="クォータースコア">
               <thead>
-                <tr className="border-b border-white/10 text-neutral-400">
+                <tr className="border-b border-accent-purple/10 text-neutral-400">
                   <th className="text-left py-2 px-3 sm:py-3 sm:px-4 w-1/3" scope="col"></th>
                   {game.quarterScores.map((q) => (
                     <th key={q.quarter} className="text-center py-2 px-2 sm:py-3 sm:px-4 font-medium" scope="col">{q.quarter}</th>
@@ -430,7 +430,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
               <div className="flex justify-center text-xs text-neutral-400 mb-1">
                 <span className="font-medium text-neutral-300">PACE</span>
               </div>
-              <p className="text-center text-lg font-bold tabular-nums text-white">{advancedStats.espoir.pace}</p>
+              <p className="text-center text-lg font-bold tabular-nums text-foreground">{advancedStats.espoir.pace}</p>
             </div>
           ) : (
             <ComparisonBar label="PACE" espoirVal={parseFloat(advancedStats.espoir.pace)} opponentVal={parseFloat(advancedStats.opponent.pace)} format="number" opponentName={game.opponent} />
@@ -439,7 +439,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
             <div className="flex justify-center text-xs text-neutral-400 mb-1">
               <span className="font-medium text-neutral-300">POSS</span>
             </div>
-            <p className="text-center text-lg font-bold tabular-nums text-white">{advancedStats.poss}</p>
+            <p className="text-center text-lg font-bold tabular-nums text-foreground">{advancedStats.poss}</p>
           </div>
           <ComparisonBar label="OFFRTG" espoirVal={parseFloat(advancedStats.espoir.offRtg)} opponentVal={parseFloat(advancedStats.opponent.offRtg)} format="number" opponentName={game.opponent} />
           <ComparisonBar label="DEFRTG" espoirVal={parseFloat(advancedStats.espoir.defRtg)} opponentVal={parseFloat(advancedStats.opponent.defRtg)} format="number" opponentName={game.opponent} />
@@ -538,12 +538,12 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
           <div className="overflow-x-auto">
             <table className="w-full text-xs sm:text-sm min-w-[1000px]" aria-label={`${activeTab === "espoir" ? "Espoir" : game.opponent} スタッツ`}>
               <thead>
-                <tr className="border-b border-white/10 text-neutral-400">
+                <tr className="border-b border-accent-purple/10 text-neutral-400">
                   <th
-                    className="text-left py-0 px-0 whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10"
+                    className="text-left py-0 px-0 whitespace-nowrap sticky left-0 bg-[#06060c] z-10 border-r border-accent-purple/10"
                     scope="col"
                   >
-                    <button type="button" className="w-full text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 cursor-pointer select-none hover:text-white transition-colors" onClick={() => handleSort("number")} aria-label="選手番号でソート">
+                    <button type="button" className="w-full text-left py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 cursor-pointer select-none hover:text-foreground transition-colors" onClick={() => handleSort("number")} aria-label="選手番号でソート">
                       <span className="inline-flex items-center gap-0.5">
                         選手
                         {sortKey === "number" && (sortAsc ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />)}
@@ -576,7 +576,7 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
                   const isTC = p.name === "Team/Coaches";
                   return (
                   <tr key={isTC ? "tc" : p.number} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${isTC ? "text-neutral-500 italic" : ""}`}>
-                    <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">
+                    <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 font-medium whitespace-nowrap sticky left-0 bg-[#06060c] z-10 border-r border-accent-purple/10">
                       {isTC ? (
                         <span className="text-neutral-500">Team/Coaches</span>
                       ) : (
@@ -611,8 +611,8 @@ export default function GameDetailClient({ game, basePath = "", adjacentGames }:
                 })}
               </tbody>
               <tfoot>
-                <tr className="border-t border-white/10 font-semibold">
-                  <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-[#0a0a0f] z-10 border-r border-white/10">TEAM</td>
+                <tr className="border-t border-accent-purple/10 font-semibold">
+                  <td className="py-2 pl-3 pr-1.5 sm:py-3 sm:pl-4 sm:pr-2 sticky left-0 bg-[#06060c] z-10 border-r border-accent-purple/10">TEAM</td>
                   <td className={`${td} text-accent-purple`}>{teamTotals.points}</td>
                   <td className={td}>{teamTotals.threePointMade}/{teamTotals.threePointAttempt}</td>
                   <td className={`${td} text-neutral-400`}>{fmtPct(teamTotals.threePointMade, teamTotals.threePointAttempt)}</td>

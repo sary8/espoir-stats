@@ -1,12 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #e5e5e5;
-  --accent-purple: oklch(0.627 0.265 292.72);
-  --accent-purple-light: oklch(0.714 0.203 293.57);
-  --card-bg: rgba(255, 255, 255, 0.05);
-  --card-border: rgba(255, 255, 255, 0.1);
+  --background: #06060c;
+  --foreground: #f0eef5;
+  --accent-purple: #a855f7;
+  --accent-purple-light: #c084fc;
+  --accent-gold: #fbbf24;
+  --accent-gold-dim: #d4a017;
+  --surface: #0e0e18;
+  --surface-bright: #161624;
+  --card-bg: linear-gradient(135deg, rgba(168, 85, 247, 0.06) 0%, rgba(14, 14, 24, 0.95) 40%, rgba(14, 14, 24, 0.98) 100%);
+  --card-bg-solid: #0e0e18;
+  --card-border: rgba(168, 85, 247, 0.12);
+  --muted: #6b6b80;
 }
 
 @theme inline {
@@ -14,9 +20,14 @@
   --color-foreground: var(--foreground);
   --color-accent-purple: var(--accent-purple);
   --color-accent-purple-light: var(--accent-purple-light);
-  --color-card-bg: var(--card-bg);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-gold-dim: var(--accent-gold-dim);
+  --color-surface: var(--surface);
+  --color-surface-bright: var(--surface-bright);
+  --color-card-bg: var(--card-bg-solid);
   --color-card-border: var(--card-border);
-  --font-sans: var(--font-space-grotesk), var(--font-noto-sans-jp), system-ui, sans-serif;
+  --font-display: var(--font-barlow-condensed), system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), var(--font-noto-sans-jp), system-ui, sans-serif;
 }
 
 html,
@@ -32,38 +43,115 @@ body {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0f;
+  background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.3), rgba(251, 191, 36, 0.2));
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, rgba(168, 85, 247, 0.5), rgba(251, 191, 36, 0.35));
 }
 
-/* Glass card utility */
+/* Card system — purple gradient background */
 .glass-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  backdrop-filter: blur(12px);
-  border-radius: 16px;
+  border-radius: 10px;
   overflow: clip;
+  position: relative;
 }
 .glass-card-hover {
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
 }
 .glass-card-hover:hover {
-  border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border-color: rgba(251, 191, 36, 0.25);
+  box-shadow:
+    0 0 20px rgba(168, 85, 247, 0.08),
+    0 0 40px rgba(251, 191, 36, 0.04),
+    inset 0 1px 0 rgba(251, 191, 36, 0.06);
+  transform: translateY(-3px);
 }
 
-/* Gradient mesh background */
+/* Court dot pattern texture */
+.court-pattern {
+  background-image: radial-gradient(circle, rgba(168, 85, 247, 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Gradient mesh — rich purple & gold atmosphere */
 .gradient-mesh {
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(192, 132, 252, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
+    radial-gradient(ellipse at 15% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 20%, rgba(192, 132, 252, 0.10) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 90%, rgba(251, 191, 36, 0.06) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 60%, rgba(168, 85, 247, 0.05) 0%, transparent 35%);
+}
+
+/* Neon glow for key numbers */
+.neon-purple {
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.6), 0 0 30px rgba(168, 85, 247, 0.25), 0 0 60px rgba(168, 85, 247, 0.08);
+}
+
+.neon-gold {
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.6), 0 0 30px rgba(251, 191, 36, 0.25), 0 0 60px rgba(251, 191, 36, 0.08);
+}
+
+/* Purple-to-gold gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #a855f7 0%, #c084fc 40%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gold shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, #fbbf24 0%, #fde68a 25%, #fbbf24 50%, #f59e0b 75%, #fbbf24 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Display font for scoreboard-style numbers */
+.stat-number {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Section divider — purple to gold gradient */
+.court-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 5%, rgba(168, 85, 247, 0.3) 30%, rgba(251, 191, 36, 0.25) 70%, transparent 95%);
+}
+
+/* Royal card — special accent card with gold top border */
+.royal-card {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(14, 14, 24, 0.98) 50%, rgba(251, 191, 36, 0.04) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  border-radius: 10px;
+  overflow: clip;
+  position: relative;
+}
+.royal-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #a855f7, #fbbf24, #a855f7);
 }
 
 *:focus-visible {
@@ -97,12 +185,12 @@ body {
   border-width: 0;
 }
 
-
 /* Recharts overrides */
 .recharts-text {
-  fill: #d4d4d4;
-  font-size: 12px;
+  fill: #a3a3b8;
+  font-size: 11px;
+  font-family: var(--font-display);
 }
 .recharts-cartesian-grid line {
-  stroke: rgba(255, 255, 255, 0.1);
+  stroke: rgba(168, 85, 247, 0.08);
 }

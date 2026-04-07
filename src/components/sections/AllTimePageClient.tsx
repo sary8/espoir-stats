@@ -57,14 +57,14 @@ function ModeToggle({
       <button
         type="button"
         onClick={() => onChange("average")}
-        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "average" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-white"}`}
+        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "average" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-foreground"}`}
       >
         Average
       </button>
       <button
         type="button"
         onClick={() => onChange("total")}
-        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "total" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-white"}`}
+        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "total" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-foreground"}`}
       >
         Total
       </button>
@@ -224,7 +224,7 @@ export default function AllTimePageClient({
 
   const th = "py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap";
   const thBtn =
-    "inline-flex items-center gap-1 cursor-pointer hover:text-white transition-colors select-none";
+    "inline-flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors select-none";
   const td = "py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap tabular-nums";
 
   return (
@@ -233,9 +233,9 @@ export default function AllTimePageClient({
       <main id="main-content" className="pt-16">
         {/* Hero */}
         <section className="relative gradient-mesh py-12 sm:py-20">
-          <div className="absolute inset-0 bg-[#0a0a0f]/50" />
+          <div className="absolute inset-0 bg-[#06060c]/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+            <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
               All-Time <span className="text-accent-purple">Records</span>
             </h1>
             <p className="text-neutral-400 mt-2 text-sm sm:text-base">
@@ -246,7 +246,7 @@ export default function AllTimePageClient({
 
         {/* Career Leaders */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+          <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
             Career <span className="text-accent-purple">Leaders</span>
           </h2>
           <div className="flex justify-center gap-2 mb-6 flex-wrap">
@@ -258,7 +258,7 @@ export default function AllTimePageClient({
                 className={`px-3 py-1.5 rounded-lg text-sm transition-colors cursor-pointer ${
                   leaderCat === tab.key
                     ? "bg-accent-purple text-white font-medium"
-                    : "bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white"
+                    : "bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-foreground"
                 }`}
               >
                 {tab.label}
@@ -269,7 +269,7 @@ export default function AllTimePageClient({
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
               <table className="w-full text-xs sm:text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-neutral-400">
+                  <tr className="border-b border-accent-purple/10 text-neutral-400">
                     <th className="text-center py-2 px-2 sm:py-3 sm:px-3 w-10" scope="col">
                       #
                     </th>
@@ -321,7 +321,7 @@ export default function AllTimePageClient({
 
         {/* Career Totals Table */}
         <AnimatedSection className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+          <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
             Career <span className="text-accent-purple">Totals</span>
           </h2>
           <div className="flex justify-center mb-4">
@@ -331,7 +331,7 @@ export default function AllTimePageClient({
             <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
               <table className="w-full text-xs sm:text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-neutral-400">
+                  <tr className="border-b border-accent-purple/10 text-neutral-400">
                     {TOTALS_COLUMNS.map((col) => (
                       <th
                         key={col.key}
@@ -418,7 +418,7 @@ export default function AllTimePageClient({
         {/* All-Time Single-Game Records */}
         {singleGameRecords.length > 0 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
               Single-Game{" "}
               <span className="text-accent-purple">Records</span>
             </h2>
@@ -426,7 +426,7 @@ export default function AllTimePageClient({
               <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
                 <table className="w-full text-xs sm:text-sm">
                   <thead>
-                    <tr className="border-b border-white/10 text-neutral-400">
+                    <tr className="border-b border-accent-purple/10 text-neutral-400">
                       <th
                         className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap"
                         scope="col"
@@ -499,14 +499,14 @@ export default function AllTimePageClient({
         {/* Milestones */}
         {milestones.length > 0 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
               <span className="text-accent-purple">Milestones</span>
             </h2>
             <GlassCard>
               <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
                 <table className="w-full text-xs sm:text-sm">
                   <thead>
-                    <tr className="border-b border-white/10 text-neutral-400">
+                    <tr className="border-b border-accent-purple/10 text-neutral-400">
                       <th
                         className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap"
                         scope="col"

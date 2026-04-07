@@ -100,15 +100,19 @@ export default function Header({ seasons }: HeaderProps) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
-        scrolled || menuOpen ? "bg-[#0a0a0f]/90 backdrop-blur-md border-b border-white/5" : ""
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled || menuOpen
+          ? "bg-[#06060c]/95 backdrop-blur-sm border-b border-accent-purple/5"
+          : ""
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href={`${basePath}/`} className="text-xl font-bold tracking-wider focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-          <span className="text-accent-purple">E</span>SPOIR
+        <Link href={`${basePath}/`} className="flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
+          <span className="font-[family-name:var(--font-barlow-condensed)] text-2xl font-bold tracking-[0.15em] uppercase gradient-text">
+            ESPOIR
+          </span>
         </Link>
-        <nav className="hidden sm:flex items-center gap-6 text-sm text-neutral-400" aria-label="メインナビゲーション">
+        <nav className="hidden sm:flex items-center gap-1 text-sm" aria-label="メインナビゲーション">
           {navLinks.map((link) => {
             const active = isActive(link);
             return (
@@ -116,35 +120,39 @@ export default function Header({ seasons }: HeaderProps) {
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={`hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded ${active ? "text-white" : ""}`}
+                className={`px-3 py-1.5 rounded-md font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple ${
+                  active
+                    ? "text-accent-purple bg-accent-purple/8"
+                    : "text-neutral-500 hover:text-neutral-200 hover:bg-white/5"
+                }`}
               >
                 {link.label}
               </Link>
             );
           })}
           {seasons && seasons.length > 1 ? (
-            <div className="relative" ref={seasonRef}>
+            <div className="relative ml-2" ref={seasonRef}>
               <button
                 type="button"
                 onClick={() => setSeasonOpen((v) => !v)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-sm text-neutral-300 cursor-pointer"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-accent-purple/10 border border-accent-purple/15 hover:bg-accent-purple/15 transition-colors text-xs font-semibold font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider text-accent-purple cursor-pointer"
                 aria-expanded={seasonOpen}
                 aria-label="シーズン切替"
               >
                 {currentSeason?.label ?? "Season"}
-                <ChevronDown size={14} className={`transition-transform ${seasonOpen ? "rotate-180" : ""}`} aria-hidden="true" />
+                <ChevronDown size={12} className={`transition-transform ${seasonOpen ? "rotate-180" : ""}`} aria-hidden="true" />
               </button>
               {seasonOpen ? (
-                <div className="absolute right-0 mt-2 w-40 bg-[#1a1a2e] border border-white/10 rounded-lg shadow-xl overflow-hidden z-50">
+                <div className="absolute right-0 mt-2 w-40 bg-surface-bright border border-accent-purple/10 rounded-lg shadow-xl shadow-black/50 overflow-hidden z-50">
                   {seasons.map((s) => (
                     <button
                       key={s.id}
                       type="button"
                       onClick={() => handleSeasonChange(s)}
-                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors cursor-pointer ${
+                      className={`w-full text-left px-4 py-2.5 text-xs font-semibold font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider transition-colors cursor-pointer ${
                         currentSeason?.id === s.id
-                          ? "bg-accent-purple/20 text-accent-purple font-medium"
-                          : "text-neutral-300 hover:bg-white/10"
+                          ? "bg-accent-purple/15 text-accent-purple"
+                          : "text-neutral-400 hover:bg-white/5 hover:text-neutral-200"
                       }`}
                     >
                       {s.label}
@@ -156,7 +164,7 @@ export default function Header({ seasons }: HeaderProps) {
           ) : null}
         </nav>
         <button
-          className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
+          className="sm:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-accent-purple transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded"
           onClick={() => setMenuOpen((v) => !v)}
           aria-expanded={menuOpen}
           aria-label={menuOpen ? "メニューを閉じる" : "メニューを開く"}
@@ -165,8 +173,8 @@ export default function Header({ seasons }: HeaderProps) {
         </button>
       </div>
       {menuOpen ? (
-        <nav className="sm:hidden bg-[#0a0a0f]/95 backdrop-blur-md border-t border-white/5" aria-label="モバイルナビゲーション">
-          <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4">
+        <nav className="sm:hidden bg-[#06060c]/98 backdrop-blur-sm border-t border-accent-purple/5" aria-label="モバイルナビゲーション">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-1">
             {navLinks.map((link) => {
               const active = isActive(link);
               return (
@@ -175,15 +183,19 @@ export default function Header({ seasons }: HeaderProps) {
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
                   aria-current={active ? "page" : undefined}
-                  className={`hover:text-white transition-colors py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded ${active ? "text-white" : "text-neutral-400"}`}
+                  className={`px-3 py-2.5 rounded-md text-sm font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple ${
+                    active
+                      ? "text-accent-purple bg-accent-purple/8"
+                      : "text-neutral-500 hover:text-neutral-200"
+                  }`}
                 >
                   {link.label}
                 </Link>
               );
             })}
             {seasons && seasons.length > 1 ? (
-              <div className="border-t border-white/10 pt-4">
-                <p className="text-xs text-neutral-500 mb-2">Season</p>
+              <div className="border-t border-accent-purple/5 pt-3 mt-2">
+                <p className="text-[10px] text-neutral-600 mb-2 px-3 uppercase tracking-widest font-[family-name:var(--font-barlow-condensed)]">Season</p>
                 <div className="flex flex-col gap-1">
                   {seasons.map((s) => (
                     <button
@@ -193,10 +205,10 @@ export default function Header({ seasons }: HeaderProps) {
                         handleSeasonChange(s);
                         setMenuOpen(false);
                       }}
-                      className={`text-left py-2 px-3 rounded-lg text-sm cursor-pointer ${
+                      className={`text-left py-2 px-3 rounded-md text-sm font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider font-semibold cursor-pointer ${
                         currentSeason?.id === s.id
-                          ? "bg-accent-purple/20 text-accent-purple font-medium"
-                          : "text-neutral-400 hover:bg-white/5"
+                          ? "bg-accent-purple/15 text-accent-purple"
+                          : "text-neutral-500 hover:bg-white/5"
                       }`}
                     >
                       {s.label}

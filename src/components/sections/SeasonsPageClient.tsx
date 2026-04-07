@@ -83,14 +83,14 @@ function ModeToggle({ mode, onChange }: { mode: ViewMode; onChange: (m: ViewMode
       <button
         type="button"
         onClick={() => onChange("average")}
-        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "average" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-white"}`}
+        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "average" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-foreground"}`}
       >
         Average
       </button>
       <button
         type="button"
         onClick={() => onChange("total")}
-        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "total" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-white"}`}
+        className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${mode === "total" ? "bg-accent-purple text-white font-medium" : "text-neutral-400 hover:text-foreground"}`}
       >
         Total
       </button>
@@ -106,7 +106,7 @@ function CompareTable({ rows, columnHeaders, columnKeys }: { rows: Row[]; column
     <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
       <table className="w-full text-xs sm:text-sm">
         <thead>
-          <tr className="border-b border-white/10 text-neutral-400">
+          <tr className="border-b border-accent-purple/10 text-neutral-400">
             <th className="text-left py-2 px-2 sm:py-3 sm:px-3 whitespace-nowrap" scope="col">指標</th>
             {columnHeaders.map((h) => (
               <th key={h.key} className={th} scope="col">{h.label}</th>
@@ -234,9 +234,9 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
       <Header seasons={seasons} />
       <main id="main-content" className="pt-16">
         <section className="relative gradient-mesh py-12 sm:py-20">
-          <div className="absolute inset-0 bg-[#0a0a0f]/50" />
+          <div className="absolute inset-0 bg-[#06060c]/50" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+            <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl sm:text-5xl md:text-6xl font-bold uppercase tracking-wider">
               Season <span className="text-accent-purple">Growth</span>
             </h1>
             <p className="text-neutral-400 mt-2 text-sm sm:text-base">シーズン横断でチーム・個人の成長を可視化</p>
@@ -245,7 +245,7 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
 
         {/* Team Comparison */}
         <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+          <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
             Team <span className="text-accent-purple">Comparison</span>
           </h2>
           <div className="flex justify-center mb-4">
@@ -259,7 +259,7 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
         {/* Team Bar Chart */}
         {barChartData.length > 1 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
               Team <span className="text-accent-purple">Trends</span>
             </h2>
             <GlassCard>
@@ -271,7 +271,7 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
         {/* Player Growth */}
         {sortedMembers.length > 0 ? (
           <AnimatedSection className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold uppercase tracking-wider mb-6 sm:mb-8 text-center">
               Player <span className="text-accent-purple">Growth</span>
             </h2>
             <div className="mb-6 flex justify-center">
@@ -282,7 +282,7 @@ export default function SeasonsPageClient({ seasons, teamStats, playerStats }: S
                 aria-label="選手を選択"
               >
                 {sortedMembers.map((m) => (
-                  <option key={m.memberId} value={m.memberId} className="bg-[#1a1a2e]">
+                  <option key={m.memberId} value={m.memberId} className="bg-[#0e0e18]">
                     {m.number !== null ? `#${m.number} ` : ""}{m.name}
                   </option>
                 ))}

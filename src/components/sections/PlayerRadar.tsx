@@ -41,7 +41,7 @@ function CustomTooltip({ active, label, selectedPlayers, colorMap }: {
   if (!key) return null;
 
   return (
-    <div className="rounded-lg bg-neutral-900/95 border border-white/10 px-3 py-2 shadow-lg animate-fade-in">
+    <div className="rounded-md bg-surface border border-card-border px-3 py-2 shadow-lg animate-fade-in">
       <p className="text-xs text-neutral-400 mb-1.5">{label}</p>
       {selectedPlayers.map((p) => (
         <div key={p.number} className="flex items-center gap-2 text-sm">
@@ -120,9 +120,10 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
 
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
         Player <span className="text-accent-purple">Comparison</span>
       </h2>
+      <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />
       <GlassCard>
         <div className="flex flex-wrap gap-2 mb-2 justify-center">
           {players.map((p) => (
@@ -155,7 +156,7 @@ export default function PlayerRadar({ players }: PlayerRadarProps) {
         )}
         <ResponsiveContainer width="100%" height={320}>
           <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
-            <PolarGrid stroke="rgba(255,255,255,0.1)" />
+            <PolarGrid stroke="rgba(168, 85, 247, 0.08)" />
             <PolarAngleAxis dataKey="stat" tick={{ fill: "#a3a3a3", fontSize: 11 }} />
             <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
             <Radar dataKey="_grid" stroke="transparent" fill="transparent" />

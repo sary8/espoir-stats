@@ -36,14 +36,12 @@ export default function LoginPage() {
   }
 
   return (
-    <main id="main-content" className="min-h-screen flex items-center justify-center px-4">
-      <div className="glass-card p-8 w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center mb-2">
-          Espoir Stats
+    <main id="main-content" className="min-h-screen flex items-center justify-center px-4 court-pattern gradient-mesh">
+      <div className="absolute inset-0 bg-[#06060c]/60" />
+      <div className="royal-card p-8 w-full max-w-sm relative z-10">
+        <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl font-bold text-center mb-6 uppercase tracking-wider">
+          <span className="gradient-text">Espoir</span> <span className="text-neutral-500">Stats</span>
         </h1>
-        <p className="text-sm text-white/60 text-center mb-6">
-          閲覧にはパスワードが必要です
-        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -58,7 +56,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="パスワード…"
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus-visible:border-accent-purple focus-visible:ring-2 focus-visible:ring-accent-purple/50 transition-colors"
+              className="w-full px-4 py-3 rounded-lg bg-white/3 border border-card-border text-foreground placeholder-neutral-600 focus-visible:border-accent-purple focus-visible:ring-1 focus-visible:ring-accent-purple/30 transition-colors"
               autoFocus
               aria-describedby={error ? "auth-error" : undefined}
             />
@@ -73,7 +71,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !password}
-            className="w-full py-3 rounded-xl bg-accent-purple text-white font-semibold hover:bg-accent-purple-light transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full py-3 rounded-lg bg-accent-purple text-black font-bold font-[family-name:var(--font-barlow-condensed)] uppercase tracking-wider hover:bg-accent-purple-light transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {loading ? "認証中…" : "ログイン"}
           </button>

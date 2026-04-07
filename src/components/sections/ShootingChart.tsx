@@ -12,9 +12,10 @@ interface ShootingChartProps {
 export default function ShootingChart({ data }: ShootingChartProps) {
   return (
     <AnimatedSection className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center [text-wrap:balance]">
+      <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
         Shooting <span className="text-accent-purple">Comparison</span>
       </h2>
+      <div className="court-divider mb-6 sm:mb-8" aria-hidden="true" />
       <GlassCard>
         <table className="sr-only">
           <caption>選手別のシュート成功率（3P%、2P%、FT%）</caption>
