@@ -108,8 +108,8 @@ export default function Header({ seasons }: HeaderProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link href={`${basePath}/`} className="flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-purple rounded">
-          <span className="font-[family-name:var(--font-barlow-condensed)] text-2xl font-bold tracking-[0.15em] uppercase">
-            <span className="text-accent-purple">E</span><span className="text-foreground">SPOIR</span>
+          <span className="font-[family-name:var(--font-barlow-condensed)] text-2xl font-bold tracking-[0.15em] uppercase gradient-text">
+            ESPOIR
           </span>
         </Link>
         <nav className="hidden sm:flex items-center gap-1 text-sm" aria-label="メインナビゲーション">

@@ -57,14 +57,15 @@ export default function SeasonAwards({ awards, basePath = "" }: SeasonAwardsProp
       {/* MVP Card */}
       {awards.mvp ? (
         <div className="mb-8 sm:mb-10">
-          <GlassCard className="relative overflow-hidden !border-accent-gold/20 bg-gradient-to-br from-amber-500/5 to-transparent">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="royal-card p-4 sm:p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-amber-500/8 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-500/6 to-transparent rounded-full translate-y-1/2 -translate-x-1/2" />
             <div className="relative flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
-              <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-amber-500/10 border border-amber-500/20 shrink-0">
+              <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-gradient-to-br from-amber-500/15 to-purple-500/10 border border-accent-gold/25 shrink-0">
                 <Trophy size={28} className="text-accent-gold" aria-hidden="true" />
               </div>
               <div>
-                <div className="font-[family-name:var(--font-barlow-condensed)] text-[10px] text-accent-gold font-bold tracking-[0.3em] uppercase mb-1">Season MVP</div>
+                <div className="font-[family-name:var(--font-barlow-condensed)] text-[10px] gold-shimmer font-bold tracking-[0.3em] uppercase mb-1">Season MVP</div>
                 <div className="stat-number text-2xl sm:text-3xl">
                   <AwardPlayerLink award={awards.mvp} basePath={basePath} />
                 </div>
@@ -73,7 +74,7 @@ export default function SeasonAwards({ awards, basePath = "" }: SeasonAwardsProp
                 ) : null}
               </div>
             </div>
-          </GlassCard>
+          </div>
         </div>
       ) : null}
 

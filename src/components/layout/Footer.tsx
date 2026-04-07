@@ -37,7 +37,7 @@ export default function Footer({ seasonLabel }: FooterProps) {
           </div>
         )}
         <p className="text-xs text-neutral-600">
-          <span className="font-[family-name:var(--font-barlow-condensed)] font-bold tracking-wider uppercase text-accent-purple/60">ESPOIR</span>
+          <span className="font-[family-name:var(--font-barlow-condensed)] font-bold tracking-wider uppercase gradient-text">ESPOIR</span>
           <span className="mx-2 text-neutral-700">|</span>
           Stats Dashboard
         </p>

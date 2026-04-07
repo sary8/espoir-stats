@@ -36,13 +36,11 @@ export default function LoginPage() {
   }
 
   return (
-    <main id="main-content" className="min-h-screen flex items-center justify-center px-4 court-pattern">
-      <div className="glass-card p-8 w-full max-w-sm relative">
-        {/* Decorative accent line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-accent-purple/40 to-transparent" aria-hidden="true" />
-
+    <main id="main-content" className="min-h-screen flex items-center justify-center px-4 court-pattern gradient-mesh">
+      <div className="absolute inset-0 bg-[#06060c]/60" />
+      <div className="royal-card p-8 w-full max-w-sm relative z-10">
         <h1 className="font-[family-name:var(--font-barlow-condensed)] text-3xl font-bold text-center mb-6 uppercase tracking-wider">
-          <span className="text-accent-purple">E</span>spoir <span className="text-neutral-500">Stats</span>
+          <span className="gradient-text">Espoir</span> <span className="text-neutral-500">Stats</span>
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">

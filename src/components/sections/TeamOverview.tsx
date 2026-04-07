@@ -59,7 +59,7 @@ export default function TeamOverview(props: TeamOverviewProps) {
   return (
     <AnimatedSection id="overview" className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
       <h2 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center uppercase tracking-wider">
-        Team <span className="text-accent-purple">Overview</span>
+        Team <span className="gradient-text">Overview</span>
       </h2>
 
       {/* Court-line divider */}
